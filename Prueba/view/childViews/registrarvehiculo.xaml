@@ -1,0 +1,84 @@
+﻿<UserControl x:Class="Prueba.view.Registrarvehiculo"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Prueba.view" 
+             xmlns:conv="clr-namespace:Prueba.helpers" xmlns:viewModel="clr-namespace:Prueba.viewModel"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+
+    <UserControl.DataContext>
+        <viewModel:registrarVehiculosViewModel />
+    </UserControl.DataContext>
+
+    <!--Definimos los recursos-->
+    <UserControl.Resources>
+        <conv:ComboBoxSelectionToVisibilityConverter x:Key="ComboBoxSelectionToVisibilityConverter"/>
+    </UserControl.Resources>
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <!--Registrar el coche-->
+            <ColumnDefinition Width="600"/>
+            <!--Registrar al cliente/-->
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <!-- Sección: Registro de Coche -->
+        <GroupBox Header="Datos del Vehiculo" Grid.Column="0" Margin="10" Style="{StaticResource gbocStilos}">
+            <StackPanel Margin="10">
+
+                <Label Content="Marca:" Style="{StaticResource GroupBoxText}" />
+                <ComboBox x:Name="cmbMarca"  Margin="0,0,0,10" Width="200" ItemsSource="{Binding ListaMarcas}" 
+                          HorizontalAlignment="Left" Style="{StaticResource ComboBoxAmarilloTransparente}" 
+                          SelectedValue="{Binding Marca, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+
+                <Label Content="Modelo:" Style="{StaticResource GroupBoxText}"/>
+                <TextBox x:Name="txtModelo" Margin="0,0,0,10" Width="200" HorizontalAlignment="Left" Text="{Binding Modelo, UpdateSourceTrigger=PropertyChanged}"/>
+
+                <Label Content="Matrícula:" Style="{StaticResource GroupBoxText}"/>
+                <TextBox Text="{Binding Matricula, UpdateSourceTrigger=PropertyChanged}" x:Name="txtMatricula" Margin="0,0,0,10" Width="200" HorizontalAlignment="Left"/>
+
+                <Label Content="Motivo de ingreso" Style="{StaticResource GroupBoxText}"/>
+                <ComboBox x:Name="cmbMotivoIngreso"  Margin="0,0,0,10" Width="200" ItemsSource="{Binding ListaMotivoIngreso}"
+                          HorizontalAlignment="Left" Style="{StaticResource ComboBoxAmarilloTransparente}" 
+                          SelectedValue="{Binding MotivoIngreso, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+
+                <Label x:Name="txtDiagSinIdentificar" Content="Breve descripción del problema" 
+                       Style="{StaticResource GroupBoxText}" Visibility="Visible"
+                       />
+                <TextBox x:Name="tbDiagSinIdentificar" Height="100" Visibility="Visible" Text="{Binding Descripcion, UpdateSourceTrigger=PropertyChanged}"/>
+
+            </StackPanel>
+        </GroupBox>
+
+        <!-- Sección: Datos del Cliente -->
+        <GroupBox Header="Datos del Cliente" Grid.Column="1" Margin="10" Style="{StaticResource gbocStilos}">
+            <Grid Margin="10">
+                <Grid.RowDefinitions>
+                    <RowDefinition/>
+                    <RowDefinition Height="Auto" MinHeight="100"/>
+                </Grid.RowDefinitions>
+
+                <!-- Datos del cliente -->
+                <StackPanel Grid.Row="0" Margin="0,0,0,10">
+                    <Label Content="Nombre:" Style="{StaticResource GroupBoxText}"/>
+                    <TextBox x:Name="txtNombreCliente" Margin="0,0,0,10" Text="{Binding NombreCliente, UpdateSourceTrigger=PropertyChanged}"/>
+
+                    <Label Content="Dni:" Style="{StaticResource GroupBoxText}"/>
+                    <TextBox x:Name="txtDni" Margin="0,0,0,10" Text="{Binding DniCliente, UpdateSourceTrigger=PropertyChanged}"/>
+
+                    <Label Content="Número Telefónico:" Style="{StaticResource GroupBoxText}"/>
+                    <TextBox x:Name="txtTelefono" Margin="0,0,0,10" Text="{Binding TelefonoCliente, UpdateSourceTrigger=PropertyChanged}"/>
+                </StackPanel>
+
+                <!-- Objetos abajo  -->
+
+                <CheckBox Grid.Row="1" Content="¿Asignar?" IsChecked="{Binding Asignar}" Foreground="{StaticResource colorB2}"/>
+                <Button Grid.Row="1" Content="Guardar Vehiculo" Width="120" Height="50"
+                Margin="0,13,0,0" HorizontalAlignment="Center" VerticalAlignment="Bottom"
+                Style="{StaticResource btnChildView}" Command="{Binding command}"/>
+            </Grid>
+        </GroupBox>
+    </Grid>
+</UserControl>

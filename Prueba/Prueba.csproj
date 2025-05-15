@@ -1,0 +1,32 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UseWPF>true</UseWPF>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="images\fondoLogin.jpg" />
+    <None Remove="images\Login.png" />
+    <None Remove="images\login\avatar.png" />
+    <None Remove="images\ventanaPrincipal\fondotaller.png" />
+    <None Remove="images\ventanaPrincipal\registrarVehiculo.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="FontAwesome.Sharp" Version="6.6.0" />
+    <PackageReference Include="Npgsql" Version="9.0.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="images\login\avatar.png" />
+    <Resource Include="images\login\fondoLogin.jpg" />
+    <Resource Include="images\login\Login.png" />
+    <Resource Include="images\ventanaPrincipal\fondotaller.png" />
+    <Resource Include="images\ventanaPrincipal\registrarVehiculo.png" />
+  </ItemGroup>
+
+</Project>
