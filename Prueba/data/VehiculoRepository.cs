@@ -1,5 +1,6 @@
 ﻿using Npgsql;
-using Prueba.DTO;
+using Prueba.data;
+using Prueba.model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +10,7 @@ using System.Windows;
 
 namespace Prueba.data
 {
-    public class VehiculoRepository 
+    public class VehiculoRepository
     {
         string connectionString = System.Configuration.ConfigurationManager.ConnectionStrings["PostgreSqlConnection"].ConnectionString;
 
@@ -50,7 +51,7 @@ namespace Prueba.data
             {
                 conn.Open();
                 var cmd = new NpgsqlCommand(@"
-                    SELECT v.marca, v.matricula, r.estado 
+                    SELECT v.marca, v.matricula, r.estado, r.trabajo_a_realizar 
                     FROM vehiculo v
                     JOIN reparacion r ON v.matricula = r.matricula_vehiculo
                     WHERE r.mecanico_id = @id", conn);
@@ -59,18 +60,19 @@ namespace Prueba.data
 
                 using (var reader = cmd.ExecuteReader())
                 {
-                    // Obtener los índices de las columnas por nombre
                     int marcaIndex = reader.GetOrdinal("marca");
                     int matriculaIndex = reader.GetOrdinal("matricula");
                     int estadoIndex = reader.GetOrdinal("estado");
+                    int trabajoIndex = reader.GetOrdinal("trabajo_a_realizar");
 
                     while (reader.Read())
                     {
                         lista.Add(new VehiculoReparacionDTO
                         {
-                            Marca = reader.IsDBNull(marcaIndex) ? null : reader.GetString(marcaIndex),
-                            Matricula = reader.IsDBNull(matriculaIndex) ? null : reader.GetString(matriculaIndex),
-                            Estado = reader.IsDBNull(estadoIndex) ? null : reader.GetString(estadoIndex) // Asegúrate de que 'estado' puede ser nulo
+                            Marca = reader.IsDBNull(marcaIndex) ? string.Empty : reader.GetString(marcaIndex),
+                            Matricula = reader.IsDBNull(matriculaIndex) ? string.Empty : reader.GetString(matriculaIndex),
+                            Estado = reader.IsDBNull(estadoIndex) ? string.Empty : reader.GetString(estadoIndex),
+                            TrabajoRealizar = reader.IsDBNull(trabajoIndex) ? string.Empty : reader.GetString(trabajoIndex)
                         });
                     }
                 }
@@ -78,6 +80,100 @@ namespace Prueba.data
 
             return lista;
         }
+
+        // Elimina todos los repuestos asociados a una reparación de un vehículo por matrícula
+        public void CancelarReparacionPorMatricula(string matricula)
+        {
+            using (var connection = new NpgsqlConnection(connectionString))
+            {
+                connection.Open();
+
+                using (var transaction = connection.BeginTransaction())
+                {
+                    try
+                    {
+                        // Obtener ID de la reparación
+                        var getIdCmd = new NpgsqlCommand("SELECT id FROM reparacion WHERE matricula_vehiculo = @matricula", connection);
+                        getIdCmd.Parameters.AddWithValue("@matricula", matricula);
+                        var reparacionId = getIdCmd.ExecuteScalar();
+
+                        if (reparacionId == null)
+                            throw new Exception("No se encontró la reparación para la matrícula dada.");
+
+                        int repId = Convert.ToInt32(reparacionId);
+
+                        // Eliminar repuestos usados
+                        var deleteRepuestosCmd = new NpgsqlCommand("DELETE FROM repuesto_usado WHERE reparacion_id = @repId", connection);
+                        deleteRepuestosCmd.Parameters.AddWithValue("@repId", repId);
+                        deleteRepuestosCmd.ExecuteNonQuery();
+
+                        // Marcar vehículo como no asignado
+                        var updateVehiculoCmd = new NpgsqlCommand("UPDATE vehiculo SET asignado = false WHERE matricula = @matricula", connection);
+                        updateVehiculoCmd.Parameters.AddWithValue("@matricula", matricula);
+                        updateVehiculoCmd.ExecuteNonQuery();
+
+                        // También podrías eliminar la reparación si lo deseas:
+                        var deleteReparacionCmd = new NpgsqlCommand("DELETE FROM reparacion WHERE id = @repId", connection);
+                        deleteReparacionCmd.Parameters.AddWithValue("@repId", repId);
+                        deleteReparacionCmd.ExecuteNonQuery();
+
+                        transaction.Commit();
+                    }
+                    catch (Exception)
+                    {
+                        transaction.Rollback();
+                        throw; // vuelve a lanzar el error
+                    }
+                }
+            }
+        }
+
+        public void AsignarVehiculoAVista(string matricula, string mecanicoId)
+        {
+            using var conn = new NpgsqlConnection(connectionString);
+            conn.Open();
+
+            using var trans = conn.BeginTransaction();
+            try
+            {
+                // Actualizar vehículo como asignado
+                var updateCmd = new NpgsqlCommand("UPDATE vehiculo SET asignado = true WHERE matricula = @matricula", conn);
+                updateCmd.Parameters.AddWithValue("@matricula", matricula);
+                updateCmd.ExecuteNonQuery();
+
+                // Consultar motivo_ingreso del vehículo
+                string motivoIngreso = "Problema sin identificar"; // Valor por defecto
+                var motivoCmd = new NpgsqlCommand("SELECT motivo_ingreso FROM vehiculo WHERE matricula = @matricula", conn);
+                motivoCmd.Parameters.AddWithValue("@matricula", matricula);
+                var result = motivoCmd.ExecuteScalar();
+
+
+                // Determinar el estado inicial según el motivo
+                string estadoReparacion = motivoIngreso == "Problema sin identificar" ? "Diagnosticando" : "En Reparacion";
+
+                // Insertar reparación
+                var insertCmd = new NpgsqlCommand(@"
+                    INSERT INTO reparacion (matricula_vehiculo, mecanico_id, trabajo_a_realizar, estado, fecha_inicio)
+                    VALUES (@matricula, @mecanicoId, @trabajo, @estado, @fechaInicio)", conn);
+
+                insertCmd.Parameters.AddWithValue("@matricula", matricula);
+                insertCmd.Parameters.AddWithValue("@mecanicoId", mecanicoId);
+                insertCmd.Parameters.AddWithValue("@trabajo", motivoIngreso);
+                insertCmd.Parameters.AddWithValue("@estado", estadoReparacion);
+                insertCmd.Parameters.AddWithValue("@fechaInicio", DateTime.Now);
+
+                insertCmd.ExecuteNonQuery();
+
+                trans.Commit();
+            }
+            catch (Exception)
+            {
+                trans.Rollback();
+                throw;
+            }
+        }
+
+
     }
 }
 

@@ -27,7 +27,7 @@ namespace Prueba.viewModel
             set
             {
                 _username = value;
-                cambioPropiedad(nameof(Username));
+                OnPropertyChanged(nameof(Username));
             }
         }
         public SecureString Password 
@@ -35,7 +35,7 @@ namespace Prueba.viewModel
             get => _password; 
             set{
                 _password = value;
-                cambioPropiedad(nameof(Password));
+                OnPropertyChanged(nameof(Password));
             }
         }
         public string MensajeError 
@@ -43,7 +43,7 @@ namespace Prueba.viewModel
             get => _mensajeError; 
             set {
                 _mensajeError = value;
-                cambioPropiedad(nameof(MensajeError));
+                OnPropertyChanged(nameof(MensajeError));
             } 
         }
         public bool IsViewVisible
@@ -51,7 +51,7 @@ namespace Prueba.viewModel
             get => _IsViewVisible; 
             set {
                 _IsViewVisible = value;
-                cambioPropiedad(nameof(IsViewVisible));
+                OnPropertyChanged(nameof(IsViewVisible));
             }
         }
         //Comandos

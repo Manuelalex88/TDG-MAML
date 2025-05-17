@@ -24,25 +24,7 @@ namespace Prueba.view
         public Registrarvehiculo()
         {
             InitializeComponent();
-        }
-
-
-        private void cmbMotivoIngreso_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            // Comprobar si la opción seleccionada es "Diagnóstico sin identificar"
-            if (cmbMotivoIngreso.SelectedItem != null &&
-                ((ComboBoxItem)cmbMotivoIngreso.SelectedItem).Content.ToString() == "Diagnóstico sin identificar")
-            {
-                // Hacer visibles los controles
-                txtDiagSinIdentificar.Visibility = Visibility.Visible;
-                tbDiagSinIdentificar.Visibility = Visibility.Visible;
-            }
-            else
-            {
-                // Ocultar los controles
-                txtDiagSinIdentificar.Visibility = Visibility.Collapsed;
-                tbDiagSinIdentificar.Visibility = Visibility.Collapsed;
-            }
+            this.DataContext = new registrarVehiculosViewModel();
         }
     }
 }

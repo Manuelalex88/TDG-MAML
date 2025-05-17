@@ -8,9 +8,10 @@ namespace Prueba.data
 {
     public class VehiculoReparacionDTO
     {
-        public string Marca { get; set; }
-        public string Matricula { get; set; }
-        public string Estado { get; set; }
-
+        public string Marca { get; set; } = string.Empty;
+        public string Matricula { get; set; } = string.Empty;
+        public string Estado { get; set; } = string.Empty;
+        public string TrabajoRealizar { get; set; } = string.Empty;
     }
+
 }

@@ -28,19 +28,19 @@ namespace Prueba.viewModel
                 if (_nombreUsuario != value)
                 {
                     _nombreUsuario = value;
-                    cambioPropiedad(nameof(NombreUsuario));  // Notifica la actualización
+                    OnPropertyChanged(nameof(NombreUsuario));  // Notifica la actualización
                 }
             }
         }
         public BaseViewModel CurrentChildView { get => _currentChildView; 
             set {
                 _currentChildView = value;
-                cambioPropiedad(nameof(CurrentChildView));
+                OnPropertyChanged(nameof(CurrentChildView));
             }
         }
         public string Caption { get => _caption; 
             set { _caption = value;
-                cambioPropiedad(nameof(Caption));
+                OnPropertyChanged(nameof(Caption));
             }
         }
         public IconChar Icon
@@ -49,7 +49,7 @@ namespace Prueba.viewModel
             set
             {
                 _icon = value;
-                cambioPropiedad(nameof(Icon));
+                OnPropertyChanged(nameof(Icon));
             }
         }
 
@@ -70,7 +70,7 @@ namespace Prueba.viewModel
 
             // Cargar el nombre del usuario desde UserData
             _nombreUsuario = UserData.Nombre;  
-            cambioPropiedad(nameof(NombreUsuario));  
+            OnPropertyChanged(nameof(NombreUsuario));  
 
             //Deafult View
             ExecuteShowCommand(null);

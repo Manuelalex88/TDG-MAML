@@ -1,4 +1,5 @@
 ﻿using Npgsql;
+using Prueba.data;
 using Prueba.model;
 using System;
 using System.Collections.Generic;
@@ -12,7 +13,7 @@ using System.Windows.Input;
 
 namespace Prueba.viewModel
 {
-    public class registrarVehiculosViewModel : BaseViewModel
+    public class registrarVehiculosViewModel : BaseViewModel, IDataErrorInfo
     {
         //Lista para los datos
         public List<string> ListaMarcas { get; set; } = new List<string>
@@ -36,15 +37,69 @@ namespace Prueba.viewModel
         public string? _dniCliente { get; set; }
         public string? _telefonoCliente { get; set; }
         public Boolean? _asignar {  get; set; }
+        #region Formatos
+        //Para el formato del dni este correcto
+        public string this[string propertyName]
+        {
+            get
+            {
+                string result = string.Empty;
+                //Formato del DNI
+                if (propertyName == nameof(DniCliente))
+                {
+                    if (string.IsNullOrWhiteSpace(DniCliente))
+                    {
+                        result = "El DNI es obligatorio.";
+                    }
+                    else if (!Regex.IsMatch(DniCliente, @"^\d{8}[A-Z]$"))
+                    {
+                        result = "El DNI debe tener 8 números seguidos de una letra mayúscula. Ej: 12345678A";
+                    }
+                    else if (!LetraDniValida(DniCliente))
+                    {
+                        result = "La letra del DNI no es válida para los números proporcionados.";
+                    }
+                }//El nombre y telefono obligatorios
+                else if (propertyName == nameof(NombreCliente))
+                {
+                    if (string.IsNullOrWhiteSpace(NombreCliente))
+                        result = "El nombre del cliente es obligatorio.";
+                }
+                else if (propertyName == nameof(TelefonoCliente))
+                {
+                    if (string.IsNullOrWhiteSpace(TelefonoCliente))
+                        result = "El teléfono del cliente es obligatorio.";
+                }
+                return result;
+            }
+        }
+
+        public string Error => null!;
+
+        //Para la validacion de la letra correcta del DNI
+        private bool LetraDniValida(string dni)
+        {
+            string letras = "TRWAGMYFPDXBNJZSQVHLCKE";
+            if (!Regex.IsMatch(dni, @"^\d{8}[A-Z]$")) return false;
+
+            int numero = int.Parse(dni[..8]);
+            char letraEsperada = letras[numero % 23];
+
+            return dni[8] == letraEsperada;
+        }
+
+        #endregion
 
         // Propiedades
+        private readonly ClienteRepository _clienteRepository;
+        private readonly ClienteVehiculoRepository _CVRepository = new ClienteVehiculoRepository();
         public string? Marca
         {
             get => _marca;
             set
             {
                 _marca = value;
-                cambioPropiedad(nameof(Marca));
+                OnPropertyChanged(nameof(Marca));
             }
         }
 
@@ -54,7 +109,7 @@ namespace Prueba.viewModel
             set
             {
                 _modelo = value;
-                cambioPropiedad(nameof(Modelo));
+                OnPropertyChanged(nameof(Modelo));
             }
         }
 
@@ -64,7 +119,7 @@ namespace Prueba.viewModel
             set
             {
                 _matricula = value;
-                cambioPropiedad(nameof(Matricula));
+                OnPropertyChanged(nameof(Matricula));
             }
         }
 
@@ -74,17 +129,31 @@ namespace Prueba.viewModel
             set
             {
                 _motivoIngreso = value;
-                cambioPropiedad(nameof(MotivoIngreso));
+                OnPropertyChanged(nameof(MotivoIngreso));
+
+                MostrarDescripcion = (_motivoIngreso == "Problema sin identificar");
             }
         }
-
+        private bool _mostrarDescripcion = false; 
+        public bool MostrarDescripcion
+        {
+            get => _mostrarDescripcion;
+            set
+            {
+                if (_mostrarDescripcion != value)
+                {
+                    _mostrarDescripcion = value;
+                    OnPropertyChanged(nameof(MostrarDescripcion));
+                }
+            }
+        }
         public string? Descripcion
         {
             get => _descripcion;
             set
             {
                 _descripcion = value;
-                cambioPropiedad(nameof(Descripcion));
+                OnPropertyChanged(nameof(Descripcion));
             }
         }
 
@@ -94,7 +163,7 @@ namespace Prueba.viewModel
             set
             {
                 _nombreCliente = value;
-                cambioPropiedad(nameof(NombreCliente));
+                OnPropertyChanged(nameof(NombreCliente));
             }
         }
 
@@ -104,7 +173,7 @@ namespace Prueba.viewModel
             set
             {
                 _anio = value;
-                cambioPropiedad(nameof(Anio));
+                OnPropertyChanged(nameof(Anio));
             }
         }
 
@@ -114,7 +183,7 @@ namespace Prueba.viewModel
             set
             {
                 _dniCliente = value;
-                cambioPropiedad(nameof(DniCliente));
+                OnPropertyChanged(nameof(DniCliente));
             }
         }
 
@@ -124,7 +193,7 @@ namespace Prueba.viewModel
             set
             {
                 _telefonoCliente = value;
-                cambioPropiedad(nameof(TelefonoCliente));
+                OnPropertyChanged(nameof(TelefonoCliente));
             }
         }
         public Boolean? Asignar
@@ -138,109 +207,93 @@ namespace Prueba.viewModel
         }
         //Comandos
         public ICommand command { get; set; }
+        public ICommand BuscarClienteCommnad { get; set; }
         public registrarVehiculosViewModel()
         {
+            //Inicializao el repositorio
+            _clienteRepository = new ClienteRepository();
+
+            BuscarClienteCommnad = new comandoViewModel(BuscarCliente);
             command = new comandoViewModel(ExecuteSaveCommand, CanExecuteSaveCommand);
+        }
+        // Metodos
+        private void BuscarCliente(object obj)
+        {
+            if (string.IsNullOrWhiteSpace(DniCliente))
+            {
+                MessageBox.Show("Introduce un DNI para buscar.", "Aviso", MessageBoxButton.OK, MessageBoxImage.Information);
+                return;
+            }
+
+            try
+            {
+                var cliente = _clienteRepository.ObtenerPorDni(DniCliente!);
+
+                if (cliente != null)
+                {
+                    NombreCliente = cliente.Nombre;
+                    TelefonoCliente = cliente.Telefono;
+
+                    // Notificar cambios a la UI
+                    OnPropertyChanged(nameof(NombreCliente));
+                    OnPropertyChanged(nameof(TelefonoCliente));
+
+                    MessageBox.Show("Cliente encontrado.", "Información", MessageBoxButton.OK, MessageBoxImage.Information);
+                }
+                else
+                {
+                    MessageBox.Show("No se encontró ningún cliente con ese DNI.", "No encontrado", MessageBoxButton.OK, MessageBoxImage.Warning);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error al buscar cliente: " + ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
 
         private bool CanExecuteSaveCommand(object obj)
         {
-            return !string.IsNullOrWhiteSpace(Matricula) &&
-           !string.IsNullOrWhiteSpace(NombreCliente);
+            // Validar que matricula y nombre no estén vacíos
+            bool camposObligatorios = !string.IsNullOrWhiteSpace(Matricula) &&
+                                      !string.IsNullOrWhiteSpace(NombreCliente);
+
+            // Validar que no haya error en DNI
+            bool dniValido = string.IsNullOrEmpty(this[nameof(DniCliente)]);
+
+            return camposObligatorios && dniValido;
         }
 
         private void ExecuteSaveCommand(object obj)
         {
             string connectionString = System.Configuration.ConfigurationManager.ConnectionStrings["PostgreSqlConnection"].ConnectionString;
-            
-            using (var conn = new NpgsqlConnection(connectionString))
+            #region Comprobaciones
+            // Validar DNI antes de continuar
+            string errorDni = this[nameof(DniCliente)];
+
+            if (!string.IsNullOrEmpty(errorDni))
             {
-                
-                conn.Open();
-                using (var transaction = conn.BeginTransaction())
-                {
-                    
-                    try
-                    {
-                        
-                        // 1. Insertar cliente (si no existe)
-                        string insertCliente = @"
-                            INSERT INTO cliente (dni, nombre, telefono)
-                            VALUES (@dni, @nombre, @telefono)
-                            ON CONFLICT (dni) DO NOTHING;";
-
-                        using (var cmdCliente = new NpgsqlCommand(insertCliente, conn))
-                        {
-                            cmdCliente.Parameters.AddWithValue("dni", DniCliente ?? (object)DBNull.Value);
-                            cmdCliente.Parameters.AddWithValue("nombre", NombreCliente ?? (object)DBNull.Value);
-                            cmdCliente.Parameters.AddWithValue("telefono", TelefonoCliente ?? (object)DBNull.Value);
-                            cmdCliente.ExecuteNonQuery();
-                        }
-
-                        // 2. Insertar vehículo
-                        string insertVehiculo = @"
-                            INSERT INTO vehiculo (matricula, marca, modelo, motivo_ingreso, descripcion, asignado)
-                            VALUES (@matricula, @marca, @modelo, @motivo_ingreso, @descripcion, @asignado)
-                            ON CONFLICT (matricula) DO NOTHING;";
-
-                        using (var cmdVehiculo = new NpgsqlCommand(insertVehiculo, conn))
-                        {
-                            cmdVehiculo.Parameters.AddWithValue("matricula", Matricula ?? (object)DBNull.Value);
-                            cmdVehiculo.Parameters.AddWithValue("marca", Marca ?? (object)DBNull.Value);
-                            cmdVehiculo.Parameters.AddWithValue("modelo", Modelo ?? (object)DBNull.Value);
-                            cmdVehiculo.Parameters.AddWithValue("motivo_ingreso", MotivoIngreso ?? (object)DBNull.Value);
-                            cmdVehiculo.Parameters.AddWithValue("descripcion", Descripcion ?? (object)DBNull.Value);
-                            // Si el checkbox no está marcado, asignar false
-                            cmdVehiculo.Parameters.AddWithValue("asignado", Asignar ?? false);
-                            cmdVehiculo.ExecuteNonQuery();
-                        }
-
-                        // 3. Insertar relación cliente-vehículo
-                        string insertRelacion = @"
-                            INSERT INTO cliente_vehiculo (dni_cliente, matricula_vehiculo)
-                            VALUES (@dni, @matricula)
-                            ON CONFLICT DO NOTHING;";
-
-                        using (var cmdRelacion = new NpgsqlCommand(insertRelacion, conn))
-                        {
-#pragma warning disable CS8604 // Posible argumento de referencia nulo
-                            cmdRelacion.Parameters.AddWithValue("dni", DniCliente);
-#pragma warning disable CS8604 // Posible argumento de referencia nulo
-                            cmdRelacion.Parameters.AddWithValue("matricula", Matricula);
-                            cmdRelacion.ExecuteNonQuery();
-                        }
-                        // Metemos una comprobacion por si el mecanico marca el check para "asignarse" el vehiculo
-                        if (Asignar == true)
-                        {
-                            // Determinar estado según el motivo de ingreso
-                            string estadoReparacion = MotivoIngreso == "Problema sin identificar" ? "Diagnóstico" : "Diagnosticando";
-
-                            string insertReparacion = @"
-                                INSERT INTO reparacion (matricula_vehiculo, fecha_inicio, descripcion, mecanico_id, estado)
-                                VALUES (@matricula, @fecha_inicio, @descripcion, @mecanico_id, @estado);";
-
-                            using (var cmdReparacion = new NpgsqlCommand(insertReparacion, conn))
-                            {
-                                cmdReparacion.Parameters.AddWithValue("matricula", Matricula ?? (object)DBNull.Value);
-                                cmdReparacion.Parameters.AddWithValue("fecha_inicio", DateTime.Now);
-                                cmdReparacion.Parameters.AddWithValue("descripcion", Descripcion ?? (object)DBNull.Value);
-                                string mecanicoId = UserData.id_mecanico; 
-                                cmdReparacion.Parameters.AddWithValue("mecanico_id", mecanicoId);
-                                cmdReparacion.Parameters.AddWithValue("estado", estadoReparacion);
-                                cmdReparacion.ExecuteNonQuery();
-                            }
-                        }
-
-                        transaction.Commit();
-                        Console.WriteLine("Cliente y vehiculo registrados correctamente.");
-                    }
-                    catch (Exception ex)
-                    {
-                        transaction.Rollback();
-                        Console.WriteLine("Error: " + ex.Message);
-                    }
-                }
-                conn.Close();
+                MessageBox.Show(errorDni, "Error de validación", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return; // Sale del método, no guarda nada
+            }
+            //Comprobar el id_mecanico
+            if (string.IsNullOrEmpty(UserData.id_mecanico))
+            {
+                MessageBox.Show("El ID del mecánico no está definido.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+            string mecanicoId = UserData.id_mecanico;
+            #endregion
+            try
+            {
+                _CVRepository.GuardarClienteVehiculoYAsignar(DniCliente, NombreCliente, TelefonoCliente,
+                                                       Matricula, Marca, Modelo,
+                                                       MotivoIngreso, Descripcion, Asignar ?? false,
+                                                       UserData.id_mecanico);
+                MessageBox.Show("Cliente y vehiculo registrados correctamente.");
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error: {ex.Message}");
             }
         }
     }

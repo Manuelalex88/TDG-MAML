@@ -26,14 +26,14 @@ namespace Prueba.viewModel
         private void CargarUsuario()
         {
             _nombreUsuario = UserData.Nombre;
-            cambioPropiedad(nameof(TextoEntrada));
+            OnPropertyChanged(nameof(TextoEntrada));
         }
 
         // Si algún día cambias UserData.Nombre en tiempo real y quieres refrescar la UI:
         public void ActualizarNombre()
         {
             _nombreUsuario = UserData.Nombre;
-            cambioPropiedad(nameof(TextoEntrada));
+            OnPropertyChanged(nameof(TextoEntrada));
         }
 
     }

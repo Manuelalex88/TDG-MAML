@@ -1,6 +1,6 @@
 ﻿using Npgsql;
 using Prueba.data;
-using Prueba.DTO;
+using Prueba.model;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -8,6 +8,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Input;
 
 namespace Prueba.viewModel
@@ -16,10 +17,46 @@ namespace Prueba.viewModel
     {
         //Campos
         private VehiculoRepository _vehiculoRepository;
-        public ObservableCollection<Vehiculo> VehiculosEnTaller { get; set; }
-
+        public ObservableCollection<Vehiculo> VehiculosEnTaller { get; set; } = new();
+        #region Comandos
+        public ICommand AsignarVehiculoCommand { get; set; }
+        #endregion
         //Constructor
         public VehiculosEnTallerViewModel()
+        {
+            //Comandos
+            AsignarVehiculoCommand = new comandoViewModel(AsignarVehiculo);
+
+            RellenarListaVehiculosTaller();
+        }
+
+
+        #region Metodos
+        private void AsignarVehiculo(object obj)
+        {
+            MessageBox.Show("LLegue aqui");
+            if (obj is Vehiculo vehiculo && !string.IsNullOrEmpty(UserData.id_mecanico))
+            {
+                MessageBox.Show("LLegue aqui 2");
+                try
+                {
+                    _vehiculoRepository.AsignarVehiculoAVista(vehiculo.Matricula, UserData.id_mecanico);
+                    MessageBox.Show("Vehículo asignado correctamente.", "Éxito", MessageBoxButton.OK, MessageBoxImage.Information);
+                    MessageBox.Show("LLegue aqui3");
+                    // Actualizar UI si lo necesitas
+                    VehiculosEnTaller.Remove(vehiculo);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Error al asignar el vehículo: " + ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
+            else
+            {
+                MessageBox.Show("Error: Vehículo o ID del mecánico no válidos.", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
+        }
+        private void RellenarListaVehiculosTaller()
         {
             try
             {
@@ -37,7 +74,7 @@ namespace Prueba.viewModel
             try
             {
                 var vehiculos = _vehiculoRepository.ObtenerVehiculosEnTaller();
-                VehiculosEnTaller.Clear(); 
+                VehiculosEnTaller.Clear();
                 foreach (var vehiculo in vehiculos)
                 {
                     VehiculosEnTaller.Add(vehiculo);
@@ -48,6 +85,8 @@ namespace Prueba.viewModel
                 System.Windows.MessageBox.Show("Error al cargar los vehículos: " + ex.Message);
             }
         }
+        #endregion
+
 
 
     }

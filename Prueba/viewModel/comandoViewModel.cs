@@ -16,7 +16,7 @@ namespace Prueba.viewModel
         //Action para encapsular un metodo, es decir pasamos un metodo como parametro
         private readonly Action<object> action;
         //Predicate para ver si el campo se puede ejecutar
-        private readonly Predicate<object>? predicate;
+        private readonly Predicate<object?>? predicate;
         //Constructores
         public comandoViewModel(Action<object> action) //No todos los eventos necesitan ser evaluados
         {

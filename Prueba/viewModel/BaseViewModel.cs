@@ -14,7 +14,7 @@ namespace Prueba.viewModel
     {
         public event PropertyChangedEventHandler? PropertyChanged;
 
-        public void cambioPropiedad(String nombre)
+        public void OnPropertyChanged(String nombre)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nombre));
         }

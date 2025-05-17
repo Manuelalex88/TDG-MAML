@@ -3,11 +3,10 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:Prueba.view.childViews" xmlns:viewModel="clr-namespace:Prueba.viewModel"
+             xmlns:fa="http://schemas.awesome.incremented/wpf/xaml/fontawesome.sharp"
              mc:Ignorable="d" 
-             d:DesignHeight="400" d:DesignWidth="800">
+             d:DesignHeight="450" d:DesignWidth="800">
 
-   
     <Grid Margin="10">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="2*" />
@@ -16,39 +15,110 @@
 
         <!-- Lista de reparaciones -->
         <GroupBox Header="Reparaciones en curso" Grid.Column="0" Margin="5">
-            <ListView Name="ReparacionesListView"  Height="342" VerticalAlignment="Top" ItemsSource="{Binding VehiculosAsignados}">
-                <ListView.View>
-                    <GridView>
-                        <GridViewColumn Header="Marca" DisplayMemberBinding="{Binding Marca}" Width="70"/>
-                        <GridViewColumn Header="Matricula" DisplayMemberBinding="{Binding Matricula}" Width="70"/>
-                        <GridViewColumn Header="Estado" DisplayMemberBinding="{Binding Estado}" Width="145"/>
-                    </GridView>
-                </ListView.View>
-            </ListView>
-        </GroupBox>
+            <StackPanel>
+                <ListView Name="ReparacionesListView" Height="327" VerticalAlignment="Top"
+                  ItemsSource="{Binding VehiculosAsignados}"
+                  SelectedItem="{Binding VehiculoSeleccionado, Mode=TwoWay}">
+                    <ListView.View>
+                        <GridView>
+                            <GridViewColumn Header="Marca" DisplayMemberBinding="{Binding Marca}" Width="70"/>
+                            <GridViewColumn Header="Matricula" DisplayMemberBinding="{Binding Matricula}" Width="70"/>
+                            <GridViewColumn Header="Estado" DisplayMemberBinding="{Binding Estado}" Width="145"/>
+                        </GridView>
+                    </ListView.View>
+                </ListView>
 
-        <!-- Detalle de la reparación -->
-        <GroupBox Header="Detalles Reparación" Grid.Column="1" Margin="5">
-            <StackPanel Margin="10" VerticalAlignment="Top">
-
-                <TextBlock Text="Vehículo:" FontWeight="Bold" Style="{StaticResource txtChildViews}" Tag="{StaticResource colorGreen}"/>
-                <TextBox Name="VehiculoTextBox" IsReadOnly="True" Margin="0,0,0,10" />
-
-                <TextBlock Text="Problema reportado:" FontWeight="Bold" Style="{StaticResource txtChildViews}" Tag="{StaticResource colorGreen}"/>
-                <TextBox Name="ProblemaTextBox" TextWrapping="Wrap" Height="20" Margin="0,0,0,10"/>
-
-                <TextBlock Text="Diagnóstico:" FontWeight="Bold" Style="{StaticResource txtChildViews}" Tag="{StaticResource colorGreen}"/>
-                <TextBox Name="DiagnosticoTextBox" TextWrapping="Wrap" Height="38" Margin="0,0,0,10"/>
-
-                <TextBlock Text="Repuestos:" FontWeight="Bold" Style="{StaticResource txtChildViews}" Tag="{StaticResource colorGreen}"/>
-                <ListBox Name="RepuestosListBox" Height="22" Margin="0,0,0,10"/>
-
-                <TextBlock Text="Estado de reparación:" FontWeight="Bold" Style="{StaticResource txtChildViews}" Tag="{StaticResource colorGreen}"/>
-                <ComboBox Name="EstadoComboBox" Margin="0,0,0,10" ItemsSource="{Binding ListaEstadoReparacion}"/>
-
-                <Button Content="Guardar cambios" Width="150" Margin="0,10,0,0"/>
-                <Button Content="Finalizar reparación" Width="150" Margin="0,5,0,0"/>
+                <!-- Botón Cancelar Reparación -->
+                <Button Content="Cancelar Reparación"
+                Command="{Binding CancelarReparacionCommand}"
+                Margin="5"
+                HorizontalAlignment="Center"
+                Width="150"/>
             </StackPanel>
         </GroupBox>
+
+        <!-- Columna derecha con dos GroupBox -->
+        <StackPanel Grid.Column="1" Margin="5" VerticalAlignment="Stretch" >
+
+            <!-- Detalles de Reparación -->
+            <GroupBox Header="Detalles de Reparación" Margin="0,0,0,10" >
+                <StackPanel Margin="10">
+                    <TextBlock Text="Trabajo a realizar:" FontWeight="Bold"/>
+                    <TextBox Text="{Binding TrabajoRealizar, UpdateSourceTrigger=PropertyChanged}"
+                             TextWrapping="Wrap" Height="36" Margin="0,0,0,10"/>
+
+                    <TextBlock Text="Estado de reparación:" FontWeight="Bold"/>
+                    <ComboBox ItemsSource="{Binding ListaEstadoReparacion}"
+                              SelectedItem="{Binding EstadoSeleccionado, Mode=TwoWay}"
+                              Margin="0,0,0,0"/>
+                </StackPanel>
+            </GroupBox>
+
+            <!-- Coste de la reparación -->
+            <GroupBox Header="Coste de la reparación" Height="260" >
+                <Grid Margin="10">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <!-- Botón mantenimiento + formulario repuesto -->
+                        <RowDefinition Height="*"/>
+                        <!-- Lista repuestos y mantenimiento -->
+                        <RowDefinition Height="Auto"/>
+                        <!-- Total y botones -->
+                    </Grid.RowDefinitions>
+
+                    <StackPanel Grid.Row="0">
+                        <Button Content="Agregar Mantenimiento (120€)"
+                                Width="220"
+                                Margin="0,0,0,10"
+                                Command="{Binding AgregarMantenimientoCommand}"/>
+
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,10" Height="20">
+                            <!-- Nombre del repuesto -->
+                            <TextBox Width="150" Margin="0,0,5,0" 
+                                     Text="{Binding NuevoRepuesto, UpdateSourceTrigger=PropertyChanged}"/>
+                            <fa:IconImage Icon="File" Margin="0,0,10,0"/>
+                            <!-- Precio del repuesto -->
+                            <TextBox Width="80" Margin="0,0,0,0"
+                                     Text="{Binding RepuestoPrecio, UpdateSourceTrigger=PropertyChanged}"/>
+                            <!-- Icono Euro justo a la derecha del textbox -->
+                            <fa:IconImage Icon="Eur"
+                                          Width="16" Height="16"
+                                          VerticalAlignment="Center"
+                                          Margin="0,0,20,0"
+                                          Foreground="Gray"/>
+                            <!-- Botón -->
+                            <Button Content="Agregar Repuesto"
+                                    Command="{Binding AgregarRepuestoCommand}"/>
+                        </StackPanel>
+                    </StackPanel>
+
+                    <ListView Grid.Row="1" ItemsSource="{Binding RepuestosSeleccionados}" Margin="0,0,0,10" >
+                        <ListView.View>
+                            <GridView>
+                                <GridViewColumn Header="Nombre" DisplayMemberBinding="{Binding Nombre}" Width="150"/>
+                                <GridViewColumn Header="Precio" DisplayMemberBinding="{Binding Precio}" Width="100"/>
+                            </GridView>
+                        </ListView.View>
+                    </ListView>
+
+                    <!-- Fila final con Grid -->
+                    <Grid Grid.Row="2">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <!-- Total a la izquierda -->
+                            <ColumnDefinition Width="0*"/>
+                            <!-- Separador flexible -->
+                            <ColumnDefinition Width="Auto" MinWidth="426"/>
+                            <!-- Botones a la derecha -->
+                        </Grid.ColumnDefinitions>
+
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Grid.Column="2" Width="320">
+                            <Button Content="Guardar Cambios" Width="150" Margin="5" Command="{Binding GuardarCambiosCommand}"/>
+                            <Button Content="Finalizar Reparación" Width="150" Margin="5" Command="{Binding FinalizarReparacionCommand}"/>
+                        </StackPanel>
+                    </Grid>
+                </Grid>
+            </GroupBox>
+        </StackPanel>
     </Grid>
 </UserControl>

@@ -16,11 +16,11 @@ using System.Windows.Shapes;
 namespace Prueba.view.childViews
 {
     /// <summary>
-    /// Lógica de interacción para factura.xaml
+    /// Lógica de interacción para Factura.xaml
     /// </summary>
-    public partial class factura : UserControl
+    public partial class Factura : UserControl
     {
-        public factura()
+        public Factura()
         {
             InitializeComponent();
         }

@@ -3,7 +3,8 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:Prueba.view.childViews" xmlns:vm="clr-namespace:Prueba.viewModel"
+             xmlns:local="clr-namespace:Prueba.view.childViews"
+             xmlns:vm="clr-namespace:Prueba.viewModel"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
 
@@ -20,44 +21,39 @@
                    Style="{StaticResource txtChildViews}"
                    Tag="{StaticResource colorBlue}"/>
 
-        <!-- Lista de vehículos -->
-        <ScrollViewer Grid.Row="1" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
-            <WrapPanel Name="VehiculosWrapPanel" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Top">
-                <ListView Name="VehiculosListView" 
-                          ItemsSource="{Binding VehiculosEnTaller}"
-                          HorizontalAlignment="Left" Margin="5" Padding="5">
-                    <ListView.ItemTemplate>
-                        <DataTemplate>
-                            <Border BorderBrush="LightGray" BorderThickness="1" 
-                                    Margin="5" Padding="10" CornerRadius="8">
-                                <!-- Contenedor para cada vehículo -->
-                                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Top">
-                                    <!-- Marca -->
-                                    <TextBlock Text="{Binding Marca}" 
-                                               FontSize="18" FontWeight="Bold" 
-                                               HorizontalAlignment="Center" Margin="0,0,0,4" />
+        <!-- Lista de vehículos con distribución horizontal -->
+        <ScrollViewer Grid.Row="1" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
+            <ItemsControl ItemsSource="{Binding VehiculosEnTaller}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <WrapPanel IsItemsHost="True" Orientation="Horizontal"/>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
 
-                                    <!-- Modelo -->
-                                    <TextBlock Text="{Binding Modelo}" 
-                                               FontSize="14" Foreground="Gray" 
-                                               HorizontalAlignment="Center" Margin="0,0,0,4" />
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Border BorderBrush="LightGray" BorderThickness="1" 
+                                Margin="5" Padding="10" CornerRadius="8" Width="220">
+                            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Top">
+                                <TextBlock Text="{Binding Marca}" 
+                                           FontSize="18" FontWeight="Bold" 
+                                           HorizontalAlignment="Center" Margin="0,0,0,4" />
+                                <TextBlock Text="{Binding Modelo}" 
+                                           FontSize="14" Foreground="Gray" 
+                                           HorizontalAlignment="Center" Margin="0,0,0,4" />
+                                <TextBlock Text="{Binding Matricula}" 
+                                           FontSize="14" FontStyle="Italic" 
+                                           HorizontalAlignment="Center" Margin="0,0,0,10" />
 
-                                    <!-- Matrícula -->
-                                    <TextBlock Text="{Binding Matricula}" 
-                                               FontSize="14" FontStyle="Italic" 
-                                               HorizontalAlignment="Center" Margin="0,0,0,10" />
-
-                                    <!-- Botón -->
-                                    <Button Content="Asignarme este vehículo" 
-                                            Width="200"
-                                            Command="{Binding DataContext.AsignarVehiculoCommand, RelativeSource={RelativeSource AncestorType=ListView}}"
-                                            CommandParameter="{Binding}"/>
-                                </StackPanel>
-                            </Border>
-                        </DataTemplate>
-                    </ListView.ItemTemplate>
-                </ListView>
-            </WrapPanel>
+                                <Button Content="Asignarme este vehículo" 
+                                        Width="200"
+                                        Command="{Binding DataContext.AsignarVehiculoCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                        CommandParameter="{Binding}" />
+                            </StackPanel>
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
         </ScrollViewer>
     </Grid>
 </UserControl>

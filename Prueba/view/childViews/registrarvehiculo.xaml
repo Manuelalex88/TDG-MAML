@@ -3,18 +3,19 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:fa="http://schemas.awesome.incremented/wpf/xaml/fontawesome.sharp"
              xmlns:local="clr-namespace:Prueba.view" 
-             xmlns:conv="clr-namespace:Prueba.helpers" xmlns:viewModel="clr-namespace:Prueba.viewModel"
+             xmlns:conv="clr-namespace:Prueba.converters" xmlns:viewModel="clr-namespace:Prueba.viewModel"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
 
     <UserControl.DataContext>
-        <viewModel:registrarVehiculosViewModel />
+        <viewModel:registrarVehiculosViewModel/> <!--NO SE POR QUE DA ERROR, FUNCIONA PERFECTAMENTE ????-->
     </UserControl.DataContext>
 
     <!--Definimos los recursos-->
     <UserControl.Resources>
-        <conv:ComboBoxSelectionToVisibilityConverter x:Key="ComboBoxSelectionToVisibilityConverter"/>
+        <conv:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
     </UserControl.Resources>
 
     <Grid>
@@ -37,17 +38,20 @@
                 <TextBox x:Name="txtModelo" Margin="0,0,0,10" Width="200" HorizontalAlignment="Left" Text="{Binding Modelo, UpdateSourceTrigger=PropertyChanged}"/>
 
                 <Label Content="Matrícula:" Style="{StaticResource GroupBoxText}"/>
-                <TextBox Text="{Binding Matricula, UpdateSourceTrigger=PropertyChanged}" x:Name="txtMatricula" Margin="0,0,0,10" Width="200" HorizontalAlignment="Left"/>
+                <TextBox Text="{Binding Matricula, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" x:Name="txtMatricula" Margin="0,0,0,10" Width="200" HorizontalAlignment="Left"/>
 
                 <Label Content="Motivo de ingreso" Style="{StaticResource GroupBoxText}"/>
                 <ComboBox x:Name="cmbMotivoIngreso"  Margin="0,0,0,10" Width="200" ItemsSource="{Binding ListaMotivoIngreso}"
                           HorizontalAlignment="Left" Style="{StaticResource ComboBoxAmarilloTransparente}" 
                           SelectedValue="{Binding MotivoIngreso, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-
-                <Label x:Name="txtDiagSinIdentificar" Content="Breve descripción del problema" 
-                       Style="{StaticResource GroupBoxText}" Visibility="Visible"
-                       />
-                <TextBox x:Name="tbDiagSinIdentificar" Height="100" Visibility="Visible" Text="{Binding Descripcion, UpdateSourceTrigger=PropertyChanged}"/>
+                <!--Si la eleccion es una en especifico lo convertimos a visible-->
+                <Label Content="Breve descripción del problema"
+                       Style="{StaticResource GroupBoxText}"
+                       Visibility="{Binding MostrarDescripcion, Converter={StaticResource BoolToVisibilityConverter}}"/>
+                
+                <TextBox Height="100"
+                         Text="{Binding Descripcion, UpdateSourceTrigger=PropertyChanged}"
+                         Visibility="{Binding MostrarDescripcion, Converter={StaticResource BoolToVisibilityConverter}}"/>
 
             </StackPanel>
         </GroupBox>
@@ -63,13 +67,22 @@
                 <!-- Datos del cliente -->
                 <StackPanel Grid.Row="0" Margin="0,0,0,10">
                     <Label Content="Nombre:" Style="{StaticResource GroupBoxText}"/>
-                    <TextBox x:Name="txtNombreCliente" Margin="0,0,0,10" Text="{Binding NombreCliente, UpdateSourceTrigger=PropertyChanged}"/>
+                    <TextBox x:Name="txtNombreCliente" Margin="0,0,0,10" Text="{Binding NombreCliente, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
 
                     <Label Content="Dni:" Style="{StaticResource GroupBoxText}"/>
-                    <TextBox x:Name="txtDni" Margin="0,0,0,10" Text="{Binding DniCliente, UpdateSourceTrigger=PropertyChanged}"/>
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                        <TextBox x:Name="txtDni" Width="110" Text="{Binding DniCliente, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}" Height="17"/>
+                        <Button Width="30" Height="25" Margin="5,0,0,0"
+                                Command="{Binding BuscarClienteCommnad}"
+                                ToolTip="Buscar cliente por DNI"
+                                Background="Transparent"
+                                BorderBrush="Transparent">
+                            <fa:IconImage Icon="Search" Width="16" Height="16" Foreground="{StaticResource colorB2}"/>
+                        </Button>
+                    </StackPanel>
 
                     <Label Content="Número Telefónico:" Style="{StaticResource GroupBoxText}"/>
-                    <TextBox x:Name="txtTelefono" Margin="0,0,0,10" Text="{Binding TelefonoCliente, UpdateSourceTrigger=PropertyChanged}"/>
+                    <TextBox x:Name="txtTelefono" Margin="0,0,0,10" Text="{Binding TelefonoCliente, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
                 </StackPanel>
 
                 <!-- Objetos abajo  -->
