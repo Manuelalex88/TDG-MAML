@@ -34,16 +34,13 @@ namespace Prueba.viewModel
         #region Metodos
         private void AsignarVehiculo(object obj)
         {
-            MessageBox.Show("LLegue aqui");
+    
             if (obj is Vehiculo vehiculo && !string.IsNullOrEmpty(UserData.id_mecanico))
-            {
-                MessageBox.Show("LLegue aqui 2");
+            {           
                 try
                 {
                     _vehiculoRepository.AsignarVehiculoAVista(vehiculo.Matricula, UserData.id_mecanico);
                     MessageBox.Show("Vehículo asignado correctamente.", "Éxito", MessageBoxButton.OK, MessageBoxImage.Information);
-                    MessageBox.Show("LLegue aqui3");
-                    // Actualizar UI si lo necesitas
                     VehiculosEnTaller.Remove(vehiculo);
                 }
                 catch (Exception ex)
