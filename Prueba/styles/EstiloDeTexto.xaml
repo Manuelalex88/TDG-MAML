@@ -25,4 +25,18 @@
         <Setter Property="FontWeight" Value="Bold"/>
         <Setter Property="Foreground" Value="{Binding Path=Tag, RelativeSource={RelativeSource Self}}"/>
     </Style>
+    <!--Vehiculos en taller estilo titulo-->
+    <Style x:Key="txtTextBlockTitulo" TargetType="TextBlock">
+        <Setter Property="FontSize" Value="18"/>
+        <Setter Property="FontWeight" Value="Bold"/>
+        <Setter Property="Foreground" Value="{Binding Path=Tag, RelativeSource={RelativeSource Self}}"/>
+    </Style>
+    <!--Vehiculos en taller estilo subTitulo-->
+    <Style x:Key="txtTextBlockSub" TargetType="TextBlock">
+        <Setter Property="FontSize" Value="14"/>
+        <Setter Property="FontWeight" Value="Bold"/>
+        <Setter Property="Foreground" Value="{Binding Path=Tag, RelativeSource={RelativeSource Self}}"/>
+    </Style>
+
+
 </ResourceDictionary>

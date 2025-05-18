@@ -10,6 +10,7 @@ namespace Prueba.model
     public class DataBaseService
     {
         private readonly string _conectionString = System.Configuration.ConfigurationManager.ConnectionStrings["PostgreSqlConnection"].ConnectionString;
+
         public bool ValidateUser(string username, string password)
         {
             using var conn = new NpgsqlConnection(_conectionString);
@@ -19,7 +20,12 @@ namespace Prueba.model
             cmd.Parameters.AddWithValue("n", username);
             cmd.Parameters.AddWithValue("c", password);
 
-            return (long)cmd.ExecuteScalar() > 0;
+            object? result = cmd.ExecuteScalar();
+
+            if (result == null || result == DBNull.Value)
+                return false;
+
+            return Convert.ToInt64(result) > 0;
         }
     }
 }

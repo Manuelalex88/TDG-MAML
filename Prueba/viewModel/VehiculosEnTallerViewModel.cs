@@ -16,7 +16,7 @@ namespace Prueba.viewModel
     public class VehiculosEnTallerViewModel : BaseViewModel
     {
         //Campos
-        private VehiculoRepository _vehiculoRepository;
+        private VehiculoRepository _vehiculoRepository = new();
         public ObservableCollection<Vehiculo> VehiculosEnTaller { get; set; } = new();
         #region Comandos
         public ICommand AsignarVehiculoCommand { get; set; }

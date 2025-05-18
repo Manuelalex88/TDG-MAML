@@ -8,8 +8,8 @@ namespace Prueba.model
 {
     public class Cliente
     {
-        public string Dni { get; set; }
-        public string Nombre { get; set; }
-        public string Telefono { get; set; }
+        public string Dni { get; set; } = string.Empty;
+        public string Nombre { get; set; } = string.Empty;
+        public string Telefono { get; set; } = string.Empty;
     }
 }

@@ -15,9 +15,9 @@ namespace Prueba.viewModel
     public class loginViewModel : BaseViewModel
     {
         //Campos
-        private string _username;
-        private SecureString  _password;
-        private string _mensajeError;
+        private string _username = String.Empty;
+        private SecureString _password = new SecureString();
+        private string _mensajeError = String.Empty;
         private bool _IsViewVisible = true;
 
         //Propiedades
@@ -55,7 +55,7 @@ namespace Prueba.viewModel
             }
         }
         //Comandos
-        public Action CerrarVentanaAction { get; set; }
+        public Action CerrarVentanaAction { get; set; } = () => { };
 
         public ICommand LoginCommand { get; set; }
 
@@ -64,9 +64,11 @@ namespace Prueba.viewModel
         {
             LoginCommand = new comandoViewModel(ExecuteLoginCommand, CanExecuteLoginCommand);
         }
-        
+
+
+
         //Si los datos son validos el boton se habilitara para hacer clic
-        private bool CanExecuteLoginCommand(object obj)
+        private bool CanExecuteLoginCommand(object? obj)
         {
             bool validData;
             if (string.IsNullOrWhiteSpace(Username) || Username.Length < 5
@@ -128,5 +130,7 @@ namespace Prueba.viewModel
                     Marshal.ZeroFreeBSTR(passwordBSTR);
             }
         }
+
+        
     }
 }

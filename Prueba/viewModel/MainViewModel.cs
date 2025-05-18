@@ -13,11 +13,12 @@ namespace Prueba.viewModel
 {
     public class MainViewModel : BaseViewModel
     {
-        private BaseViewModel _currentChildView;
-        private string _caption;
+        private BaseViewModel? _currentChildView;
+
+        private string _caption = String.Empty;
         private IconChar _icon;
 
-        private string _nombreUsuario;
+        private string _nombreUsuario = String.Empty;
 
         //Propiedades
         public string NombreUsuario
@@ -32,7 +33,8 @@ namespace Prueba.viewModel
                 }
             }
         }
-        public BaseViewModel CurrentChildView { get => _currentChildView; 
+        public BaseViewModel? CurrentChildView { 
+            get => _currentChildView; 
             set {
                 _currentChildView = value;
                 OnPropertyChanged(nameof(CurrentChildView));
@@ -104,7 +106,7 @@ namespace Prueba.viewModel
             Icon = IconChar.Database;
         }
 
-        private void ExecuteShowCommand(object obj)
+        private void ExecuteShowCommand(object? obj)
         {
             CurrentChildView = new principalViewModel();
             Caption = "Dashboard";

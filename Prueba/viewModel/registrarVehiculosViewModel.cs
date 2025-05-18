@@ -27,16 +27,16 @@ namespace Prueba.viewModel
         };
         //Campos
 
-        public string? _marca { get; set; }
-        public string? _modelo { get; set; }
-        public string? _matricula { get; set; }
-        public string? _motivoIngreso { get; set; }
-        public string? _descripcion { get; set; }
-        public string? _nombreCliente { get; set; }
-        public string? _anio { get; set; }
-        public string? _dniCliente { get; set; }
-        public string? _telefonoCliente { get; set; }
-        public Boolean? _asignar {  get; set; }
+        public string _marca { get; set; } = String.Empty;
+        public string _modelo { get; set; } = String.Empty;
+        public string _matricula { get; set; } = String.Empty;
+        public string _motivoIngreso { get; set; } = String.Empty;
+        public string _descripcion { get; set; } = String.Empty;
+        public string _nombreCliente { get; set; } = String.Empty;
+        public string _anio { get; set; } = String.Empty;
+        public string _dniCliente { get; set; } = String.Empty;
+        public string _telefonoCliente { get; set; } = String.Empty;
+        public Boolean _asignar {  get; set; } = false;
         #region Formatos
         //Para el formato del dni este correcto
         public string this[string propertyName]
@@ -93,7 +93,7 @@ namespace Prueba.viewModel
         // Propiedades
         private readonly ClienteRepository _clienteRepository;
         private readonly ClienteVehiculoRepository _CVRepository = new ClienteVehiculoRepository();
-        public string? Marca
+        public string Marca
         {
             get => _marca;
             set
@@ -103,7 +103,7 @@ namespace Prueba.viewModel
             }
         }
 
-        public string? Modelo
+        public string Modelo
         {
             get => _modelo;
             set
@@ -113,7 +113,7 @@ namespace Prueba.viewModel
             }
         }
 
-        public string? Matricula
+        public string Matricula
         {
             get => _matricula;
             set
@@ -123,7 +123,7 @@ namespace Prueba.viewModel
             }
         }
 
-        public string? MotivoIngreso
+        public string MotivoIngreso
         {
             get => _motivoIngreso;
             set
@@ -147,7 +147,7 @@ namespace Prueba.viewModel
                 }
             }
         }
-        public string? Descripcion
+        public string Descripcion
         {
             get => _descripcion;
             set
@@ -157,7 +157,7 @@ namespace Prueba.viewModel
             }
         }
 
-        public string? NombreCliente
+        public string NombreCliente
         {
             get => _nombreCliente;
             set
@@ -167,7 +167,7 @@ namespace Prueba.viewModel
             }
         }
 
-        public string? Anio
+        public string Anio
         {
             get => _anio;
             set
@@ -177,7 +177,7 @@ namespace Prueba.viewModel
             }
         }
 
-        public string? DniCliente
+        public string DniCliente
         {
             get => _dniCliente;
             set
@@ -187,7 +187,7 @@ namespace Prueba.viewModel
             }
         }
 
-        public string? TelefonoCliente
+        public string TelefonoCliente
         {
             get => _telefonoCliente;
             set
@@ -196,7 +196,7 @@ namespace Prueba.viewModel
                 OnPropertyChanged(nameof(TelefonoCliente));
             }
         }
-        public Boolean? Asignar
+        public Boolean Asignar
         {
             get => _asignar;
             set
@@ -251,7 +251,7 @@ namespace Prueba.viewModel
             }
         }
 
-        private bool CanExecuteSaveCommand(object obj)
+        private bool CanExecuteSaveCommand(object? obj)
         {
             // Validar que matricula y nombre no estén vacíos
             bool camposObligatorios = !string.IsNullOrWhiteSpace(Matricula) &&
@@ -287,7 +287,7 @@ namespace Prueba.viewModel
             {
                 _CVRepository.GuardarClienteVehiculoYAsignar(DniCliente, NombreCliente, TelefonoCliente,
                                                        Matricula, Marca, Modelo,
-                                                       MotivoIngreso, Descripcion, Asignar ?? false,
+                                                       MotivoIngreso, Descripcion, Asignar,
                                                        UserData.id_mecanico);
                 MessageBox.Show("Cliente y vehiculo registrados correctamente.");
             }

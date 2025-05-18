@@ -13,7 +13,7 @@ namespace Prueba.viewModel
     public class principalViewModel : BaseViewModel
     {
         //Campos
-        private string _nombreUsuario;
+        private string _nombreUsuario= String.Empty;
 
         public string TextoEntrada => "Bienvenido, " + _nombreUsuario;
 

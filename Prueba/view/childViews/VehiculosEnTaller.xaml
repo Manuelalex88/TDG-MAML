@@ -29,24 +29,27 @@
                         <WrapPanel IsItemsHost="True" Orientation="Horizontal"/>
                     </ItemsPanelTemplate>
                 </ItemsControl.ItemsPanel>
-
+                <!--Designed by macrovector_official / Freepik-->
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
                         <Border BorderBrush="LightGray" BorderThickness="1" 
-                                Margin="5" Padding="10" CornerRadius="8" Width="220">
+                                Margin="5" Padding="10" CornerRadius="8" Width="200">
                             <StackPanel HorizontalAlignment="Center" VerticalAlignment="Top">
                                 <TextBlock Text="{Binding Marca}" 
-                                           FontSize="18" FontWeight="Bold" 
-                                           HorizontalAlignment="Center" Margin="0,0,0,4" />
+                                           HorizontalAlignment="Center" Margin="0,0,0,4" 
+                                           Style="{StaticResource txtTextBlockTitulo}"
+                                           Tag="{StaticResource colorBlue}"/>
                                 <TextBlock Text="{Binding Modelo}" 
-                                           FontSize="14" Foreground="Gray" 
-                                           HorizontalAlignment="Center" Margin="0,0,0,4" />
+                                           Style="{StaticResource txtTextBlockSub}"
+                                           Tag="{StaticResource colorGray}"
+                                           HorizontalAlignment="Center" Margin="0,0,0,4"/>
                                 <TextBlock Text="{Binding Matricula}" 
-                                           FontSize="14" FontStyle="Italic" 
+                                           Style="{StaticResource txtTextBlockSub}"
+                                           Tag="{StaticResource colorGray}"
                                            HorizontalAlignment="Center" Margin="0,0,0,10" />
 
                                 <Button Content="Asignarme este vehículo" 
-                                        Width="200"
+                                        Width="150"
                                         Command="{Binding DataContext.AsignarVehiculoCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
                                         CommandParameter="{Binding}" />
                             </StackPanel>

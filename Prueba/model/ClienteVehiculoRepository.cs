@@ -15,6 +15,7 @@ namespace Prueba.model
                                                    string matricula, string marca, string modelo,
                                                    string motivoIngreso, string descripcion, bool asignar,
                                                    string mecanicoId)
+
         {
             using (var conn = new NpgsqlConnection(connectionString))
             {

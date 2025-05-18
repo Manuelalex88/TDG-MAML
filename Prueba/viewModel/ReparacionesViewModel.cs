@@ -72,6 +72,8 @@ namespace Prueba.viewModel
         public ICommand AgregarMantenimientoCommand { get; }
         public ICommand AgregarRepuestoCommand { get; }
         public ICommand CancelarReparacionCommand { get; }
+        public ICommand FinalizarReparacionCommand { get; set; }
+        public ICommand GuardarCambiosCommand { get; set; }
 
         // Constructor
         public ReparacionesViewModel()
@@ -81,9 +83,15 @@ namespace Prueba.viewModel
             AgregarMantenimientoCommand = new comandoViewModel(AgregarMantenimientoBasico);
             AgregarRepuestoCommand = new comandoViewModel(AgregarPieza, PuedeAgregarPieza);
             CancelarReparacionCommand = new comandoViewModel(CancelarReparacion, CanExecuteDeleteCommand);
+            FinalizarReparacionCommand = new comandoViewModel(FinalizarReparacion,CanExecuteFinalizarCommand);
+            GuardarCambiosCommand = new comandoViewModel(GuardarCambios);
 
             VehiculosAsignadosActualmente();
         }
+
+        
+
+
 
         #region Métodos de comando
         protected bool SetProperty<T>(ref T backingField, T value, [CallerMemberName] string? propertyName = null)
@@ -99,7 +107,19 @@ namespace Prueba.viewModel
             return true;
         }
 
+        private void GuardarCambios(object obj)
+        {
+            throw new NotImplementedException();
+        }
+        private bool CanExecuteFinalizarCommand(object? obj)
+        {
+            return EstadoSeleccionado == "En Reparacion";
+        }
 
+        private void FinalizarReparacion(object obj)
+        {
+            throw new NotImplementedException();
+        }
         private void AgregarPieza(object? obj)
         {
             RepuestosSeleccionados.Add(new Repuesto { Nombre = NuevoRepuesto, Precio = RepuestoPrecio });

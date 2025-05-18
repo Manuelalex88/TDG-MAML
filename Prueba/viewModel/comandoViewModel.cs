@@ -14,7 +14,7 @@ namespace Prueba.viewModel
         /// CAMPOS
         /// </summary>
         //Action para encapsular un metodo, es decir pasamos un metodo como parametro
-        private readonly Action<object> action;
+        private readonly Action<object> action = _ => { };
         //Predicate para ver si el campo se puede ejecutar
         private readonly Predicate<object?>? predicate;
         //Constructores
@@ -23,7 +23,7 @@ namespace Prueba.viewModel
             this.action = action;
             this.predicate = null;
         }
-        public comandoViewModel(Action<object> action, Predicate<object> predicate)
+        public comandoViewModel(Action<object> action, Predicate<object?> predicate)
         {
             this.action = action;
             this.predicate = predicate;
@@ -44,7 +44,8 @@ namespace Prueba.viewModel
 
         public void Execute(object? parameter)
         {
-            action(parameter);
+            action?.Invoke(parameter);
         }
+
     }
 }
