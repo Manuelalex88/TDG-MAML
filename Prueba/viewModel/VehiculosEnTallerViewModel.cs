@@ -20,18 +20,35 @@ namespace Prueba.viewModel
         public ObservableCollection<Vehiculo> VehiculosEnTaller { get; set; } = new();
         #region Comandos
         public ICommand AsignarVehiculoCommand { get; set; }
+        public ICommand MarcarSalidaCommand { get; set; }
         #endregion
         //Constructor
         public VehiculosEnTallerViewModel()
         {
             //Comandos
             AsignarVehiculoCommand = new comandoViewModel(AsignarVehiculo);
-
+            MarcarSalidaCommand = new comandoViewModel(MarcarSalidaVehiculo);
             RellenarListaVehiculosTaller();
         }
 
 
         #region Metodos
+        private void MarcarSalidaVehiculo(object obj)
+        {
+            if (obj is Vehiculo vehiculo)
+            {
+                try
+                {
+                    _vehiculoRepository.MarcarSalidaTaller(vehiculo.Matricula);
+                    VehiculosEnTaller.Remove(vehiculo);
+                    MessageBox.Show("El vehiculo a salido", "Éxito", MessageBoxButton.OK, MessageBoxImage.Information);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Error al marcar salida: " + ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
+        }
         private void AsignarVehiculo(object obj)
         {
     

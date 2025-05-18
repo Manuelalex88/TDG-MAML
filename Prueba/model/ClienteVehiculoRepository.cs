@@ -28,7 +28,7 @@ namespace Prueba.model
                         string insertCliente = @"
                         INSERT INTO cliente (dni, nombre, telefono)
                         VALUES (@dni, @nombre, @telefono)
-                        ON CONFLICT (dni) DO NOTHING;";
+                        ON CONFLICT (dni) DO UPDATE SET salida_taller = EXCLUDED.salida_taller;";
                         using (var cmdCliente = new NpgsqlCommand(insertCliente, conn))
                         {
                             cmdCliente.Parameters.AddWithValue("dni", dniCliente ?? (object)DBNull.Value);
@@ -39,8 +39,8 @@ namespace Prueba.model
 
                         // Insertar vehículo
                         string insertVehiculo = @"
-                        INSERT INTO vehiculo (matricula, marca, modelo, motivo_ingreso, descripcion, asignado)
-                        VALUES (@matricula, @marca, @modelo, @motivo_ingreso, @descripcion, @asignado)
+                        INSERT INTO vehiculo (matricula, marca, modelo, motivo_ingreso, descripcion, asignado, salida_taller)
+                        VALUES (@matricula, @marca, @modelo, @motivo_ingreso, @descripcion, @asignado, @salida_taller)
                         ON CONFLICT (matricula) DO NOTHING;";
                         using (var cmdVehiculo = new NpgsqlCommand(insertVehiculo, conn))
                         {
@@ -50,6 +50,7 @@ namespace Prueba.model
                             cmdVehiculo.Parameters.AddWithValue("motivo_ingreso", motivoIngreso ?? (object)DBNull.Value);
                             cmdVehiculo.Parameters.AddWithValue("descripcion", descripcion ?? (object)DBNull.Value);
                             cmdVehiculo.Parameters.AddWithValue("asignado", asignar);
+                            cmdVehiculo.Parameters.AddWithValue("salida_taller", false); 
                             cmdVehiculo.ExecuteNonQuery();
                         }
 

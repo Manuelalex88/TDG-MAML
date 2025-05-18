@@ -52,6 +52,10 @@
                                         Width="150"
                                         Command="{Binding DataContext.AsignarVehiculoCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
                                         CommandParameter="{Binding}" />
+                                <Button Content="Marcar salida" 
+                                        Width="150" Margin="0,5,0,0"
+                                        Command="{Binding DataContext.MarcarSalidaCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                        CommandParameter="{Binding}" />
                             </StackPanel>
                         </Border>
                     </DataTemplate>

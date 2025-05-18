@@ -13,7 +13,8 @@ namespace Prueba.model
         public string Modelo { get; set; } = String.Empty;
         public string MotivoIngreso { get; set; } = String.Empty;
         public string Descripcion { get; set; } = String.Empty;
-        public Boolean Asignado { get; set; }              
+        public Boolean Asignado { get; set; }   
+        public Boolean salidataller { get; set; }
 
         // Propiedad auxiliar para saber si el vehículo ya está asignado
         public bool EstaAsignado => Asignado;

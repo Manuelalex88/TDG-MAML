@@ -22,7 +22,7 @@ namespace Prueba.data
             {
                 connection.Open();
 
-                string query = "SELECT matricula, marca, modelo FROM vehiculo WHERE asignado = false";
+                string query = "SELECT matricula, marca, modelo FROM vehiculo WHERE asignado = false AND salida_taller = false";
 
 
                 using (var command = new NpgsqlCommand(query, connection))
@@ -171,6 +171,15 @@ namespace Prueba.data
                 trans.Rollback();
                 throw;
             }
+        }
+        public void MarcarSalidaTaller(string matricula)
+        {
+            using var conn = new NpgsqlConnection(connectionString);
+            conn.Open();
+
+            using var cmd = new NpgsqlCommand("UPDATE vehiculo SET salida_taller = true WHERE matricula = @matricula", conn);
+            cmd.Parameters.AddWithValue("matricula", matricula);
+            cmd.ExecuteNonQuery();
         }
 
 

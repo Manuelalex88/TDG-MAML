@@ -22,6 +22,7 @@ namespace Prueba.viewModel
         public ObservableCollection<Repuesto> RepuestosSeleccionados { get; set; } = new();
 
         // Campos privados
+        private readonly ReparacionRepository _reparacionRepository;
         private readonly VehiculoRepository _vehiculoRepository;
         private VehiculoReparacionDTO? _vehiculoSeleccionado;
         private bool _mantenimientoAgregado = false;
@@ -78,6 +79,8 @@ namespace Prueba.viewModel
         // Constructor
         public ReparacionesViewModel()
         {
+            //Instaciar la lista
+            _reparacionRepository = new ReparacionRepository();
             _vehiculoRepository = new VehiculoRepository();
             //Comandos
             AgregarMantenimientoCommand = new comandoViewModel(AgregarMantenimientoBasico);
@@ -109,7 +112,40 @@ namespace Prueba.viewModel
 
         private void GuardarCambios(object obj)
         {
-            throw new NotImplementedException();
+            if (VehiculoSeleccionado == null)
+            {
+                
+                MessageBox.Show("Selecciona un vehículo para guardar cambios.");
+                return;
+            }
+
+            try
+            {
+                
+                _reparacionRepository.GuardarCambiosReparacion(
+                    VehiculoSeleccionado,
+                    TrabajoRealizar,
+                    EstadoSeleccionado,
+                    RepuestosSeleccionados.ToList()
+                );
+
+                MessageBox.Show("Cambios guardados correctamente.");
+
+                // Limpiar los campos después de guardar
+                TrabajoRealizar = string.Empty;
+                EstadoSeleccionado = string.Empty;
+                NuevoRepuesto = string.Empty;
+                RepuestoPrecio = 0;
+                RepuestosSeleccionados.Clear();
+                VehiculoSeleccionado = null;
+                //Refrescar la lista
+                VehiculosAsignados.Clear();
+                VehiculosAsignadosActualmente();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error al guardar cambios: " + ex.Message);
+            }
         }
         private bool CanExecuteFinalizarCommand(object? obj)
         {
