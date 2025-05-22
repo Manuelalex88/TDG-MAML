@@ -1,5 +1,6 @@
 ﻿using Prueba.data;
 using Prueba.model;
+using Prueba.view.childViews;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -154,7 +155,34 @@ namespace Prueba.viewModel
 
         private void FinalizarReparacion(object obj)
         {
-            throw new NotImplementedException();
+            if (VehiculoSeleccionado == null)
+            {
+                MessageBox.Show("Selecciona una reparación para finalizar.");
+                return;
+            }
+
+            try
+            {
+                var reparacionId = VehiculoSeleccionado.Id;
+
+                _reparacionRepository.FinalizarReparacionActual(reparacionId);
+
+                MessageBox.Show("Reparación finalizada correctamente.");
+
+                // Actualiza la UI o refresca la lista después de finalizar
+                VehiculosAsignados.Clear();
+                VehiculosAsignadosActualmente();
+
+                // Limpia selección y datos
+                VehiculoSeleccionado = null;
+                TrabajoRealizar = string.Empty;
+                EstadoSeleccionado = string.Empty;
+                RepuestosSeleccionados.Clear();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error al finalizar la reparación: " + ex.Message);
+            }
         }
         private void AgregarPieza(object? obj)
         {

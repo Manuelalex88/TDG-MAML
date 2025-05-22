@@ -150,4 +150,23 @@
             </Setter.Value>
         </Setter>
     </Style>
+    <!-- ESTILO DE BOTONES DE FACTURA -->
+    <Style x:Key="btnEliminarFactura" TargetType="Button">
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="Foreground" Value="{StaticResource colorRed}"/>
+        <Setter Property="BorderBrush" Value="{StaticResource colorRed}"/>
+        <Setter Property="BorderThickness" Value="2"/>
+        <Setter Property="Padding" Value="8,4"/>
+        <Setter Property="FontWeight" Value="Bold"/>
+        <Setter Property="Cursor" Value="Hand"/>
+    </Style>
+    <Style x:Key="btnFacturar" TargetType="Button">
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="Foreground" Value="{StaticResource colorGreen}"/>
+        <Setter Property="BorderBrush" Value="{StaticResource colorGreen}"/>
+        <Setter Property="BorderThickness" Value="2"/>
+        <Setter Property="Padding" Value="8,4"/>
+        <Setter Property="FontWeight" Value="Bold"/>
+        <Setter Property="Cursor" Value="Hand"/>
+    </Style>
 </ResourceDictionary>

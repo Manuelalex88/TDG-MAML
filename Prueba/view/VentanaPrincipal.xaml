@@ -111,7 +111,7 @@
                     </RadioButton>
 
                     <RadioButton Style="{StaticResource botones}" 
-                                 Tag="{StaticResource colorRed}"
+                                 Tag="{StaticResource colorSilver}"
                                  Command="{Binding showFacturasChildView}">
                         <StackPanel Orientation="Horizontal">
                             <fa:IconImage Icon="MoneyBill" Style="{StaticResource botonMenu}"/>

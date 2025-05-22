@@ -38,8 +38,17 @@
                 <TextBox x:Name="txtModelo" Margin="0,0,0,10" Width="200" HorizontalAlignment="Left" Text="{Binding Modelo, UpdateSourceTrigger=PropertyChanged}"/>
 
                 <Label Content="Matrícula:" Style="{StaticResource GroupBoxText}"/>
-                <TextBox Text="{Binding Matricula, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" x:Name="txtMatricula" Margin="0,0,0,10" Width="200" HorizontalAlignment="Left"/>
-
+                <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                    <TextBox Text="{Binding Matricula, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" x:Name="txtMatricula"  Width="180" HorizontalAlignment="Left"
+                             VerticalAlignment="Center"/>
+                    <Button Width="20" Height="20" Margin="5,0,0,0"
+                            Command="{Binding BuscarVehiculoCommand}"
+                            ToolTip="Buscar vehiculo"
+                            Background="Transparent"
+                            BorderBrush="Transparent">
+                        <fa:IconImage Icon="Search" Width="16" Height="16" Foreground="{StaticResource colorB2}"/>
+                    </Button>
+                </StackPanel>
                 <Label Content="Motivo de ingreso" Style="{StaticResource GroupBoxText}"/>
                 <ComboBox x:Name="cmbMotivoIngreso"  Margin="0,0,0,10" Width="200" ItemsSource="{Binding ListaMotivoIngreso}"
                           HorizontalAlignment="Left" Style="{StaticResource ComboBoxAmarilloTransparente}" 
@@ -73,7 +82,7 @@
                     <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
                         <TextBox x:Name="txtDni" Width="110" Text="{Binding DniCliente, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}" Height="17"/>
                         <Button Width="30" Height="25" Margin="5,0,0,0"
-                                Command="{Binding BuscarClienteCommnad}"
+                                Command="{Binding BuscarClienteCommand}"
                                 ToolTip="Buscar cliente por DNI"
                                 Background="Transparent"
                                 BorderBrush="Transparent">

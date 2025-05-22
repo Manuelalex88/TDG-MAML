@@ -1,12 +1,14 @@
 ﻿using Npgsql;
 using Prueba.data;
+using Prueba.model;
+using Prueba.view.childViews;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Prueba.model
+namespace Prueba.data
 {
     public class ReparacionRepository
     {
@@ -86,6 +88,22 @@ namespace Prueba.model
                 transaction.Rollback();
                 throw;
             }
+        }
+        public void FinalizarReparacionActual(int reparacionId)
+        {
+            using var conn = new NpgsqlConnection(connectionString);
+            conn.Open();
+
+            using var cmd = new NpgsqlCommand(@"
+                UPDATE reparacion
+                SET estado = @estado, fecha_fin = @fechaFin
+                WHERE id = @id;", conn);
+
+            cmd.Parameters.AddWithValue("estado", DatosConstantes.Estado5);
+            cmd.Parameters.AddWithValue("fechaFin", DateTime.Now);
+            cmd.Parameters.AddWithValue("id", reparacionId);
+
+            cmd.ExecuteNonQuery();
         }
     }
 }

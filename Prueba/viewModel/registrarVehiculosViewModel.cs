@@ -91,6 +91,8 @@ namespace Prueba.viewModel
         #endregion
 
         // Propiedades
+        private readonly VehiculoRepository _vehiculoRepository;
+
         private readonly ClienteRepository _clienteRepository;
         private readonly ClienteVehiculoRepository _CVRepository = new ClienteVehiculoRepository();
         public string Marca
@@ -207,16 +209,51 @@ namespace Prueba.viewModel
         }
         //Comandos
         public ICommand command { get; set; }
-        public ICommand BuscarClienteCommnad { get; set; }
+        public ICommand BuscarClienteCommand { get; set; }
+        public ICommand BuscarVehiculoCommand { get; set; }
         public registrarVehiculosViewModel()
         {
             //Inicializao el repositorio
+            _vehiculoRepository = new VehiculoRepository();
             _clienteRepository = new ClienteRepository();
-
-            BuscarClienteCommnad = new comandoViewModel(BuscarCliente);
+            //Inicializar comandos
+            BuscarVehiculoCommand = new comandoViewModel(BuscarVehiculo);
+            BuscarClienteCommand = new comandoViewModel(BuscarCliente);
             command = new comandoViewModel(ExecuteSaveCommand, CanExecuteSaveCommand);
         }
         // Metodos
+        private void BuscarVehiculo(object obj)
+        {
+            if (string.IsNullOrWhiteSpace(Matricula))
+            {
+                MessageBox.Show("Introduce una matricula para buscar.", "Aviso", MessageBoxButton.OK, MessageBoxImage.Information);
+                return;
+            }
+
+            try
+            {
+                var vehiculo = _vehiculoRepository.BuscarPorMatricula(Matricula);
+                if (vehiculo != null)
+                {
+                    Marca = vehiculo.Marca;
+                    Modelo = vehiculo.Modelo;
+
+                    // Notificar cambios a la UI
+                    OnPropertyChanged(nameof(Marca));
+                    OnPropertyChanged(nameof(Modelo));
+
+                    MessageBox.Show("Vehiculo encontrado.", "Información", MessageBoxButton.OK, MessageBoxImage.Information);
+                }
+                else
+                {
+                    MessageBox.Show("No se encontró ningún vehiculo con esa matricula.", "No encontrado", MessageBoxButton.OK, MessageBoxImage.Warning);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error al buscar vehiculo: " + ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
         private void BuscarCliente(object obj)
         {
             if (string.IsNullOrWhiteSpace(DniCliente))
@@ -289,7 +326,7 @@ namespace Prueba.viewModel
                                                        Matricula, Marca, Modelo,
                                                        MotivoIngreso, Descripcion, Asignar,
                                                        UserData.id_mecanico);
-                MessageBox.Show("Cliente y vehiculo registrados correctamente.");
+                MessageBox.Show("Cliente y vehiculo registrados/activados correctamente.");
             }
             catch (Exception ex)
             {

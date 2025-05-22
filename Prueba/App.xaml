@@ -12,6 +12,7 @@
                 <ResourceDictionary Source="/styles/MenuStilo.xaml"/>
                 <ResourceDictionary Source="/styles/GroupBoxStilos.xaml"/>
                 <ResourceDictionary Source="/styles/ComboBoxStilos.xaml"/>
+                <ResourceDictionary Source="/styles/ListasStilos.xaml"/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>

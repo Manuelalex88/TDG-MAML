@@ -4,6 +4,7 @@ using Prueba.model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -51,15 +52,20 @@ namespace Prueba.data
             {
                 conn.Open();
                 var cmd = new NpgsqlCommand(@"
-                    SELECT v.marca, v.matricula, r.estado, r.trabajo_a_realizar 
+                    SELECT r.id, v.marca, v.matricula, r.estado, r.trabajo_a_realizar
                     FROM vehiculo v
                     JOIN reparacion r ON v.matricula = r.matricula_vehiculo
-                    WHERE r.mecanico_id = @id", conn);
+                    WHERE r.mecanico_id = @id 
+                      AND v.salida_taller = false
+                      AND r.estado NOT IN (@estado5, @estado6)", conn);
 
                 cmd.Parameters.AddWithValue("@id", idMecanico);
+                cmd.Parameters.AddWithValue("@estado5", DatosConstantes.Estado5);
+                cmd.Parameters.AddWithValue("@estado6", DatosConstantes.Estado6);
 
                 using (var reader = cmd.ExecuteReader())
                 {
+                    int idIndex = reader.GetOrdinal("id");
                     int marcaIndex = reader.GetOrdinal("marca");
                     int matriculaIndex = reader.GetOrdinal("matricula");
                     int estadoIndex = reader.GetOrdinal("estado");
@@ -69,6 +75,7 @@ namespace Prueba.data
                     {
                         lista.Add(new VehiculoReparacionDTO
                         {
+                            Id = reader.GetInt32(idIndex),
                             Marca = reader.IsDBNull(marcaIndex) ? string.Empty : reader.GetString(marcaIndex),
                             Matricula = reader.IsDBNull(matriculaIndex) ? string.Empty : reader.GetString(matriculaIndex),
                             Estado = reader.IsDBNull(estadoIndex) ? string.Empty : reader.GetString(estadoIndex),
@@ -80,6 +87,7 @@ namespace Prueba.data
 
             return lista;
         }
+
 
         // Elimina todos los repuestos asociados a una reparación de un vehículo por matrícula
         public void CancelarReparacionPorMatricula(string matricula)
@@ -127,7 +135,6 @@ namespace Prueba.data
                 }
             }
         }
-
         public void AsignarVehiculoAVista(string matricula, string mecanicoId)
         {
             using var conn = new NpgsqlConnection(connectionString);
@@ -180,6 +187,34 @@ namespace Prueba.data
             using var cmd = new NpgsqlCommand("UPDATE vehiculo SET salida_taller = true WHERE matricula = @matricula", conn);
             cmd.Parameters.AddWithValue("matricula", matricula);
             cmd.ExecuteNonQuery();
+        }
+        public Vehiculo? BuscarPorMatricula(string matricula)
+        {
+            
+            Vehiculo? vehiculo = null;
+
+            using (var conn = new NpgsqlConnection(connectionString))
+            {
+                conn.Open();
+                const string sql = "SELECT marca, modelo FROM vehiculo WHERE matricula = @matricula";
+                using (var cmd = new NpgsqlCommand(sql, conn))
+                {
+                    cmd.Parameters.AddWithValue("matricula", matricula);
+
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        if (reader.Read())
+                        {
+                            vehiculo = new Vehiculo
+                            {
+                                Marca = reader["marca"]?.ToString() ?? string.Empty,
+                                Modelo = reader["modelo"]?.ToString() ?? string.Empty,
+                            };
+                        }
+                    }
+                }
+            }
+            return vehiculo;
         }
 
 
