@@ -4,6 +4,7 @@ using Prueba.view.childViews;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -13,14 +14,15 @@ namespace Prueba.viewModel
 {
     public class MainViewModel : BaseViewModel
     {
+        #region Campos
         private BaseViewModel? _currentChildView;
 
         private string _caption = String.Empty;
         private IconChar _icon;
 
         private string _nombreUsuario = String.Empty;
-
-        //Propiedades
+        #endregion
+        #region Propiedades
         public string NombreUsuario
         {
             get => _nombreUsuario;
@@ -35,33 +37,27 @@ namespace Prueba.viewModel
         }
         public BaseViewModel? CurrentChildView { 
             get => _currentChildView; 
-            set {
-                _currentChildView = value;
-                OnPropertyChanged(nameof(CurrentChildView));
-            }
+            set => SetProperty(ref _currentChildView, value);
         }
-        public string Caption { get => _caption; 
-            set { _caption = value;
-                OnPropertyChanged(nameof(Caption));
-            }
+        public string Caption { 
+            get => _caption; 
+            set => SetProperty(ref _caption, value);
         }
         public IconChar Icon
         {
             get  => _icon; 
-            set
-            {
-                _icon = value;
-                OnPropertyChanged(nameof(Icon));
-            }
+            set => SetProperty(ref _icon, value);
         }
+        #endregion
 
-        //Comandos
+        #region Comandos
         public ICommand showPrimerachildView {  get;}
         public ICommand showSegundachildView {  get;}
         public ICommand showReparacionesChildView {  get;}
         public ICommand showFacturasChildView{  get;}
         public ICommand ShowVehiculosEnTallerChildView {  get;}
-
+        #endregion
+        //Constructor
         public MainViewModel()
         {
             showPrimerachildView = new comandoViewModel(ExecuteShowCommand);
@@ -77,7 +73,20 @@ namespace Prueba.viewModel
             //Deafult View
             ExecuteShowCommand(null);
         }
+        #region Metodos
+        //Metodo para no poner set { _loquesea = value; OnPropertyChanged(loquesea) y poner simplemente SetProperty(ref Loquesea, value)
+        protected bool SetProperty<T>(ref T backingField, T value, [CallerMemberName] string? propertyName = null)
+        {
+            if (EqualityComparer<T>.Default.Equals(backingField, value))
+                return false;
 
+            backingField = value;
+
+            if (propertyName != null)
+                OnPropertyChanged(propertyName);
+
+            return true;
+        }
         private void ExecuteShowCommand5(object obj)
         {
             CurrentChildView = new VehiculosEnTallerViewModel();
@@ -113,7 +122,7 @@ namespace Prueba.viewModel
             Icon = IconChar.House;
         }
 
-        
+        #endregion
     }
-    
+
 }

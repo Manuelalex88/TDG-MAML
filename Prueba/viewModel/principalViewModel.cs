@@ -12,17 +12,17 @@ namespace Prueba.viewModel
 {
     public class principalViewModel : BaseViewModel
     {
-        //Campos
+        #region Campos
         private string _nombreUsuario= String.Empty;
 
         public string TextoEntrada => "Bienvenido, " + _nombreUsuario;
-
-        //Propiedades
+        #endregion
+        
         public principalViewModel()
         {
             CargarUsuario();
         }
-
+        #region Metodos
         private void CargarUsuario()
         {
             _nombreUsuario = UserData.Nombre;
@@ -35,6 +35,6 @@ namespace Prueba.viewModel
             _nombreUsuario = UserData.Nombre;
             OnPropertyChanged(nameof(TextoEntrada));
         }
-
+        #endregion
     }
 }

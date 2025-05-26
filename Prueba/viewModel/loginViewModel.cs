@@ -3,6 +3,7 @@ using Prueba.model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Security;
 using System.Text;
@@ -24,35 +25,22 @@ namespace Prueba.viewModel
         public string Username
         {
             get => _username;
-            set
-            {
-                _username = value;
-                OnPropertyChanged(nameof(Username));
-            }
+            set => SetProperty(ref _username, value);
         }
         public SecureString Password 
         { 
             get => _password; 
-            set{
-                _password = value;
-                OnPropertyChanged(nameof(Password));
-            }
+            set=> SetProperty(ref _password, value);
         }
         public string MensajeError 
         { 
             get => _mensajeError; 
-            set {
-                _mensajeError = value;
-                OnPropertyChanged(nameof(MensajeError));
-            } 
+            set => SetProperty(ref _mensajeError, value);
         }
         public bool IsViewVisible
         { 
             get => _IsViewVisible; 
-            set {
-                _IsViewVisible = value;
-                OnPropertyChanged(nameof(IsViewVisible));
-            }
+            set => SetProperty(ref _IsViewVisible, value);
         }
         //Comandos
         public Action CerrarVentanaAction { get; set; } = () => { };
@@ -66,7 +54,20 @@ namespace Prueba.viewModel
         }
 
 
+        #region Metodos
+        //Metodo para no poner set { _loquesea = value; OnPropertyChanged(loquesea) y poner simplemente SetProperty(ref Loquesea, value)
+        protected bool SetProperty<T>(ref T backingField, T value, [CallerMemberName] string? propertyName = null)
+        {
+            if (EqualityComparer<T>.Default.Equals(backingField, value))
+                return false;
 
+            backingField = value;
+
+            if (propertyName != null)
+                OnPropertyChanged(propertyName);
+
+            return true;
+        }
         //Si los datos son validos el boton se habilitara para hacer clic
         private bool CanExecuteLoginCommand(object? obj)
         {
@@ -130,7 +131,7 @@ namespace Prueba.viewModel
                     Marshal.ZeroFreeBSTR(passwordBSTR);
             }
         }
+        #endregion
 
-        
     }
 }

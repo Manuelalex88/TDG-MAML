@@ -99,7 +99,7 @@
                 <CheckBox Grid.Row="1" Content="¿Asignar?" IsChecked="{Binding Asignar}" Foreground="{StaticResource colorB2}"/>
                 <Button Grid.Row="1" Content="Guardar Vehiculo" Width="120" Height="50"
                 Margin="0,13,0,0" HorizontalAlignment="Center" VerticalAlignment="Bottom"
-                Style="{StaticResource btnChildView}" Command="{Binding command}"/>
+                Style="{StaticResource btnChildView}" Command="{Binding AgregarVehiculoClienteCommand}"/>
             </Grid>
         </GroupBox>
     </Grid>

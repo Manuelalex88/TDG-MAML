@@ -238,15 +238,7 @@
                             </Ellipse>
                             <Button Style="{StaticResource botonesCabezero}"
                                     Tag="{StaticResource colorBlanco}">
-                                <fa:IconImage Icon="Clock" Style="{StaticResource botonCabezero}"/>
-                            </Button>
-                            <Button Style="{StaticResource botonesCabezero}"
-                                    Tag="{StaticResource colorBlanco}">
-                                <fa:IconImage Icon="Envelope" Style="{StaticResource botonCabezero}"/>
-                            </Button>
-                            <Button Style="{StaticResource botonesCabezero}"
-                                    Tag="{StaticResource colorBlanco}">
-                                <fa:IconImage Icon="Bell" Style="{StaticResource botonCabezero}"/>
+                                <fa:IconImage Icon="QuestionCircle" Style="{StaticResource botonCabezero}"/>
                             </Button>
                         </StackPanel>
                     </Grid>

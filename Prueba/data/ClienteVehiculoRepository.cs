@@ -28,7 +28,7 @@ namespace Prueba.data
                         string insertCliente = @"
                         INSERT INTO cliente (dni, nombre, telefono)
                         VALUES (@dni, @nombre, @telefono)
-                        ON CONFLICT (dni) DO UPDATE SET salida_taller = EXCLUDED.salida_taller;";
+                        ON CONFLICT (dni) DO NOTHING;";
                         using (var cmdCliente = new NpgsqlCommand(insertCliente, conn))
                         {
                             cmdCliente.Parameters.AddWithValue("dni", dniCliente ?? (object)DBNull.Value);
@@ -56,7 +56,7 @@ namespace Prueba.data
 
                         // Insertar relación cliente-vehículo
                         string insertRelacion = @"
-                        INSERT INTO cliente_vehiculo (dni_cliente, matricula_vehiculo)
+                        INSERT INTO cliente_vehiculo (cliente_id, vehiculo_id)
                         VALUES (@dni, @matricula)
                         ON CONFLICT DO NOTHING;";
                         using (var cmdRelacion = new NpgsqlCommand(insertRelacion, conn))

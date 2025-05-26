@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace Prueba.data
 {
+    //Los DTO (data transfer object) sirve para ensanblar datos combinados de dos tablas en mi caso
     public class VehiculoReparacionDTO
     {
         public int Id { get; set; }

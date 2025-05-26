@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -15,7 +16,7 @@ namespace Prueba.viewModel
 {
     public class registrarVehiculosViewModel : BaseViewModel, IDataErrorInfo
     {
-        //Lista para los datos
+        #region Listas
         public List<string> ListaMarcas { get; set; } = new List<string>
         {
             "Seat", "Mercedes", "BMW", "FIAT", "FERRARI"
@@ -25,18 +26,25 @@ namespace Prueba.viewModel
         {
             "Revisión General","Cambio de aceite", "Cambio de filtros", "Diagnóstico de motor","Problema sin identificar"
         };
-        //Campos
+        #endregion
+        #region Campos
 
-        public string _marca { get; set; } = String.Empty;
-        public string _modelo { get; set; } = String.Empty;
-        public string _matricula { get; set; } = String.Empty;
-        public string _motivoIngreso { get; set; } = String.Empty;
-        public string _descripcion { get; set; } = String.Empty;
-        public string _nombreCliente { get; set; } = String.Empty;
-        public string _anio { get; set; } = String.Empty;
-        public string _dniCliente { get; set; } = String.Empty;
-        public string _telefonoCliente { get; set; } = String.Empty;
-        public Boolean _asignar {  get; set; } = false;
+        private string _marca  = String.Empty;
+        private string _modelo = string.Empty;
+        private string _matricula  = String.Empty;
+        private string _motivoIngreso  = String.Empty;
+        private string _descripcion  = String.Empty;
+        private string _nombreCliente  = String.Empty;
+        private string _anio  = String.Empty;
+        private string _dniCliente  = String.Empty;    
+        private string _telefonoCliente  = String.Empty;
+        private Boolean _asignar  = false;
+        private bool _mostrarDescripcion = false;
+
+        private readonly VehiculoRepository _vehiculoRepository;
+        private readonly ClienteRepository _clienteRepository;
+        private readonly ClienteVehiculoRepository _CVRepository = new ClienteVehiculoRepository();
+        #endregion
         #region Formatos
         //Para el formato del dni este correcto
         public string this[string propertyName]
@@ -90,39 +98,24 @@ namespace Prueba.viewModel
 
         #endregion
 
-        // Propiedades
-        private readonly VehiculoRepository _vehiculoRepository;
-
-        private readonly ClienteRepository _clienteRepository;
-        private readonly ClienteVehiculoRepository _CVRepository = new ClienteVehiculoRepository();
+        #region Propiedades
+        
         public string Marca
         {
             get => _marca;
-            set
-            {
-                _marca = value;
-                OnPropertyChanged(nameof(Marca));
-            }
+            set => SetProperty(ref _marca, value);
         }
 
         public string Modelo
         {
             get => _modelo;
-            set
-            {
-                _modelo = value;
-                OnPropertyChanged(nameof(Modelo));
-            }
+            set => SetProperty(ref _modelo, value);
         }
 
         public string Matricula
         {
             get => _matricula;
-            set
-            {
-                _matricula = value;
-                OnPropertyChanged(nameof(Matricula));
-            }
+            set => SetProperty(ref _matricula, value);
         }
 
         public string MotivoIngreso
@@ -130,73 +123,47 @@ namespace Prueba.viewModel
             get => _motivoIngreso;
             set
             {
-                _motivoIngreso = value;
-                OnPropertyChanged(nameof(MotivoIngreso));
-
-                MostrarDescripcion = (_motivoIngreso == "Problema sin identificar");
+                if (SetProperty(ref _motivoIngreso, value))
+                {
+                    MostrarDescripcion = (_motivoIngreso == "Problema sin identificar");
+                }
             }
         }
-        private bool _mostrarDescripcion = false; 
+
+        
         public bool MostrarDescripcion
         {
             get => _mostrarDescripcion;
-            set
-            {
-                if (_mostrarDescripcion != value)
-                {
-                    _mostrarDescripcion = value;
-                    OnPropertyChanged(nameof(MostrarDescripcion));
-                }
-            }
+            set => SetProperty(ref _mostrarDescripcion, value);
         }
         public string Descripcion
         {
             get => _descripcion;
-            set
-            {
-                _descripcion = value;
-                OnPropertyChanged(nameof(Descripcion));
-            }
+            set => SetProperty(ref _descripcion, value);
         }
 
         public string NombreCliente
         {
             get => _nombreCliente;
-            set
-            {
-                _nombreCliente = value;
-                OnPropertyChanged(nameof(NombreCliente));
-            }
+            set => SetProperty(ref _nombreCliente, value);
         }
 
         public string Anio
         {
             get => _anio;
-            set
-            {
-                _anio = value;
-                OnPropertyChanged(nameof(Anio));
-            }
+            set => SetProperty(ref _anio, value);
         }
 
         public string DniCliente
         {
             get => _dniCliente;
-            set
-            {
-                _dniCliente = value;
-                OnPropertyChanged(nameof(DniCliente));
-            }
+            set => SetProperty(ref _dniCliente, value);
         }
 
         public string TelefonoCliente
         {
             get => _telefonoCliente;
-            set
-            {
-                _telefonoCliente = value;
-                OnPropertyChanged(nameof(TelefonoCliente));
-            }
+            set => SetProperty(ref _telefonoCliente, value);
         }
         public Boolean Asignar
         {
@@ -207,10 +174,13 @@ namespace Prueba.viewModel
                 
             }
         }
-        //Comandos
-        public ICommand command { get; set; }
+        #endregion
+        #region Comandos
+        public ICommand AgregarVehiculoClienteCommand { get; set; }
         public ICommand BuscarClienteCommand { get; set; }
         public ICommand BuscarVehiculoCommand { get; set; }
+        #endregion
+        //Constructor
         public registrarVehiculosViewModel()
         {
             //Inicializao el repositorio
@@ -219,9 +189,22 @@ namespace Prueba.viewModel
             //Inicializar comandos
             BuscarVehiculoCommand = new comandoViewModel(BuscarVehiculo);
             BuscarClienteCommand = new comandoViewModel(BuscarCliente);
-            command = new comandoViewModel(ExecuteSaveCommand, CanExecuteSaveCommand);
+            AgregarVehiculoClienteCommand = new comandoViewModel(AgregarVehiculoCliente, PuedeAgregar);
         }
-        // Metodos
+        #region Metodos
+        //Metodo para no poner set { _loquesea = value; OnPropertyChanged(loquesea) y poner simplemente SetProperty(ref Loquesea, value)
+        protected bool SetProperty<T>(ref T backingField, T value, [CallerMemberName] string? propertyName = null)
+        {
+            if (EqualityComparer<T>.Default.Equals(backingField, value))
+                return false;
+
+            backingField = value;
+
+            if (propertyName != null)
+                OnPropertyChanged(propertyName);
+
+            return true;
+        }
         private void BuscarVehiculo(object obj)
         {
             if (string.IsNullOrWhiteSpace(Matricula))
@@ -288,7 +271,7 @@ namespace Prueba.viewModel
             }
         }
 
-        private bool CanExecuteSaveCommand(object? obj)
+        private bool PuedeAgregar(object? obj)
         {
             // Validar que matricula y nombre no estén vacíos
             bool camposObligatorios = !string.IsNullOrWhiteSpace(Matricula) &&
@@ -300,7 +283,7 @@ namespace Prueba.viewModel
             return camposObligatorios && dniValido;
         }
 
-        private void ExecuteSaveCommand(object obj)
+        private void AgregarVehiculoCliente(object obj)
         {
             string connectionString = System.Configuration.ConfigurationManager.ConnectionStrings["PostgreSqlConnection"].ConnectionString;
             #region Comprobaciones
@@ -333,5 +316,6 @@ namespace Prueba.viewModel
                 MessageBox.Show($"Error: {ex.Message}");
             }
         }
+        #endregion
     }
 }

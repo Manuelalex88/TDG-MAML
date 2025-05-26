@@ -6,14 +6,20 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
+    <ApplicationIcon>images\icono\wrench-screwdriver-icon_34325.ico</ApplicationIcon>
   </PropertyGroup>
 
   <ItemGroup>
     <None Remove="images\fondoLogin.jpg" />
+    <None Remove="images\icono\wrench-screwdriver-icon_34325.ico" />
     <None Remove="images\Login.png" />
     <None Remove="images\login\avatar.png" />
     <None Remove="images\ventanaPrincipal\fondotaller.png" />
     <None Remove="images\ventanaPrincipal\registrarVehiculo.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="images\icono\wrench-screwdriver-icon_34325.ico" />
   </ItemGroup>
 
   <ItemGroup>
@@ -24,6 +30,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Resource Include="images\icono\wrench-screwdriver-icon_34325.ico" />
     <Resource Include="images\login\avatar.png" />
     <Resource Include="images\login\fondoLogin.jpg" />
     <Resource Include="images\login\Login.png" />

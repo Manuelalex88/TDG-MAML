@@ -74,17 +74,26 @@
 
                         <StackPanel Orientation="Horizontal" Margin="0,0,0,10" Height="20">
                             <!-- Nombre del repuesto -->
-                            <TextBox Width="150" Margin="0,0,5,0" 
+                            <TextBox Width="110" Margin="0,0,5,0" 
                                      Text="{Binding NuevoRepuesto, UpdateSourceTrigger=PropertyChanged}"/>
                             <fa:IconImage Icon="File" Margin="0,0,10,0"/>
                             <!-- Precio del repuesto -->
-                            <TextBox Width="80" Margin="0,0,0,0"
+                            <TextBox Width="70" Margin="0,0,0,0"
                                      Text="{Binding RepuestoPrecio, UpdateSourceTrigger=PropertyChanged}"/>
+
                             <!-- Icono Euro justo a la derecha del textbox -->
                             <fa:IconImage Icon="Eur"
                                           Width="16" Height="16"
                                           VerticalAlignment="Center"
-                                          Margin="0,0,20,0"
+                                          Margin="0,0,10,0"
+                                          Foreground="Gray"/>
+                            <!--Cantidad del repuesto-->
+                            <TextBox Width="50" Text="{Binding CantidadPieza, UpdateSourceTrigger=PropertyChanged}"/>
+                            <!-- Icono Euro justo a la derecha del textbox -->
+                            <fa:IconImage Icon="ListNumeric"
+                                          Width="16" Height="16"
+                                          VerticalAlignment="Center"
+                                          Margin="2,0,10,0"
                                           Foreground="Gray"/>
                             <!-- Botón -->
                             <Button Content="Agregar Repuesto"
@@ -92,11 +101,13 @@
                         </StackPanel>
                     </StackPanel>
 
-                    <ListView Grid.Row="1" ItemsSource="{Binding RepuestosSeleccionados}" Margin="0,0,0,10" >
+                    <ListView Grid.Row="1" ItemsSource="{Binding RepuestosSeleccionados}" Margin="0,0,0,10"
+                              SelectedItem="{Binding RepuestoSeleccionado, Mode=TwoWay}">
                         <ListView.View>
                             <GridView>
-                                <GridViewColumn Header="Nombre" DisplayMemberBinding="{Binding Nombre}" Width="150"/>
+                                <GridViewColumn Header="Nombre" DisplayMemberBinding="{Binding Nombre}" Width="200"/>
                                 <GridViewColumn Header="Precio" DisplayMemberBinding="{Binding Precio}" Width="100"/>
+                                <GridViewColumn Header="Cantidad" DisplayMemberBinding="{Binding Cantidad}" Width="100"/>
                             </GridView>
                         </ListView.View>
                     </ListView>

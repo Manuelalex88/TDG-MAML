@@ -14,20 +14,19 @@
 
         <!-- Mis Facturas Pendientes -->
         <GroupBox Header="Mis Facturas Pendientes" FontWeight="Bold" FontSize="14" Grid.Column="0" Margin="5">
-            <DataGrid ItemsSource="{Binding ReparacionesPendientes}"
-                      SelectedItem="{Binding ReparacionSeleccionada}"
-                      AutoGenerateColumns="False"
-                      IsReadOnly="True"
-                      Margin="5"
-                      Style="{StaticResource datagridFactura}">
-                <DataGrid.Columns>
-                    <DataGridTextColumn Header="ID" Binding="{Binding Id}" Width="50"/>
-                    <DataGridTextColumn Header="Vehículo" Binding="{Binding Vehiculo.Matricula}" Width="100"/>
-                    <DataGridTextColumn Header="Cliente" Binding="{Binding Cliente.Nombre}" Width="150"/>
-                    <DataGridTextColumn Header="Fecha" Binding="{Binding Fecha}" Width="100"/>
-                    <DataGridTextColumn Header="Total Estimado" Binding="{Binding PrecioTotal}" Width="100"/>
-                </DataGrid.Columns>
-            </DataGrid>
+            <ListView ItemsSource="{Binding FacturasPendientes}"
+                      SelectedItem="{Binding FacturaSeleccionada}"
+                      Margin="5">
+                <ListView.View> <!--TOCAR ARREGLAR-->
+                    <GridView>
+                        <GridViewColumn Header="Modelo" Width="100" DisplayMemberBinding="{Binding Modelo}" />
+                        <GridViewColumn Header="Marca" Width="100" DisplayMemberBinding="{Binding Marca}" />
+                        <GridViewColumn Header="Matrícula" Width="100" DisplayMemberBinding="{Binding Matricula}" />
+                        <GridViewColumn Header="Cliente" Width="150" DisplayMemberBinding="{Binding ClienteNombre}" />
+                        <GridViewColumn Header="Fecha" Width="120" DisplayMemberBinding="{Binding FechaEmision}" />
+                    </GridView>
+                </ListView.View>
+            </ListView>
         </GroupBox>
 
         <!-- Facturar -->
@@ -38,18 +37,18 @@
                     <!-- Cliente -->
                     <GroupBox Header="Cliente" FontSize="12">
                         <StackPanel Margin="5">
-                            <TextBox Text="{Binding Cliente.Nombre}" Margin="0,0,0,5"/>
-                            <TextBox Text="{Binding Cliente.DNI}" Margin="0,0,0,5"/>
-                            <TextBox Text="{Binding Cliente.Telefono}" Margin="0,0,0,5"/>
+                            <TextBox Text="{Binding NombreCliente}" Margin="0,0,0,5"/>
+                            <TextBox Text="{Binding DniCliente}" Margin="0,0,0,5"/>
+                            <TextBox Text="{Binding TelefonoCliente}" Margin="0,0,0,5"/>
                         </StackPanel>
                     </GroupBox>
 
                     <!-- Vehículo -->
                     <GroupBox Header="Vehículo" FontSize="12" Margin="0,10,0,0" Height="97">
                         <StackPanel Margin="5">
-                            <TextBox Text="{Binding Vehiculo.Matricula}" Margin="0,0,0,5"/>
-                            <TextBox Text="{Binding Vehiculo.Marca}" Margin="0,0,0,5"/>
-                            <TextBox Text="{Binding Vehiculo.Modelo}" Margin="0,0,0,5"/>
+                            <TextBox Text="{Binding MatriculaVehiculo}" Margin="0,0,0,5"/>
+                            <TextBox Text="{Binding MarcaVehiculo}" Margin="0,0,0,5"/>
+                            <TextBox Text="{Binding ModeloVehiculo}" Margin="0,0,0,5"/>
                         </StackPanel>
                     </GroupBox>
 
