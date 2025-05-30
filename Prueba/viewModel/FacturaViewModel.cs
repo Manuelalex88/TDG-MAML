@@ -1,5 +1,6 @@
 ﻿using Prueba.data;
 using Prueba.model;
+using Prueba.view.childViews;
 using QuestPDF.Fluent;
 using System;
 using System.Collections.Generic;
@@ -18,7 +19,7 @@ namespace Prueba.viewModel
     public class FacturaViewModel : BaseViewModel
     {
         #region Listas
-        private ObservableCollection<FacturaVehiculoClienteDTO> _facturasPendientes  = new();
+        private ObservableCollection<FacturaVehiculoClienteDTO> _facturasPendientes = new();
         #endregion
         #region Campos
         private string _modeloVehiculo = string.Empty;
@@ -27,11 +28,12 @@ namespace Prueba.viewModel
         private string _nombreCliente = string.Empty;
         private string _dniCliente = string.Empty;
         private string _telefonoCliente = string.Empty;
+        private decimal _precioTotal = decimal.Zero;
 
 
         private FacturaVehiculoClienteDTO _facturaSeleccionada = new();
         public string _nombreMecanico { get; set; } = string.Empty;
-        private readonly FacturaRepository _facturaRepository = new();
+        private readonly FacturaRepository _facturaRepository;
         #endregion
         #region Propiedades
         public string ModeloVehiculo
@@ -71,6 +73,11 @@ namespace Prueba.viewModel
             get => _telefonoCliente;
             set => SetProperty(ref _telefonoCliente, value);
         }
+        public decimal PrecioTotal
+        {
+            get => _precioTotal;
+            set => SetProperty(ref _precioTotal, value);
+        }
 
         public string MatriculaVehiculo
         {
@@ -92,7 +99,7 @@ namespace Prueba.viewModel
                         NombreCliente = _facturaSeleccionada.ClienteNombre;
                         DniCliente = _facturaSeleccionada.Dni;
                         TelefonoCliente = _facturaSeleccionada.Telefono;
-                        
+                        CalcularTotalFactura();
                     }
                     else
                     {
@@ -116,15 +123,22 @@ namespace Prueba.viewModel
         #region Comandos
         public ICommand ConfirmarFacturaCommand { get; }
         public ICommand MostrarFacturasPendientesCommand { get; }
+        public ICommand EliminarFacturaCommand { get; set; }
         #endregion
         public FacturaViewModel()
         {
-            ConfirmarFacturaCommand = new comandoViewModel(GenerarFacturaPDF);
+            _facturaRepository = new FacturaRepository();
+            FacturasPendientes = new ObservableCollection<FacturaVehiculoClienteDTO>();
+            
+
+            ConfirmarFacturaCommand = new comandoViewModel(GenerarFacturaPDF, PuedeGenerarFactura);
             MostrarFacturasPendientesCommand = new comandoViewModel(MostrarFacturasPendientes);
+            EliminarFacturaCommand = new comandoViewModel(EliminarLaFactura, PuedeEliminar);
             NombreMecanico = UserData.Nombre ?? string.Empty;
 
             MostrarFacturasPendientes(null);
         }
+
         #region Metodos
         //Metodo para no poner set { _loquesea = value; OnPropertyChanged(loquesea) y poner simplemente SetProperty(ref Loquesea, value)
         protected bool SetProperty<T>(ref T backingField, T value, [CallerMemberName] string? propertyName = null)
@@ -141,10 +155,18 @@ namespace Prueba.viewModel
         }
         private void MostrarFacturasPendientes(object? obj)
         {
-            
+            if (FacturasPendientes == null)
+                FacturasPendientes = new ObservableCollection<FacturaVehiculoClienteDTO>();
             try
             {
                 FacturasPendientes.Clear();
+
+                if (string.IsNullOrWhiteSpace(UserData.id_mecanico))
+                {
+                    MessageBox.Show("No se ha establecido el ID del mecánico.");
+                    return;
+                }
+
                 var lista = _facturaRepository.ObtenerFacturasPendientesPorMecanico(UserData.id_mecanico);
                 foreach (var v in lista)
                 {
@@ -153,12 +175,62 @@ namespace Prueba.viewModel
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error al cargar los vehículos asignados: " + ex.Message);
+                MessageBox.Show("Error al cargar los vehículos asignados:\n" +
+                "Mensaje: " + ex.Message + "\n" +
+                "Fuente: " + ex.Source + "\n" +
+                "StackTrace: " + ex.StackTrace);
+
             }
         }
 
+        private bool PuedeGenerarFactura(object? obj)
+        {
+            return FacturaSeleccionada != null && PrecioTotal > 0;
+        }
+
+        private bool PuedeEliminar(object? obj)
+        {
+            return FacturaSeleccionada != null && PrecioTotal > 0;
+        }
+        private void CalcularTotalFactura()
+        {
+            if (FacturaSeleccionada == null)
+                return;
+
+            var repuestosUsados = _facturaRepository.ObtenerRepuestosUsadosPorReparacion(FacturaSeleccionada.Id);
+
+            var total = repuestosUsados.Sum(p => p.Precio * p.Cantidad);
+            PrecioTotal = total;
+        }
+        private void EliminarLaFactura(object obj)
+        {
+            if (FacturaSeleccionada == null)
+            {
+                MessageBox.Show("Selecciona una factura para eliminar.");
+                return;
+            }
+
+            try
+            {
+                _facturaRepository.EliminarFacturaSeleccionada(FacturaSeleccionada.Id);
+
+                FacturasPendientes.Remove(FacturaSeleccionada);
+                FacturaSeleccionada = null;
+
+                MessageBox.Show("Factura eliminada correctamente.");
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error al eliminar factura: " + ex.Message);
+            }
+        }
         private void GenerarFacturaPDF(object obj)
         {
+            if (FacturaSeleccionada == null)
+            {
+                MessageBox.Show("Por favor selecciona una factura antes de generar el PDF.");
+                return;
+            }
             try
             {
                 QuestPDF.Settings.License = QuestPDF.Infrastructure.LicenseType.Community;
@@ -184,7 +256,7 @@ namespace Prueba.viewModel
                 };
 
                 // Obtén la lista real de repuestos usados para la reparación asociada a la factura seleccionada
-                var repuestosUsados = _facturaRepository.ObtenerRepuestosUsadosPorReparacion(FacturaSeleccionada.Id);
+                var repuestosUsados = _facturaRepository.ObtenerRepuestosUsadosPorReparacion(FacturaSeleccionada.Id) ?? new List<Repuesto>();
                 var total = repuestosUsados.Sum(p => p.Precio);
                 #endregion
 
@@ -202,6 +274,8 @@ namespace Prueba.viewModel
                 string ruta = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), fileName);
 
                 factura.GeneratePdf(ruta);
+                // Marcamos los repuestos como facturados
+                _facturaRepository.MarcarRepuestosComoFacturados(FacturaSeleccionada.Id);
 
                 // Marcamos como pagada la factura
                 _facturaRepository.MarcarFacturaComoPagada(FacturaSeleccionada.Id);

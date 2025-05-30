@@ -14,6 +14,7 @@ using System.Windows.Shapes;
 using System.Runtime.InteropServices;
 using System.Windows.Interop;
 using Prueba.model;
+using Prueba.viewModel;
 
 namespace Prueba.view
 {
@@ -25,7 +26,7 @@ namespace Prueba.view
         public VentanaPrincipal()
         {
             InitializeComponent();
-            
+
         }
         /*Requerimos usar la libreria de 32bits para manejar los eventos del propio sistema -MAML*/
         [DllImport("user32.dll")]

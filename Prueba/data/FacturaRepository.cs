@@ -1,6 +1,7 @@
 ﻿using Npgsql;
 using Prueba.model;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,7 +11,7 @@ namespace Prueba.data
 {
     public class FacturaRepository
     {
-        private readonly string connectionString = System.Configuration.ConfigurationManager
+        string connectionString = System.Configuration.ConfigurationManager
                                                            .ConnectionStrings["PostgreSqlConnection"]
                                                            .ConnectionString;
 
@@ -68,13 +69,11 @@ namespace Prueba.data
             using var conn = new NpgsqlConnection(connectionString);
             conn.Open();
 
-            string query = @"SELECT 
-                        r.nombre,
-                        r.precio,
-                        ru.cantidad
+            var query = @"
+                    SELECT r.nombre, r.precio, ru.cantidad
                     FROM repuesto_usado ru
                     JOIN repuesto r ON ru.repuesto_id = r.id
-                    WHERE ru.reparacion_id = @reparacionId;";
+                    WHERE ru.reparacion_id = @reparacionId AND ru.facturado = FALSE";
 
             using var cmd = new NpgsqlCommand(query, conn);
             cmd.Parameters.AddWithValue("reparacionId", reparacionId);
@@ -89,7 +88,8 @@ namespace Prueba.data
                 lista.Add(new Repuesto
                 {
                     Nombre = nombre,
-                    Precio = precio * cantidad
+                    Precio = precio,
+                    Cantidad = cantidad,
                 });
             }
 
@@ -107,6 +107,77 @@ namespace Prueba.data
 
             cmd.ExecuteNonQuery();
         }
+        public void MarcarRepuestosComoFacturados(int idReparacion)
+        {
+            using var conn = new NpgsqlConnection(connectionString);
+            conn.Open();
 
+            var query = "UPDATE repuesto_usado SET facturado = TRUE WHERE reparacion_id = @id";
+            using var cmd = new NpgsqlCommand(query, conn);
+            cmd.Parameters.AddWithValue("id", idReparacion);
+            cmd.ExecuteNonQuery();
+        }
+        public void EliminarFacturaSeleccionada(int facturaId)
+        {
+            using var conn = new NpgsqlConnection(connectionString);
+            conn.Open();
+
+            string query = "DELETE FROM factura WHERE id = @id";
+
+            using var cmd = new NpgsqlCommand(query, conn);
+            cmd.Parameters.AddWithValue("id", facturaId);
+
+            cmd.ExecuteNonQuery();
+        }
+        public List<FacturaVehiculoClienteDTO> ObtenerFacturasPorMecanico(string idMecanico)
+        {
+            var lista = new List<FacturaVehiculoClienteDTO>();
+
+            using (var connection = new NpgsqlConnection(connectionString))
+            {
+                connection.Open();
+
+                string query = @"
+                            SELECT f.id, f.fecha_emision, f.total,
+                           v.marca, v.modelo, v.matricula,
+                           c.nombre AS cliente_nombre, c.dni, c.telefono
+                        FROM factura f
+                        INNER JOIN reparacion r ON f.id_reparacion = r.id
+                        INNER JOIN vehiculo v ON r.matricula_vehiculo = v.matricula
+                        INNER JOIN cliente_vehiculo cv ON cv.vehiculo_id = v.matricula
+                        INNER JOIN cliente c ON cv.cliente_id = c.dni
+                        WHERE r.mecanico_id = @idMecanico
+                          AND f.pagado = TRUE
+                        ORDER BY f.fecha_emision DESC;";
+
+                using (var command = new NpgsqlCommand(query, connection))
+                {
+                    command.Parameters.AddWithValue("@idMecanico", idMecanico);
+
+                    using (var reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            var dto = new FacturaVehiculoClienteDTO
+                            {
+                                Id = reader.GetInt32(0),
+                                FechaEmision = reader.IsDBNull(1) ? null : reader.GetDateTime(1),
+                                Total = reader.GetDecimal(2),
+                                Marca = reader.GetString(3),
+                                Modelo = reader.GetString(4),
+                                Matricula = reader.GetString(5),
+                                ClienteNombre = reader.GetString(6),
+                                Dni = reader.GetString(7),
+                                Telefono = reader.GetString(8)
+                            };
+
+                            lista.Add(dto);
+                        }
+                    }
+                }
+            }
+
+            return lista;
+        }
     }
 }

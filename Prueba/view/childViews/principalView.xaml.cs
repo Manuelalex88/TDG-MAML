@@ -1,4 +1,5 @@
 ﻿using Prueba.model;
+using Prueba.viewModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,6 +25,7 @@ namespace Prueba.view
         public principalView()
         {
             InitializeComponent();
+       
         }
     }
 }

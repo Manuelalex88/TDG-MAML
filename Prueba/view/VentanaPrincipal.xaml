@@ -23,7 +23,7 @@
             <local:principalView/>
         </DataTemplate>
 
-        <DataTemplate DataType="{x:Type viewmodel:registrarVehiculosViewModel}">
+        <DataTemplate DataType="{x:Type viewmodel:RegistrarVehiculosViewModel}">
             <local:Registrarvehiculo/>
         </DataTemplate>
             

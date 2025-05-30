@@ -26,25 +26,25 @@
         <Binding Path="IsViewVisible" Mode="TwoWay" Converter="{StaticResource BooleanToVisibility}"/>
     </Window.Visibility>
 
-    <!--Primer Border para la imagen de fondo mas que todo -MAML-->
+    <!--Primer Border para la imagen de fondo mas que todo -->
     <Border CornerRadius="10">
         <Border.Background>
             <ImageBrush ImageSource="/images/login/fondoLogin.jpg"/>
         </Border.Background>
-        <!--Segundo Border para la Creacion de la ventana -MAML-->
+        <!--Segundo Border para la Creacion de la ventana -->
         <Border CornerRadius="10"
             Background="{StaticResource colorFondoPrimario}"
             BorderBrush="{StaticResource colorFondoPrimario}"
             BorderThickness="5"
             Opacity="0.82">
-            <!--Metemos un Grid hijo para el titulo login -MAML-->
+            <!--Metemos un Grid hijo para el titulo login -->
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="30"/>
                     <RowDefinition Height="329*"/>
                     <RowDefinition Height="181*"/>
                 </Grid.RowDefinitions>
-                <!--Grid para los "objetos" del login -MAML-->
+                <!--Grid para los "objetos" del login -->
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition/>
@@ -60,7 +60,7 @@
                                Grid.Column="0"
                                VerticalAlignment="Center"
                                Margin="10,0,0,0"/>
-                    <!--Botones Minimizar y Cerrar -MAML-->
+                    <!--Botones Minimizar y Cerrar -->
                     <Button x:Name="btnMinimizar"
                             BorderThickness="0"
                             Content="-"
@@ -69,7 +69,7 @@
                             Cursor="Hand"
                             Grid.Column="1"
                             Click="btnMinimizar_Click">
-                        <!--Diseño del boton (Ambos iguales) -MAML-->
+                        <!--Diseño del boton (Ambos iguales) -->
                         <Button.Template>
                             <ControlTemplate TargetType="Button">
                                 <Border Width="20" Height="20"
@@ -81,7 +81,7 @@
                                 </Border>
                             </ControlTemplate>
                         </Button.Template>
-                        <!--Estilo del boton (Ambos iguales) -MAML-->
+                        <!--Estilo del boton (Ambos iguales) -->
                         <Button.Style>
                             <Style TargetType="Button">
                                 <Setter Property="Background" Value="{StaticResource colorB1}"/>
@@ -134,7 +134,7 @@
                     </Button>
 
                 </Grid>
-                <!--Stack panel para organizar las partes del login -MAML-->
+                <!--Stack panel para organizar las partes del login -->
                 <StackPanel Width="250"
                             Grid.Row="1"
                             Orientation="Vertical"
@@ -143,16 +143,16 @@
                     <Image Source="/images/login/Login.png"
                            Width="100"
                            Height="100"/>
-                    <!--Texblock del Titulo -MAML-->
-                    <TextBlock Text="ACCESS"
+                    <!--Texblock del Titulo -->
+                    <TextBlock Text="ACCESO"
                                Foreground="{StaticResource colorBlanco}"
                                FontSize="25"
                                FontWeight="Medium"
                                FontFamily="Montserrat"
                                HorizontalAlignment="Center"
                                Margin="0,5,0,0"/>
-                    <!--Texblock del nombre del usuario -MAML-->
-                    <TextBlock Text="User"
+                    <!--Texblock del nombre del usuario -->
+                    <TextBlock Text="Usuario"
                                Foreground="{StaticResource colorBlanco}"
                                FontSize="15"
                                FontWeight="Medium"
@@ -171,8 +171,8 @@
                              VerticalAlignment="Center"
                              Margin="0,5,0,0">
                     </TextBox>
-                    <!--Texblock del password -MAML-->
-                    <TextBlock Text="Password"
+                    <!--Texblock del password -->
+                    <TextBlock Text="Contraseña"
                                Foreground="{StaticResource colorBlanco}"
                                FontSize="15"
                                FontWeight="Medium"
@@ -192,7 +192,7 @@
                             FontFamily="Montserrat"
                             Margin="0,10,0,0"
                             TextWrapping="Wrap"/>
-                    <!--Boton del login -MAML-->
+                    <!--Boton del login -->
                     <Button x:Name="btnLogin"
                             Command="{Binding LoginCommand}"
                             BorderThickness="0"

@@ -38,4 +38,10 @@
     <Resource Include="images\ventanaPrincipal\registrarVehiculo.png" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="App.config">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

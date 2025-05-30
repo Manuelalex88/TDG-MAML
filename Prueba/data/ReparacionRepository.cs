@@ -53,7 +53,7 @@ namespace Prueba.data
                     using (var cmdInsertRepuesto = new NpgsqlCommand(@"
                             INSERT INTO repuesto (nombre, precio)
                             VALUES (@nombre, @precio)
-                            ON CONFLICT (nombre) DO NOTHING;", conn))
+                            ON CONFLICT (nombre) DO UPDATE SET precio = EXCLUDED.precio;", conn))
                     {
                         cmdInsertRepuesto.Parameters.AddWithValue("nombre", repuesto.Nombre);
                         cmdInsertRepuesto.Parameters.AddWithValue("precio", repuesto.Precio);
@@ -89,7 +89,7 @@ namespace Prueba.data
                 throw;
             }
         }
-        public void FinalizarReparacionActual(int reparacionId)
+        public void FinalizarReparacionActual(VehiculoReparacionDTO vehiculo,int reparacionId)
         {
             using var conn = new NpgsqlConnection(connectionString);
             conn.Open();
@@ -107,6 +107,16 @@ namespace Prueba.data
                     cmd.Parameters.AddWithValue("estado", DatosConstantes.Estado5);
                     cmd.Parameters.AddWithValue("fechaFin", DateTime.Now);
                     cmd.Parameters.AddWithValue("id", reparacionId);
+                    cmd.ExecuteNonQuery();
+                }
+                //Actualizar el vehiculo (Ya no esta asignado)
+                using (var cmd = new NpgsqlCommand(@"
+                        UPDATE vehiculo
+                        SET asignado = FALSE,
+                            salida_taller = TRUE
+                        WHERE matricula = @matricula;", conn, transaction))
+                {
+                    cmd.Parameters.AddWithValue("matricula", vehiculo.Matricula);
                     cmd.ExecuteNonQuery();
                 }
 

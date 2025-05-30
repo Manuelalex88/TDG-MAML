@@ -16,11 +16,12 @@ namespace Prueba.viewModel
     public class VehiculosEnTallerViewModel : BaseViewModel
     {
         //Campos
-        private VehiculoRepository _vehiculoRepository = new();
+        private VehiculoRepository _vehiculoRepository;
         public ObservableCollection<Vehiculo> VehiculosEnTaller { get; set; } = new();
         #region Comandos
         public ICommand AsignarVehiculoCommand { get; set; }
         public ICommand MarcarSalidaCommand { get; set; }
+
         #endregion
         //Constructor
         public VehiculosEnTallerViewModel()

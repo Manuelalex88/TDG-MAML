@@ -3,6 +3,7 @@ using Prueba.model;
 using Prueba.view.childViews;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -21,6 +22,7 @@ namespace Prueba.viewModel
         private IconChar _icon;
 
         private string _nombreUsuario = String.Empty;
+        
         #endregion
         #region Propiedades
         public string NombreUsuario
@@ -65,7 +67,6 @@ namespace Prueba.viewModel
             showReparacionesChildView = new comandoViewModel(ExecuteShowCommand3);
             showFacturasChildView = new comandoViewModel(ExecuteShowCommand4);
             ShowVehiculosEnTallerChildView = new comandoViewModel(ExecuteShowCommand5);
-
             // Cargar el nombre del usuario desde UserData
             _nombreUsuario = UserData.Nombre;  
             OnPropertyChanged(nameof(NombreUsuario));  
@@ -110,14 +111,14 @@ namespace Prueba.viewModel
 
         private void ExecuteShowCommand2(object obj)
         {
-            CurrentChildView = new registrarVehiculosViewModel();
+            CurrentChildView = new RegistrarVehiculosViewModel();
             Caption = "Registrar Vehiculo";
             Icon = IconChar.Database;
         }
 
         private void ExecuteShowCommand(object? obj)
         {
-            CurrentChildView = new principalViewModel();
+            CurrentChildView = new PrincipalViewModel();
             Caption = "Dashboard";
             Icon = IconChar.House;
         }

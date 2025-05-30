@@ -14,6 +14,7 @@ namespace Prueba.viewModel
     public class ReparacionesViewModel : BaseViewModel
     {
         #region Campos
+        
         public List<string> ListaEstadoReparacion { get; set; } = new()
         {
             "Problema sin identificar", "Diagnosticando", "Esperando Repuesto", "En Reparacion"
@@ -71,22 +72,25 @@ namespace Prueba.viewModel
             {
                 if (SetProperty(ref _vehiculoSeleccionado, value))
                 {
-                    TrabajoRealizar = value?.TrabajoRealizar ?? string.Empty;
+                    TrabajoRealizar = value?.TrabajoARealizar ?? string.Empty;
                     EstadoSeleccionado = value?.Estado ?? string.Empty;
                     RepuestosSeleccionados.Clear();
 
                     if (value != null)
                     {
-                        // Obtener ID de la reparación actual
+                        // Obtener ID de la reparacion actual
                         int reparacionId = _reparacionRepository.ObtenerIdReparacionPorMatricula(value.Matricula);
 
-                        // Cargar repuestos usados en la reparación
+                        // Cargar repuestos usados en la reparacion
                         var repuestos = _reparacionRepository.ObtenerRepuestosUsados(reparacionId);
 
                         foreach (var r in repuestos)
                         {
                             RepuestosSeleccionados.Add(r);
                         }
+                        // Actualizar estado de _mantenimientoAgregado para que se elimine correctamente
+                        var nombresMantenimiento = new[] { "Filtros", "Aceite", "Anticongelante" };
+                        _mantenimientoAgregado = RepuestosSeleccionados.Any(r => nombresMantenimiento.Contains(r.Nombre));
                     }
                 }
             }
@@ -128,7 +132,7 @@ namespace Prueba.viewModel
             CancelarReparacionCommand = new comandoViewModel(CancelarReparacion, CanExecuteDeleteCommand);
             FinalizarReparacionCommand = new comandoViewModel(FinalizarReparacion,CanExecuteFinalizarCommand);
             GuardarCambiosCommand = new comandoViewModel(GuardarCambios);
-
+            //Hacemos que se rellene la lista llamando a la funcion
             VehiculosAsignadosActualmente();
         }
 
@@ -202,7 +206,7 @@ namespace Prueba.viewModel
             {
                 var reparacionId = VehiculoSeleccionado.Id;
 
-                _reparacionRepository.FinalizarReparacionActual(reparacionId);
+                _reparacionRepository.FinalizarReparacionActual(VehiculoSeleccionado,reparacionId);
 
                 MessageBox.Show("Reparación finalizada correctamente.");
 
@@ -271,19 +275,22 @@ namespace Prueba.viewModel
 
             if (!_mantenimientoAgregado)
             {
-                RepuestosSeleccionados.Add(new Repuesto { Nombre = "Filtros", Precio = 20 , Cantidad = 3});
-                RepuestosSeleccionados.Add(new Repuesto { Nombre = "Aceite", Precio = 40 ,Cantidad = 1 });
+                // Agregar mantenimiento básico
+                RepuestosSeleccionados.Add(new Repuesto { Nombre = "Filtros", Precio = 20, Cantidad = 3 });
+                RepuestosSeleccionados.Add(new Repuesto { Nombre = "Aceite", Precio = 40, Cantidad = 1 });
                 RepuestosSeleccionados.Add(new Repuesto { Nombre = "Anticongelante", Precio = 20, Cantidad = 1 });
+
                 _mantenimientoAgregado = true;
             }
             else
             {
-                foreach (var nombre in nombresMantenimiento)
+                // Quitar mantenimiento básico
+                var itemsAEliminar = RepuestosSeleccionados.Where(r => nombresMantenimiento.Contains(r.Nombre)).ToList();
+                foreach (var item in itemsAEliminar)
                 {
-                    var item = RepuestosSeleccionados.FirstOrDefault(r => r.Nombre == nombre);
-                    if (item != null)
-                        RepuestosSeleccionados.Remove(item);
+                    RepuestosSeleccionados.Remove(item);
                 }
+
                 _mantenimientoAgregado = false;
             }
         }
@@ -307,7 +314,7 @@ namespace Prueba.viewModel
 
                 _vehiculoRepository.CancelarReparacionPorMatricula(matricula);
 
-                // Limpia UI
+                // Limpia UI 
                 RepuestosSeleccionados.Clear();
                 VehiculosAsignados.Remove(VehiculoSeleccionado);
                 VehiculoSeleccionado = null;

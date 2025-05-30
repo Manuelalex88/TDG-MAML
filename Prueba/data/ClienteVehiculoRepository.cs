@@ -41,7 +41,7 @@ namespace Prueba.data
                         string insertVehiculo = @"
                         INSERT INTO vehiculo (matricula, marca, modelo, motivo_ingreso, descripcion, asignado, salida_taller)
                         VALUES (@matricula, @marca, @modelo, @motivo_ingreso, @descripcion, @asignado, @salida_taller)
-                        ON CONFLICT (matricula) DO NOTHING;";
+                        ON CONFLICT (matricula) DO UPDATE SET salida_taller = FALSE;";
                         using (var cmdVehiculo = new NpgsqlCommand(insertVehiculo, conn))
                         {
                             cmdVehiculo.Parameters.AddWithValue("matricula", matricula ?? (object)DBNull.Value);

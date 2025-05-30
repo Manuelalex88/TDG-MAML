@@ -3,80 +3,73 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:fa="http://schemas.awesome.incremented/wpf/xaml/fontawesome.sharp"
              xmlns:local="clr-namespace:Prueba.view"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
-    <ScrollViewer VerticalScrollBarVisibility="Auto">
-        <StackPanel Margin="20">
+             d:DesignHeight="600" d:DesignWidth="800">
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto" Background="#F4F6F8">
+        <StackPanel Margin="20" Orientation="Vertical" >
 
             <!-- Bienvenida -->
             <TextBlock Text="{Binding TextoEntrada}" 
-                       FontSize="24" FontWeight="Bold" Margin="0,0,0,20"
-                       Style="{StaticResource txtChildViews}" Tag="{StaticResource colorIconosVentanaPrincipal}"/>
+                       FontSize="28" FontWeight="Bold" Foreground="#2C3E50"
+                       Margin="0,0,0,20"/>
 
-            <!-- Resumen de actividad -->
-            <UniformGrid Columns="2" Margin="0,0,0,20">
-                <Border Background="#FFCCE5FF" Padding="10" Margin="5" CornerRadius="10">
-                    <StackPanel>
-                        <TextBlock Text="Vehículos en reparación" FontWeight="Bold"
-                                   Style="{StaticResource txtChildViews}" Tag="{StaticResource colorIconosVentanaPrincipal}"/>
-                        <TextBlock Text="{Binding VehiculosEnReparacion}" FontSize="24"/>
-                    </StackPanel>
+            <!-- Resumen Rápido -->
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Margin="0,0,0,20">
+                <Border Background="#DFF0D8" CornerRadius="10" Padding="15" Margin="0,0,20,0">
+                    <TextBlock Text="🛠 Reparaciones asignadas: {Binding VehiculosAsignados.Count}" 
+                               FontSize="16" FontWeight="SemiBold"/>
                 </Border>
-                <Border Background="#FFD5F5D5" Padding="10" Margin="5" CornerRadius="10">
-                    <StackPanel>
-                        <TextBlock Text="Reparaciones finalizadas hoy" FontWeight="Bold"
-                                   Style="{StaticResource txtChildViews}" Tag="{StaticResource colorIconosVentanaPrincipal}"/>
-                        <TextBlock Text="{Binding ReparacionesFinalizadasHoy}" FontSize="24"/>
-                    </StackPanel>
+                <Border Background="#D9EDF7" CornerRadius="10" Padding="15" Width="227">
+                    <TextBlock Text="📄 Facturas emitidas: {Binding ListaFacturas.Count}" 
+                               FontSize="16" FontWeight="SemiBold"/>
                 </Border>
-                <Border Background="#FFFFE0B2" Padding="10" Margin="5" CornerRadius="10">
-                    <StackPanel>
-                        <TextBlock Text="Vehículos sin empezar" FontWeight="Bold"
-                                   Style="{StaticResource txtChildViews}" Tag="{StaticResource colorIconosVentanaPrincipal}"/>
-                        <TextBlock Text="{Binding VehiculosSinEmpezar}" FontSize="24"/>
-                    </StackPanel>
-                </Border>
-                <Border Background="#FFF8BBD0" Padding="10" Margin="5" CornerRadius="10">
-                    <StackPanel>
-                        <TextBlock Text="Facturas pendientes" FontWeight="Bold"
-                                   Style="{StaticResource txtChildViews}" Tag="{StaticResource colorIconosVentanaPrincipal}"/>
-                        <TextBlock Text="{Binding FacturasPendientes}" FontSize="24"/>
-                    </StackPanel>
-                </Border>
-            </UniformGrid>
-
-            <!-- Vehículos asignados -->
-            <TextBlock Text="Vehículos asignados" FontSize="18" FontWeight="SemiBold" Margin="0,10,0,10"
-                       Style="{StaticResource txtChildViews}" Tag="{StaticResource colorIconosVentanaPrincipal}"/>
-            <ListView ItemsSource="{Binding VehiculosAsignados}" Margin="0,0,0,20">
-                <ListView.ItemTemplate>
-                    <DataTemplate>
-                        <Border BorderBrush="LightGray" BorderThickness="1" Margin="5" Padding="10" CornerRadius="8">
-                            <StackPanel>
-                                <TextBlock Text="{Binding Vehiculo}" FontWeight="Bold" FontSize="16"/>
-                                <TextBlock Text="{Binding Problema}" TextWrapping="Wrap"/>
-                                <TextBlock Text="Estado: " FontWeight="Bold" />
-                                <TextBlock Text="{Binding Estado}" FontStyle="Italic"/>
-                                <Button Content="Ver Reparación"
-                                        HorizontalAlignment="Left"
-                                        Margin="0,10,0,0"
-                                        Command="{Binding DataContext.VerReparacionCommand, RelativeSource={RelativeSource AncestorType=ListView}}"
-                                        CommandParameter="{Binding}" />
-                            </StackPanel>
-                        </Border>
-                    </DataTemplate>
-                </ListView.ItemTemplate>
-            </ListView>
-
-            <!-- Accesos rápidos -->
-            <TextBlock Text="Accesos rápidos" FontSize="18" FontWeight="SemiBold" Margin="0,10,0,10"
-                       Style="{StaticResource txtChildViews}" Tag="{StaticResource colorIconosVentanaPrincipal}"/>
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,10">
-                <Button Content="Registrar Vehículo" Width="160" Height="40" Margin="10"/>
-                <Button Content="Ver Vehículos sin Asignar" Width="200" Height="40" Margin="10"/>
-                <Button Content="Historial de Reparaciones" Width="200" Height="40" Margin="10"/>
             </StackPanel>
+
+            <!-- Historial de Facturas -->
+            <TextBlock Text="Mis Facturas" FontSize="22" FontWeight="SemiBold" Foreground="#34495E" Margin="0,10,0,10"/>
+
+            <Border Background="White" CornerRadius="8" Padding="10" Margin="0,0,0,20" >
+                <ListView ItemsSource="{Binding ListaFacturas}" Height="102">
+                    <ListView.View>
+                        <GridView>
+                            <GridViewColumn Header="ID" DisplayMemberBinding="{Binding Id}" Width="80"/>
+                            <GridViewColumn Header="Cliente" DisplayMemberBinding="{Binding ClienteNombre}" Width="200"/>
+                            <GridViewColumn Header="Fecha" DisplayMemberBinding="{Binding FechaEmision}" Width="150"/>
+                            <GridViewColumn Header="Total" DisplayMemberBinding="{Binding Total}" Width="100"/>
+                            <GridViewColumn Header="Descargar" Width="100">
+                                <GridViewColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <Button ToolTip="Descargar Factura" 
+                                                Command="{Binding DataContext.DescargarFacturaCommand, RelativeSource={RelativeSource AncestorType=ListView}}"
+                                                CommandParameter="{Binding}">
+                                            <fa:IconBlock Icon="FileDownload" Foreground="DarkSlateGray" Width="20" Height="20"/>
+                                        </Button>
+                                    </DataTemplate>
+                                </GridViewColumn.CellTemplate>
+                            </GridViewColumn>
+                        </GridView>
+                    </ListView.View>
+                </ListView>
+            </Border>
+
+            <!-- Reparaciones asignadas -->
+            <TextBlock Text="Mis Reparaciones Asignadas" FontSize="22" FontWeight="SemiBold" Foreground="#34495E" Margin="0,10,0,10"/>
+
+            <Border Background="White" CornerRadius="8" Padding="10" Margin="0,0,0,40">
+                <ListView ItemsSource="{Binding VehiculosAsignados}" Height="106">
+                    <ListView.View>
+                        <GridView>
+                            <GridViewColumn Header="Matrícula" DisplayMemberBinding="{Binding Matricula}" Width="120"/>
+                            <GridViewColumn Header="Marca" DisplayMemberBinding="{Binding Marca}" Width="150"/>
+                            <GridViewColumn Header="Modelo" DisplayMemberBinding="{Binding Modelo}" Width="150"/>
+                            <GridViewColumn Header="Fecha Inicio" DisplayMemberBinding="{Binding Fecha_Inicio}" Width="150"/>
+                        </GridView>
+                    </ListView.View>
+                </ListView>
+            </Border>
 
         </StackPanel>
     </ScrollViewer>

@@ -14,36 +14,109 @@ using System.Windows.Input;
 
 namespace Prueba.viewModel
 {
-    public class registrarVehiculosViewModel : BaseViewModel, IDataErrorInfo
+    public class RegistrarVehiculosViewModel : BaseViewModel, IDataErrorInfo
     {
         #region Listas
         public List<string> ListaMarcas { get; set; } = new List<string>
-        {
-            "Seat", "Mercedes", "BMW", "FIAT", "FERRARI"
-        };
-
+            {
+                "Seat", "Mercedes", "BMW", "FIAT", "FERRARI"
+            };
         public List<string> ListaMotivoIngreso { get; set; } = new List<string>
-        {
-            "Revisión General","Cambio de aceite", "Cambio de filtros", "Diagnóstico de motor","Problema sin identificar"
-        };
+             {
+                 "Revisión General","Cambio de aceite", "Cambio de filtros", "Diagnóstico de motor","Problema sin identificar"
+             };
         #endregion
         #region Campos
 
-        private string _marca  = String.Empty;
+        private string _marca = String.Empty;
         private string _modelo = string.Empty;
-        private string _matricula  = String.Empty;
-        private string _motivoIngreso  = String.Empty;
-        private string _descripcion  = String.Empty;
-        private string _nombreCliente  = String.Empty;
-        private string _anio  = String.Empty;
-        private string _dniCliente  = String.Empty;    
-        private string _telefonoCliente  = String.Empty;
-        private Boolean _asignar  = false;
+        private string _matricula = String.Empty;
+        private string _motivoIngreso = String.Empty;
+        private string _descripcion = String.Empty;
+        private string _nombreCliente = String.Empty;
+        private string _anio = String.Empty;
+        private string _dniCliente = String.Empty;
+        private string _telefonoCliente = String.Empty;
+        private Boolean _asignar = false;
         private bool _mostrarDescripcion = false;
+
 
         private readonly VehiculoRepository _vehiculoRepository;
         private readonly ClienteRepository _clienteRepository;
         private readonly ClienteVehiculoRepository _CVRepository = new ClienteVehiculoRepository();
+        #endregion
+        //No son el error
+        #region Propiedades
+        public string Marca
+        {
+            get => _marca;
+            set => SetProperty(ref _marca, value);
+        }
+        public string Modelo
+        {
+            get => _modelo;
+            set => SetProperty(ref _modelo, value);
+        }
+
+        public string Matricula
+        {
+            get => _matricula;
+            set => SetProperty(ref _matricula, value);
+        }
+        public bool MostrarDescripcion
+        {
+            get => _mostrarDescripcion;
+            set => SetProperty(ref _mostrarDescripcion, value);
+        }
+        public string MotivoIngreso
+        {
+            get => _motivoIngreso;
+            set
+            {
+                if (SetProperty(ref _motivoIngreso, value))
+                {
+                    MostrarDescripcion = (_motivoIngreso == "Problema sin identificar");
+                }
+            }
+        }
+        public string Descripcion
+        {
+            get => _descripcion;
+            set => SetProperty(ref _descripcion, value);
+        }
+
+        public string NombreCliente
+        {
+            get => _nombreCliente;
+            set => SetProperty(ref _nombreCliente, value);
+        }
+
+        public string Anio
+        {
+            get => _anio;
+            set => SetProperty(ref _anio, value);
+        }
+
+        public string DniCliente
+        {
+            get => _dniCliente;
+            set => SetProperty(ref _dniCliente, value);
+        }
+
+        public string TelefonoCliente
+        {
+            get => _telefonoCliente;
+            set => SetProperty(ref _telefonoCliente, value);
+        }
+        public Boolean Asignar
+        {
+            get => _asignar;
+            set
+            {
+                _asignar = value;
+
+            }
+        }
         #endregion
         #region Formatos
         //Para el formato del dni este correcto
@@ -95,101 +168,24 @@ namespace Prueba.viewModel
 
             return dni[8] == letraEsperada;
         }
-
-        #endregion
-
-        #region Propiedades
-        
-        public string Marca
-        {
-            get => _marca;
-            set => SetProperty(ref _marca, value);
-        }
-
-        public string Modelo
-        {
-            get => _modelo;
-            set => SetProperty(ref _modelo, value);
-        }
-
-        public string Matricula
-        {
-            get => _matricula;
-            set => SetProperty(ref _matricula, value);
-        }
-
-        public string MotivoIngreso
-        {
-            get => _motivoIngreso;
-            set
-            {
-                if (SetProperty(ref _motivoIngreso, value))
-                {
-                    MostrarDescripcion = (_motivoIngreso == "Problema sin identificar");
-                }
-            }
-        }
-
-        
-        public bool MostrarDescripcion
-        {
-            get => _mostrarDescripcion;
-            set => SetProperty(ref _mostrarDescripcion, value);
-        }
-        public string Descripcion
-        {
-            get => _descripcion;
-            set => SetProperty(ref _descripcion, value);
-        }
-
-        public string NombreCliente
-        {
-            get => _nombreCliente;
-            set => SetProperty(ref _nombreCliente, value);
-        }
-
-        public string Anio
-        {
-            get => _anio;
-            set => SetProperty(ref _anio, value);
-        }
-
-        public string DniCliente
-        {
-            get => _dniCliente;
-            set => SetProperty(ref _dniCliente, value);
-        }
-
-        public string TelefonoCliente
-        {
-            get => _telefonoCliente;
-            set => SetProperty(ref _telefonoCliente, value);
-        }
-        public Boolean Asignar
-        {
-            get => _asignar;
-            set
-            {
-                _asignar = value;
-                
-            }
-        }
         #endregion
         #region Comandos
+
+        public ICommand BuscarVehiculoCommand { get; }
+        public ICommand BuscarClienteCommand { get; }
         public ICommand AgregarVehiculoClienteCommand { get; set; }
-        public ICommand BuscarClienteCommand { get; set; }
-        public ICommand BuscarVehiculoCommand { get; set; }
         #endregion
         //Constructor
-        public registrarVehiculosViewModel()
+        public RegistrarVehiculosViewModel()
         {
-            //Inicializao el repositorio
+            //Inicializar campos
             _vehiculoRepository = new VehiculoRepository();
             _clienteRepository = new ClienteRepository();
             //Inicializar comandos
             BuscarVehiculoCommand = new comandoViewModel(BuscarVehiculo);
             BuscarClienteCommand = new comandoViewModel(BuscarCliente);
             AgregarVehiculoClienteCommand = new comandoViewModel(AgregarVehiculoCliente, PuedeAgregar);
+
         }
         #region Metodos
         //Metodo para no poner set { _loquesea = value; OnPropertyChanged(loquesea) y poner simplemente SetProperty(ref Loquesea, value)
@@ -270,7 +266,6 @@ namespace Prueba.viewModel
                 MessageBox.Show("Error al buscar cliente: " + ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
-
         private bool PuedeAgregar(object? obj)
         {
             // Validar que matricula y nombre no estén vacíos
@@ -282,7 +277,6 @@ namespace Prueba.viewModel
 
             return camposObligatorios && dniValido;
         }
-
         private void AgregarVehiculoCliente(object obj)
         {
             string connectionString = System.Configuration.ConfigurationManager.ConnectionStrings["PostgreSqlConnection"].ConnectionString;
@@ -316,6 +310,8 @@ namespace Prueba.viewModel
                 MessageBox.Show($"Error: {ex.Message}");
             }
         }
+
         #endregion
+
     }
 }

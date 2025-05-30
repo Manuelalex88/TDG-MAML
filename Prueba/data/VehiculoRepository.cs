@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Configuration;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -13,7 +14,8 @@ namespace Prueba.data
 {
     public class VehiculoRepository
     {
-        string connectionString = System.Configuration.ConfigurationManager.ConnectionStrings["PostgreSqlConnection"].ConnectionString;
+        private readonly string connectionString = System.Configuration.ConfigurationManager
+        .ConnectionStrings["PostgreSqlConnection"]?.ConnectionString ?? throw new InvalidOperationException("La cadena de conexión 'PostgreSqlConnection' no está definida.");
 
         public List<Vehiculo> ObtenerVehiculosEnTaller()
         {
@@ -52,12 +54,12 @@ namespace Prueba.data
             {
                 conn.Open();
                 var cmd = new NpgsqlCommand(@"
-                    SELECT r.id, v.marca, v.matricula, r.estado, r.trabajo_a_realizar
-                    FROM vehiculo v
-                    JOIN reparacion r ON v.matricula = r.matricula_vehiculo
-                    WHERE r.mecanico_id = @id 
-                      AND v.salida_taller = false
-                      AND r.estado NOT IN (@estado5, @estado6)", conn);
+            SELECT r.id, v.marca, v.matricula, r.estado, r.trabajo_a_realizar, r.fecha_inicio
+            FROM vehiculo v
+            JOIN reparacion r ON v.matricula = r.matricula_vehiculo
+            WHERE r.mecanico_id = @id 
+              AND v.salida_taller = false
+              AND r.estado NOT IN (@estado5, @estado6)", conn);
 
                 cmd.Parameters.AddWithValue("@id", idMecanico);
                 cmd.Parameters.AddWithValue("@estado5", DatosConstantes.Estado5);
@@ -70,6 +72,7 @@ namespace Prueba.data
                     int matriculaIndex = reader.GetOrdinal("matricula");
                     int estadoIndex = reader.GetOrdinal("estado");
                     int trabajoIndex = reader.GetOrdinal("trabajo_a_realizar");
+                    int fechaInicioIndex = reader.GetOrdinal("fecha_inicio");
 
                     while (reader.Read())
                     {
@@ -79,7 +82,8 @@ namespace Prueba.data
                             Marca = reader.IsDBNull(marcaIndex) ? string.Empty : reader.GetString(marcaIndex),
                             Matricula = reader.IsDBNull(matriculaIndex) ? string.Empty : reader.GetString(matriculaIndex),
                             Estado = reader.IsDBNull(estadoIndex) ? string.Empty : reader.GetString(estadoIndex),
-                            TrabajoRealizar = reader.IsDBNull(trabajoIndex) ? string.Empty : reader.GetString(trabajoIndex)
+                            TrabajoARealizar = reader.IsDBNull(trabajoIndex) ? string.Empty : reader.GetString(trabajoIndex),
+                            Fecha_Inicio = reader.IsDBNull(fechaInicioIndex) ? DateTime.MinValue : reader.GetDateTime(fechaInicioIndex)
                         });
                     }
                 }

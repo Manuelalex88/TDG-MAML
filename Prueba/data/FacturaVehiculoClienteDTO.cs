@@ -20,5 +20,7 @@ namespace Prueba.data
         public string ClienteNombre { get; set; } = string.Empty;
         public string Dni {  get; set; } = string.Empty;
         public string Telefono {  get; set; } = string.Empty;
+
+        
     }
 }
