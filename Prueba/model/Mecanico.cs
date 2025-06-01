@@ -8,8 +8,7 @@ namespace Prueba.model
 {
     public class Mecanico
     {
-        public int Id { get; set; }
+        public string Id { get; set; } = string.Empty;
         public string Nombre { get; set; } = string.Empty;
-        public string Usuario { get; set; } = string.Empty;
     }
 }

@@ -25,7 +25,7 @@ namespace Prueba.view
         public Registrarvehiculo()
         {
             InitializeComponent();
-            this.DataContext = new RegistrarVehiculosViewModel();
+            
         }
     }
 }

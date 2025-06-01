@@ -1,0 +1,41 @@
+﻿using Npgsql;
+using Prueba.model;
+using System;
+
+namespace Prueba.repository
+{
+    public class MecanicoRepository : Conexion
+    {
+        
+
+        public Mecanico? Login(string id, string password)
+        {
+            using (var conn = GetConection())
+            {
+                conn.Open();
+
+                string query = "SELECT id, nombre FROM Mecanico WHERE id = @id AND contrasena = @contrasena";
+
+                using (var cmd = new NpgsqlCommand(query, conn))
+                {
+                    cmd.Parameters.AddWithValue("@id", id);
+                    cmd.Parameters.AddWithValue("@contrasena", password);
+
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        if (reader.Read())
+                        {
+                            return new Mecanico
+                            {
+                                Id = reader.GetString(0),
+                                Nombre = reader.GetString(1)
+                            };
+                        }
+                    }
+                }
+            }
+
+            return null; 
+        }
+    }
+}

@@ -26,6 +26,8 @@ namespace Prueba.viewModel
         //Constructor
         public VehiculosEnTallerViewModel()
         {
+            //Inicializar
+            _vehiculoRepository = new VehiculoRepository();
             //Comandos
             AsignarVehiculoCommand = new comandoViewModel(AsignarVehiculo);
             MarcarSalidaCommand = new comandoViewModel(MarcarSalidaVehiculo);
@@ -52,12 +54,14 @@ namespace Prueba.viewModel
         }
         private void AsignarVehiculo(object obj)
         {
-    
-            if (obj is Vehiculo vehiculo && !string.IsNullOrEmpty(UserData.id_mecanico))
+            //Identidad Mecanico
+            var identity = Thread.CurrentPrincipal?.Identity as IdentidadMecanico;
+            var idMecanico = identity?.Name;
+            if (obj is Vehiculo vehiculo && !string.IsNullOrEmpty(idMecanico))
             {           
                 try
                 {
-                    _vehiculoRepository.AsignarVehiculoAVista(vehiculo.Matricula, UserData.id_mecanico);
+                    _vehiculoRepository.AsignarVehiculoAVista(vehiculo.Matricula, idMecanico);
                     MessageBox.Show("Vehículo asignado correctamente.", "Éxito", MessageBoxButton.OK, MessageBoxImage.Information);
                     VehiculosEnTaller.Remove(vehiculo);
                 }
@@ -81,7 +85,7 @@ namespace Prueba.viewModel
             }
             catch (Exception ex)
             {
-                System.Windows.MessageBox.Show("Error en ViewModel: " + ex.Message);
+                MessageBox.Show("Error en ViewModel: " + ex.Message);
             }
         }
         private void CargarVehiculosEnTaller()

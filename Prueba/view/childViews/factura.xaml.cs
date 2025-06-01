@@ -24,7 +24,7 @@ namespace Prueba.view.childViews
         public Factura()
         {
             InitializeComponent();
-            this.DataContext = new FacturaViewModel();
+            
         }
     }
 }

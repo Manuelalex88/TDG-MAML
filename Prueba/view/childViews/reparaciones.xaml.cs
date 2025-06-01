@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Prueba.viewModel;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -23,6 +24,7 @@ namespace Prueba.view.childViews
         public Reparaciones()
         {
             InitializeComponent();
+            
         }
 
     }

@@ -20,7 +20,6 @@ namespace Prueba.viewModel
 
         private string _caption = String.Empty;
         private IconChar _icon;
-
         private string _nombreUsuario = String.Empty;
         
         #endregion
@@ -61,14 +60,17 @@ namespace Prueba.viewModel
         #endregion
         //Constructor
         public MainViewModel()
-        {
+        {   // Obtener el ID del mecánico desde el hilo actual
+            var identity = Thread.CurrentPrincipal?.Identity as IdentidadMecanico;
+            var idMecanico = identity?.Name;
+
             showPrimerachildView = new comandoViewModel(ExecuteShowCommand);
             showSegundachildView = new comandoViewModel(ExecuteShowCommand2);
             showReparacionesChildView = new comandoViewModel(ExecuteShowCommand3);
             showFacturasChildView = new comandoViewModel(ExecuteShowCommand4);
             ShowVehiculosEnTallerChildView = new comandoViewModel(ExecuteShowCommand5);
             // Cargar el nombre del usuario desde UserData
-            _nombreUsuario = UserData.Nombre;  
+            _nombreUsuario = identity?.NombreCompleto ?? "Desconocido"; 
             OnPropertyChanged(nameof(NombreUsuario));  
 
             //Deafult View

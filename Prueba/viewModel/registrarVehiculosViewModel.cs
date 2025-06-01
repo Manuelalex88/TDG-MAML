@@ -43,7 +43,7 @@ namespace Prueba.viewModel
 
         private readonly VehiculoRepository _vehiculoRepository;
         private readonly ClienteRepository _clienteRepository;
-        private readonly ClienteVehiculoRepository _CVRepository = new ClienteVehiculoRepository();
+        private readonly ClienteVehiculoRepository _CVRepository;
         #endregion
         //No son el error
         #region Propiedades
@@ -181,6 +181,7 @@ namespace Prueba.viewModel
             //Inicializar campos
             _vehiculoRepository = new VehiculoRepository();
             _clienteRepository = new ClienteRepository();
+            _CVRepository = new ClienteVehiculoRepository();
             //Inicializar comandos
             BuscarVehiculoCommand = new comandoViewModel(BuscarVehiculo);
             BuscarClienteCommand = new comandoViewModel(BuscarCliente);
@@ -279,6 +280,10 @@ namespace Prueba.viewModel
         }
         private void AgregarVehiculoCliente(object obj)
         {
+            // Obtener el ID del mecánico desde el hilo actual
+            var identity = Thread.CurrentPrincipal?.Identity as IdentidadMecanico;
+            var idMecanico = identity?.Name;
+
             string connectionString = System.Configuration.ConfigurationManager.ConnectionStrings["PostgreSqlConnection"].ConnectionString;
             #region Comprobaciones
             // Validar DNI antes de continuar
@@ -290,19 +295,18 @@ namespace Prueba.viewModel
                 return; // Sale del método, no guarda nada
             }
             //Comprobar el id_mecanico
-            if (string.IsNullOrEmpty(UserData.id_mecanico))
+            if (string.IsNullOrEmpty(idMecanico))
             {
                 MessageBox.Show("El ID del mecánico no está definido.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
-            string mecanicoId = UserData.id_mecanico;
             #endregion
             try
             {
                 _CVRepository.GuardarClienteVehiculoYAsignar(DniCliente, NombreCliente, TelefonoCliente,
                                                        Matricula, Marca, Modelo,
                                                        MotivoIngreso, Descripcion, Asignar,
-                                                       UserData.id_mecanico);
+                                                       idMecanico);
                 MessageBox.Show("Cliente y vehiculo registrados/activados correctamente.");
             }
             catch (Exception ex)

@@ -19,7 +19,7 @@ namespace Prueba.viewModel
     public class FacturaViewModel : BaseViewModel
     {
         #region Listas
-        private ObservableCollection<FacturaVehiculoClienteDTO> _facturasPendientes = new();
+        private ObservableCollection<FacturaVehiculoClienteDTO> _facturasPendientes ;
         #endregion
         #region Campos
         private string _modeloVehiculo = string.Empty;
@@ -30,7 +30,7 @@ namespace Prueba.viewModel
         private string _telefonoCliente = string.Empty;
         private decimal _precioTotal = decimal.Zero;
 
-
+        
         private FacturaVehiculoClienteDTO _facturaSeleccionada = new();
         public string _nombreMecanico { get; set; } = string.Empty;
         private readonly FacturaRepository _facturaRepository;
@@ -127,14 +127,19 @@ namespace Prueba.viewModel
         #endregion
         public FacturaViewModel()
         {
+            //Identidad Mecanico
+            var identity = Thread.CurrentPrincipal?.Identity as IdentidadMecanico;
+            var idMecanico = identity?.Name;
+            NombreMecanico = identity?.NombreCompleto ?? "Desconocido";
+            //Instancias
+         
+            _facturaSeleccionada = new FacturaVehiculoClienteDTO();
             _facturaRepository = new FacturaRepository();
             FacturasPendientes = new ObservableCollection<FacturaVehiculoClienteDTO>();
-            
 
             ConfirmarFacturaCommand = new comandoViewModel(GenerarFacturaPDF, PuedeGenerarFactura);
             MostrarFacturasPendientesCommand = new comandoViewModel(MostrarFacturasPendientes);
             EliminarFacturaCommand = new comandoViewModel(EliminarLaFactura, PuedeEliminar);
-            NombreMecanico = UserData.Nombre ?? string.Empty;
 
             MostrarFacturasPendientes(null);
         }
@@ -161,13 +166,17 @@ namespace Prueba.viewModel
             {
                 FacturasPendientes.Clear();
 
-                if (string.IsNullOrWhiteSpace(UserData.id_mecanico))
+                // Obtener el ID del mecánico desde el hilo actual
+                var identity = Thread.CurrentPrincipal?.Identity as IdentidadMecanico;
+                var idMecanico = identity?.Name;
+
+                if (string.IsNullOrWhiteSpace(idMecanico))
                 {
                     MessageBox.Show("No se ha establecido el ID del mecánico.");
                     return;
                 }
 
-                var lista = _facturaRepository.ObtenerFacturasPendientesPorMecanico(UserData.id_mecanico);
+                var lista = _facturaRepository.ObtenerFacturasPendientesPorMecanico(idMecanico);
                 foreach (var v in lista)
                 {
                     FacturasPendientes.Add(v);

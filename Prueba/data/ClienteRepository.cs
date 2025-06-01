@@ -5,17 +5,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace Prueba.data
 {
-    public class ClienteRepository
+    public class ClienteRepository : Conexion
     {
-        private readonly string _connectionString;
-
-        public ClienteRepository()
-        {
-            _connectionString = System.Configuration.ConfigurationManager.ConnectionStrings["PostgreSqlConnection"].ConnectionString ?? throw new InvalidOperationException("Cadena de conexión no encontrada");
-        }
+        
 
         public Cliente? ObtenerPorDni(string dni)
         {
@@ -25,7 +21,7 @@ namespace Prueba.data
 
             Cliente? cliente = null;
 
-            using (var conn = new NpgsqlConnection(_connectionString))
+            using (var conn = GetConection())
             {
                 conn.Open();
                 const string sql = "SELECT dni, nombre, telefono FROM cliente WHERE dni = @dni";

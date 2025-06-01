@@ -12,16 +12,15 @@ using System.Windows;
 
 namespace Prueba.data
 {
-    public class VehiculoRepository
+    public class VehiculoRepository : Conexion
     {
-        private readonly string connectionString = System.Configuration.ConfigurationManager
-        .ConnectionStrings["PostgreSqlConnection"]?.ConnectionString ?? throw new InvalidOperationException("La cadena de conexión 'PostgreSqlConnection' no está definida.");
+        
 
         public List<Vehiculo> ObtenerVehiculosEnTaller()
         {
             var vehiculos = new List<Vehiculo>();
 
-            using (var connection = new NpgsqlConnection(connectionString))
+            using (var connection = GetConection())
             {
                 connection.Open();
 
@@ -50,7 +49,7 @@ namespace Prueba.data
         {
             var lista = new List<VehiculoReparacionDTO>();
 
-            using (var conn = new NpgsqlConnection(connectionString))
+            using (var conn  = GetConection())
             {
                 conn.Open();
                 var cmd = new NpgsqlCommand(@"
@@ -96,7 +95,7 @@ namespace Prueba.data
         // Elimina todos los repuestos asociados a una reparación de un vehículo por matrícula
         public void CancelarReparacionPorMatricula(string matricula)
         {
-            using (var connection = new NpgsqlConnection(connectionString))
+            using (var connection = GetConection())
             {
                 connection.Open();
 
@@ -141,7 +140,7 @@ namespace Prueba.data
         }
         public void AsignarVehiculoAVista(string matricula, string mecanicoId)
         {
-            using var conn = new NpgsqlConnection(connectionString);
+            using var conn = GetConection();
             conn.Open();
 
             using var trans = conn.BeginTransaction();
@@ -185,7 +184,7 @@ namespace Prueba.data
         }
         public void MarcarSalidaTaller(string matricula)
         {
-            using var conn = new NpgsqlConnection(connectionString);
+            using var conn = GetConection();
             conn.Open();
 
             using var cmd = new NpgsqlCommand("UPDATE vehiculo SET salida_taller = true WHERE matricula = @matricula", conn);
@@ -197,7 +196,7 @@ namespace Prueba.data
             
             Vehiculo? vehiculo = null;
 
-            using (var conn = new NpgsqlConnection(connectionString))
+            using (var conn = GetConection())
             {
                 conn.Open();
                 const string sql = "SELECT marca, modelo FROM vehiculo WHERE matricula = @matricula";

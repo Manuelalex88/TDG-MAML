@@ -10,7 +10,7 @@
     <SolidColorBrush x:Key="colorGreen" Color="ForestGreen" />
     <SolidColorBrush x:Key="colorBlue" Color="SkyBlue" />
     <SolidColorBrush x:Key="colorGray" Color="DarkGray" />
-    <SolidColorBrush x:Key="colorSilver" Color="Silver" />
+    <SolidColorBrush x:Key="colorSilver" Color="Silver"/>
     <!--Colores Solidos para los botones/texto...-->
     <SolidColorBrush x:Key="colorB1" Color="#80287CEB" />
     <SolidColorBrush x:Key="colorB2" Color="#fbff95" />

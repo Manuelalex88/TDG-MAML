@@ -1,15 +1,17 @@
 ﻿using Npgsql;
+using Prueba.model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace Prueba.data
 {
-    public class ClienteVehiculoRepository
+    public class ClienteVehiculoRepository : Conexion
     {
-        private readonly string connectionString = System.Configuration.ConfigurationManager.ConnectionStrings["PostgreSqlConnection"].ConnectionString;
+        
 
         public void GuardarClienteVehiculoYAsignar(string dniCliente, string nombreCliente, string telefonoCliente,
                                                    string matricula, string marca, string modelo,
@@ -17,7 +19,7 @@ namespace Prueba.data
                                                    string mecanicoId)
 
         {
-            using (var conn = new NpgsqlConnection(connectionString))
+            using (var conn = GetConection())
             {
                 conn.Open();
                 using (var transaction = conn.BeginTransaction())

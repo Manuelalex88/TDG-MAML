@@ -334,7 +334,11 @@ namespace Prueba.viewModel
 
         private void VehiculosAsignadosActualmente()
         {
-            if (string.IsNullOrEmpty(UserData.id_mecanico))
+            // Obtener el ID del mecánico desde el hilo actual
+            var identity = Thread.CurrentPrincipal?.Identity as IdentidadMecanico;
+            var idMecanico = identity?.Name;
+
+            if (string.IsNullOrEmpty(idMecanico))
             {
                 MessageBox.Show("El ID del mecánico no está definido.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
@@ -342,7 +346,7 @@ namespace Prueba.viewModel
 
             try
             {
-                var lista = _vehiculoRepository.ObtenerVehiculosAsignados(UserData.id_mecanico);
+                var lista = _vehiculoRepository.ObtenerVehiculosAsignados(idMecanico);
                 foreach (var v in lista)
                 {
                     VehiculosAsignados.Add(v);

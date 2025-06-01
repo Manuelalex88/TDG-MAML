@@ -14,16 +14,25 @@
 
         <!-- Mis Facturas Pendientes -->
         <GroupBox Header="Mis Facturas Pendientes" FontWeight="Bold" FontSize="14" Grid.Column="0" Margin="5">
-            <ListView ItemsSource="{Binding FacturasPendientes}"
+            <ListView ItemContainerStyle="{StaticResource EstiloListViewItemHover}"
+                      ItemsSource="{Binding FacturasPendientes}"
                       SelectedItem="{Binding FacturaSeleccionada}"
-                      Margin="5">
-                <ListView.View> <!--TOCAR ARREGLAR-->
-                    <GridView>
-                        <GridViewColumn Header="Modelo" Width="100" DisplayMemberBinding="{Binding Modelo}" />
-                        <GridViewColumn Header="Marca" Width="100" DisplayMemberBinding="{Binding Marca}" />
-                        <GridViewColumn Header="Matrícula" Width="100" DisplayMemberBinding="{Binding Matricula}" />
-                        <GridViewColumn Header="Cliente" Width="150" DisplayMemberBinding="{Binding ClienteNombre}" />
-                        <GridViewColumn Header="Fecha" Width="120" DisplayMemberBinding="{Binding FechaEmision}" />
+                      Style="{StaticResource EstiloListViewFacturas}">
+                <!--Estilo de la barra (Scrollbar)-->
+                <ListView.Resources>
+                    <Style TargetType="ScrollBar" BasedOn="{StaticResource ScrollBarHorizontalRedondeada}" />
+                </ListView.Resources>
+                <ListView.View> 
+                    <GridView ColumnHeaderContainerStyle="{StaticResource EstiloEncabezadoGridView}">
+                        <GridViewColumn Header="Modelo" Width="Auto" DisplayMemberBinding="{Binding Modelo}"/>
+                        <GridViewColumn Header="Marca" Width="Auto" DisplayMemberBinding="{Binding Marca}" />
+                        <GridViewColumn Header="Matrícula" Width="Auto" DisplayMemberBinding="{Binding Matricula}" />
+                        <GridViewColumn Header="Cliente" Width="Auto" DisplayMemberBinding="{Binding ClienteNombre}" />
+                        <GridViewColumn Header="Fecha de Reparación" Width="Auto">
+                            <GridViewColumn.DisplayMemberBinding>
+                                <Binding Path="FechaEmision" StringFormat="dd/MM/yyyy"/>
+                            </GridViewColumn.DisplayMemberBinding>
+                        </GridViewColumn>
                     </GridView>
                 </ListView.View>
             </ListView>
@@ -58,12 +67,17 @@
                             <TextBox Text="{Binding NombreMecanico}" Margin="0,0,0,5" IsReadOnly="True"/>
                         </StackPanel>
                     </GroupBox>
-
                     <!-- Precio total -->
-                    <StackPanel Orientation="Horizontal" Margin="0,20,0,0" VerticalAlignment="Center">
-                        <TextBlock Text="Precio Total:" VerticalAlignment="Center" FontWeight="Bold"/>
-                        <TextBlock Text="{Binding PrecioTotal, StringFormat=C}" Margin="10,0,0,0" FontSize="14"/>
-                    </StackPanel>
+                    <Border Background="{StaticResource colorSilver}"
+                            CornerRadius="10"
+                            Padding="10"
+                            Margin="0,20,0,0">
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                            <TextBlock Text="Precio Total:" VerticalAlignment="Center" FontWeight="Bold"/>
+                            <TextBlock Text="{Binding PrecioTotal, StringFormat=C}" 
+                                             Margin="10,0,0,0" FontSize="14"/>
+                        </StackPanel>
+                    </Border>
 
                     <!-- CRUD / Acciones -->
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,20,0,0">

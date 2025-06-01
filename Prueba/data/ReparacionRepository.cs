@@ -7,17 +7,19 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Configuration;
 using System.Windows;
 
 namespace Prueba.data
 {
-    public class ReparacionRepository
+    public class ReparacionRepository : Conexion
     {
-        private readonly string connectionString = System.Configuration.ConfigurationManager.ConnectionStrings["PostgreSqlConnection"].ConnectionString;
+        
+
 
         public void GuardarCambiosReparacion(VehiculoReparacionDTO vehiculo, string trabajo, string estado, List<Repuesto> repuestos)
         {
-            using var conn = new NpgsqlConnection(connectionString);
+            using var conn = GetConection();
             conn.Open();
 
             using var transaction = conn.BeginTransaction();
@@ -91,7 +93,7 @@ namespace Prueba.data
         }
         public void FinalizarReparacionActual(VehiculoReparacionDTO vehiculo,int reparacionId)
         {
-            using var conn = new NpgsqlConnection(connectionString);
+            using var conn = GetConection();
             conn.Open();
 
             using var transaction = conn.BeginTransaction();
@@ -149,7 +151,7 @@ namespace Prueba.data
         {
             var repuestos = new List<Repuesto>();
 
-            using var conn = new NpgsqlConnection(connectionString);
+            using var conn = GetConection();
             conn.Open();
 
             string query = @"
@@ -176,7 +178,7 @@ namespace Prueba.data
         }
         public int ObtenerIdReparacionPorMatricula(string matricula)
         {
-            using var conn = new NpgsqlConnection(connectionString);
+            using var conn = GetConection();
             conn.Open();
 
             using var cmd = new NpgsqlCommand("SELECT id FROM reparacion WHERE matricula_vehiculo = @matricula", conn);

@@ -6,14 +6,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace Prueba.data
 {
-    public class FacturaRepository
+    public class FacturaRepository : Conexion
     {
-        string connectionString = System.Configuration.ConfigurationManager
-                                                           .ConnectionStrings["PostgreSqlConnection"]
-                                                           .ConnectionString;
+        
 
         public List<FacturaVehiculoClienteDTO> ObtenerFacturasPendientesPorMecanico(string mecanicoId)
         {
@@ -37,7 +36,7 @@ namespace Prueba.data
                         WHERE r.mecanico_id = @mecanico_id
                           AND f.pagado = FALSE;";
 
-            using var conn = new NpgsqlConnection(connectionString);
+            using var conn = GetConection();
             conn.Open();
 
             using var cmd = new NpgsqlCommand(query, conn);
@@ -66,7 +65,7 @@ namespace Prueba.data
         {
             var lista = new List<Repuesto>();
 
-            using var conn = new NpgsqlConnection(connectionString);
+            using var conn = GetConection();
             conn.Open();
 
             var query = @"
@@ -99,7 +98,7 @@ namespace Prueba.data
         {
             string query = "UPDATE factura SET pagado = TRUE WHERE id = @id";
 
-            using var conn = new NpgsqlConnection(connectionString);
+            using var conn = GetConection();
             conn.Open();
 
             using var cmd = new NpgsqlCommand(query, conn);
@@ -109,7 +108,7 @@ namespace Prueba.data
         }
         public void MarcarRepuestosComoFacturados(int idReparacion)
         {
-            using var conn = new NpgsqlConnection(connectionString);
+            using var conn = GetConection();
             conn.Open();
 
             var query = "UPDATE repuesto_usado SET facturado = TRUE WHERE reparacion_id = @id";
@@ -119,7 +118,7 @@ namespace Prueba.data
         }
         public void EliminarFacturaSeleccionada(int facturaId)
         {
-            using var conn = new NpgsqlConnection(connectionString);
+            using var conn = GetConection();
             conn.Open();
 
             string query = "DELETE FROM factura WHERE id = @id";
@@ -133,7 +132,7 @@ namespace Prueba.data
         {
             var lista = new List<FacturaVehiculoClienteDTO>();
 
-            using (var connection = new NpgsqlConnection(connectionString))
+            using (var connection = GetConection())
             {
                 connection.Open();
 
