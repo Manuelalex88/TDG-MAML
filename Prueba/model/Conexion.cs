@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Prueba.model
 {
-    public abstract class Conexion //USAR
+    public abstract class Conexion 
     {
         private readonly string _conectionString;
 

@@ -53,12 +53,12 @@ namespace Prueba.data
             {
                 conn.Open();
                 var cmd = new NpgsqlCommand(@"
-            SELECT r.id, v.marca, v.matricula, r.estado, r.trabajo_a_realizar, r.fecha_inicio
-            FROM vehiculo v
-            JOIN reparacion r ON v.matricula = r.matricula_vehiculo
-            WHERE r.mecanico_id = @id 
-              AND v.salida_taller = false
-              AND r.estado NOT IN (@estado5, @estado6)", conn);
+                    SELECT r.id, v.marca, v.modelo, v.matricula, r.estado, r.trabajo_a_realizar, r.fecha_inicio
+                    FROM vehiculo v
+                    JOIN reparacion r ON v.matricula = r.matricula_vehiculo
+                    WHERE r.mecanico_id = @id 
+                      AND v.salida_taller = false
+                      AND r.estado NOT IN (@estado5, @estado6)", conn);
 
                 cmd.Parameters.AddWithValue("@id", idMecanico);
                 cmd.Parameters.AddWithValue("@estado5", DatosConstantes.Estado5);
@@ -68,6 +68,7 @@ namespace Prueba.data
                 {
                     int idIndex = reader.GetOrdinal("id");
                     int marcaIndex = reader.GetOrdinal("marca");
+                    int modelo = reader.GetOrdinal("modelo");
                     int matriculaIndex = reader.GetOrdinal("matricula");
                     int estadoIndex = reader.GetOrdinal("estado");
                     int trabajoIndex = reader.GetOrdinal("trabajo_a_realizar");
@@ -79,6 +80,7 @@ namespace Prueba.data
                         {
                             Id = reader.GetInt32(idIndex),
                             Marca = reader.IsDBNull(marcaIndex) ? string.Empty : reader.GetString(marcaIndex),
+                            Modelo = reader.IsDBNull(modelo) ? string.Empty : reader.GetString(modelo),
                             Matricula = reader.IsDBNull(matriculaIndex) ? string.Empty : reader.GetString(matriculaIndex),
                             Estado = reader.IsDBNull(estadoIndex) ? string.Empty : reader.GetString(estadoIndex),
                             TrabajoARealizar = reader.IsDBNull(trabajoIndex) ? string.Empty : reader.GetString(trabajoIndex),

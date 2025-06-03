@@ -5,6 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Prueba.view"
         xmlns:viewModel="clr-namespace:Prueba.viewModel" xmlns:customcontrols="clr-namespace:Prueba.customControls"
+        xmlns:fa="http://schemas.awesome.incremented/wpf/xaml/fontawesome.sharp"
+        xmlns:converters="clr-namespace:Prueba.converters"
         mc:Ignorable="d"
         WindowStartupLocation="CenterScreen"
         WindowStyle="None"
@@ -19,6 +21,7 @@
 
     <Window.Resources>
         <BooleanToVisibilityConverter x:Key="BooleanToVisibility"/>
+        <converters:EstadoIconoConverter x:Key="EstadoIconoConverter"/>
     </Window.Resources>
 
 
@@ -37,12 +40,13 @@
             BorderBrush="{StaticResource colorFondoPrimario}"
             BorderThickness="5"
             Opacity="0.82">
-            <!--Metemos un Grid hijo para el titulo login -->
+            
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="30"/>
-                    <RowDefinition Height="329*"/>
-                    <RowDefinition Height="181*"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="2*"/>
+                    <RowDefinition Height="30"/>
                 </Grid.RowDefinitions>
                 <!--Grid para los "objetos" del login -->
                 <Grid>
@@ -68,7 +72,8 @@
                             FontFamily="Montserrat"
                             Cursor="Hand"
                             Grid.Column="1"
-                            Click="btnMinimizar_Click">
+                            Command="{Binding MinimizeCommand}"
+                            CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}">
                         <!--Diseño del boton (Ambos iguales) -->
                         <Button.Template>
                             <ControlTemplate TargetType="Button">
@@ -104,7 +109,8 @@
                             FontFamily="Montserrat"
                             Cursor="Hand"
                             Grid.Column="2"
-                            Click="btnCerrar_Click">
+                            Command="{Binding CloseCommand}"
+                            CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}">
 
                         <Button.Template>
                             <ControlTemplate TargetType="Button">
@@ -151,6 +157,7 @@
                                FontFamily="Montserrat"
                                HorizontalAlignment="Center"
                                Margin="0,5,0,0"/>
+                    
                     <!--Texblock del nombre del usuario -->
                     <TextBlock Text="Usuario"
                                Foreground="{StaticResource colorBlanco}"
@@ -195,6 +202,7 @@
                     <!--Boton del login -->
                     <Button x:Name="btnLogin"
                             Command="{Binding LoginCommand}"
+                            CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}"
                             BorderThickness="0"
                             Content="LOG IN"
                             FontSize="15"
@@ -228,8 +236,25 @@
                                 </Style.Triggers>
                             </Style>
                         </Button.Style>
-
                     </Button>
+                <!--Icono de BD con la confirmacion-->    
+                </StackPanel>
+                <StackPanel Grid.Row="3"
+                    Orientation="Horizontal"
+                    Margin="10,0,0,5"
+                    VerticalAlignment="Bottom"
+                    HorizontalAlignment="Left">
+                    <fa:IconBlock Icon="Database"
+                      Width="20"
+                      Height="20"
+                      VerticalAlignment="Center"
+                      Foreground="{StaticResource colorBlanco}"/>
+                    <fa:IconBlock Width="20"
+                      Height="20"
+                      Margin="5,0,0,0"
+                      VerticalAlignment="Center"
+                      Icon="{Binding ConexionBDActiva, Converter={StaticResource EstadoIconoConverter}}"
+                      Foreground="{StaticResource colorBlue}"/>
                 </StackPanel>
             </Grid>
         </Border>

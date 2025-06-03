@@ -17,7 +17,6 @@ namespace Prueba.viewModel
     {
         #region Campos
         private BaseViewModel? _currentChildView;
-
         private string _caption = String.Empty;
         private IconChar _icon;
         private string _nombreUsuario = String.Empty;

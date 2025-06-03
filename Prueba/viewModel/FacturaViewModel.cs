@@ -19,7 +19,7 @@ namespace Prueba.viewModel
     public class FacturaViewModel : BaseViewModel
     {
         #region Listas
-        private ObservableCollection<FacturaVehiculoClienteDTO> _facturasPendientes ;
+        private ObservableCollection<FacturaVehiculoClienteDTO> _facturasPendientes;
         #endregion
         #region Campos
         private string _modeloVehiculo = string.Empty;
@@ -132,15 +132,15 @@ namespace Prueba.viewModel
             var idMecanico = identity?.Name;
             NombreMecanico = identity?.NombreCompleto ?? "Desconocido";
             //Instancias
-         
+            _facturasPendientes = new ObservableCollection<FacturaVehiculoClienteDTO>();
             _facturaSeleccionada = new FacturaVehiculoClienteDTO();
             _facturaRepository = new FacturaRepository();
             FacturasPendientes = new ObservableCollection<FacturaVehiculoClienteDTO>();
-
+            //Comandos
             ConfirmarFacturaCommand = new comandoViewModel(GenerarFacturaPDF, PuedeGenerarFactura);
             MostrarFacturasPendientesCommand = new comandoViewModel(MostrarFacturasPendientes);
             EliminarFacturaCommand = new comandoViewModel(EliminarLaFactura, PuedeEliminar);
-
+            //Metodos
             MostrarFacturasPendientes(null);
         }
 
@@ -172,7 +172,6 @@ namespace Prueba.viewModel
 
                 if (string.IsNullOrWhiteSpace(idMecanico))
                 {
-                    MessageBox.Show("No se ha establecido el ID del mecánico.");
                     return;
                 }
 
@@ -196,7 +195,6 @@ namespace Prueba.viewModel
         {
             return FacturaSeleccionada != null && PrecioTotal > 0;
         }
-
         private bool PuedeEliminar(object? obj)
         {
             return FacturaSeleccionada != null && PrecioTotal > 0;

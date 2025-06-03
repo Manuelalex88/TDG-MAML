@@ -21,21 +21,16 @@ namespace Prueba.view
     /// </summary>
     public partial class Login : Window
     {
-        public bool LoginCorrecto { get; set; } = false;
+        
         public Login()
         {
+            this.StateChanged += LoginView_StateChanged;
             InitializeComponent();
-            ConectarBaseDeDatos();
-            // Enlazamos la acción de cierre para MVVM
-            if (DataContext is loginViewModel vm)
-            {
-                vm.CerrarVentanaAction = () =>
-                {
-                    LoginCorrecto = true;
-                     
-                };
-            }
+            
         }
+
+        
+
         /*Usamos esta función para poder mover la ventana con hacer click en ella en cualquier lugar -MAML*/
         private void Window_MouseDown(object sender, MouseButtonEventArgs e)
         {
@@ -43,41 +38,39 @@ namespace Prueba.view
             
         }
 
-        private void btnMinimizar_Click(object sender, RoutedEventArgs e)
-        {
-            WindowState = WindowState.Minimized;
-        }
-
-        private void btnCerrar_Click(object sender, RoutedEventArgs e)
-        {
-            Application.Current.Shutdown();
-            
-        }
 
 
-        /// <summary>
-        /// FUNCIONES
-        /// </summary>
+        #region Metodos
         /*Prueba para conexión de BD -MAML*/
-        private void ConectarBaseDeDatos()
-        {
-            try
+        private void LoginView_StateChanged(object? sender, EventArgs e)
+        { //Esta funcion para desacer la animacion de minimizar al volver a abrirlo
+            if (this.WindowState == WindowState.Normal && this.Opacity < 1)
             {
-                // Obtén la cadena de conexión desde el archivo de configuración
-                string connectionString = System.Configuration.ConfigurationManager.ConnectionStrings["PostgreSqlConnection"].ConnectionString;
-
-                using (var conexion = new NpgsqlConnection(connectionString))
+                // Restaurar visibilidad suavemente
+                var anim = new System.Windows.Media.Animation.DoubleAnimation
                 {
-                    conexion.Open();
-                    MessageBox.Show("Conexión exitosa a la base de datos.");
-                    
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Error al conectar con la base de datos: {ex.Message}");
+                    From = 0.0,
+                    To = 1.0,
+                    Duration = TimeSpan.FromMilliseconds(200)
+                };
+                this.BeginAnimation(Window.OpacityProperty, anim);
             }
         }
-        
+
+        public void MinimizarConAnimacion()
+        {
+            //Esta funcion para hacer una animacion de minimizar decente. Por que de base es muy tosco
+            var anim = new System.Windows.Media.Animation.DoubleAnimation
+            {
+                From = 1.0,
+                To = 0.0,
+                Duration = TimeSpan.FromMilliseconds(200)
+            };
+
+            anim.Completed += (s, e) => this.WindowState = WindowState.Minimized;
+
+            this.BeginAnimation(Window.OpacityProperty, anim);
+        }
+        #endregion
     }
 }

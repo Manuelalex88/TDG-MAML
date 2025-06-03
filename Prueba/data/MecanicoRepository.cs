@@ -37,5 +37,19 @@ namespace Prueba.repository
 
             return null; 
         }
+
+        public bool TestConexion()
+        {
+            using var conexion = GetConection(); 
+            try
+            {
+                conexion.Open();
+                return conexion.State == System.Data.ConnectionState.Open;
+            }
+            catch
+            {
+                return false;
+            }
+        }
     }
 }

@@ -25,7 +25,6 @@ namespace Prueba.view
         public principalView()
         {
             InitializeComponent();
-       
         }
     }
 }

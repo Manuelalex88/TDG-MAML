@@ -128,7 +128,7 @@ namespace Prueba.data
 
             cmd.ExecuteNonQuery();
         }
-        public List<FacturaVehiculoClienteDTO> ObtenerFacturasPorMecanico(string idMecanico)
+        public List<FacturaVehiculoClienteDTO> ObtenerFacturasPagadasPorMecanico(string idMecanico)
         {
             var lista = new List<FacturaVehiculoClienteDTO>();
 

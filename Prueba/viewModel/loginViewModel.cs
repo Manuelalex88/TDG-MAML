@@ -1,84 +1,110 @@
-﻿using Npgsql;
+﻿using FontAwesome.Sharp;
+using Npgsql;
 using Prueba.model;
 using Prueba.repository;
+using Prueba.view;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Security;
 using System.Security.Principal;
-using System.Text;
-using System.Threading.Tasks;
+using System.Threading;
 using System.Windows;
 using System.Windows.Input;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Prueba.viewModel
 {
     public class loginViewModel : BaseViewModel
     {
-        //Campos
+        #region Campos
         private string _username;
         private SecureString _password = new SecureString();
         private string _mensajeError;
-        private bool _IsViewVisible = true;
+        private bool _conexionBDActiva;
+        #endregion
 
-        //Propiedades
+        #region Propiedades
+
+
+        public bool ConexionBDActiva
+        {
+            get => _conexionBDActiva;
+            set => SetProperty(ref _conexionBDActiva, value);
+        }
         public string Username
         {
             get => _username;
             set => SetProperty(ref _username, value);
         }
+
         public SecureString Password
         {
             get => _password;
             set => SetProperty(ref _password, value);
         }
+
         public string MensajeError
         {
             get => _mensajeError;
             set => SetProperty(ref _mensajeError, value);
         }
-        public bool IsViewVisible
-        {
-            get => _IsViewVisible;
-            set => SetProperty(ref _IsViewVisible, value);
-        }
-        //Comandos
-        public Action CerrarVentanaAction { get; set; } = () => { };
+        #endregion
 
+        #region Comandos
         public ICommand LoginCommand { get; set; }
+        public ICommand CloseCommand { get; }
+        public ICommand MinimizeCommand { get; }
+        #endregion
 
-        //Constructor
+        // Constructor
         public loginViewModel()
         {
+            //Inicializar
+            _username = string.Empty;
+            _mensajeError = string.Empty;
+            //Comandos
             LoginCommand = new comandoViewModel(ExecuteLoginCommand, CanExecuteLoginCommand);
+            CloseCommand = new comandoViewModel(o => ((Window)o!).Close());
+            MinimizeCommand = new comandoViewModel(o =>
+            {
+                if (o is Login view)
+                {
+                    view.MinimizarConAnimacion();
+                }
+            });
+            //Metodos
+            VerificarConexionBD();
         }
 
+        #region Métodos
 
-        #region Metodos
-        //Metodo para no poner set { _loquesea = value; OnPropertyChanged(loquesea) y poner simplemente SetProperty(ref Loquesea, value)
         protected bool SetProperty<T>(ref T backingField, T value, [CallerMemberName] string? propertyName = null)
         {
             if (EqualityComparer<T>.Default.Equals(backingField, value))
                 return false;
 
             backingField = value;
-
             if (propertyName != null)
                 OnPropertyChanged(propertyName);
 
             return true;
         }
-        //Si los datos son validos el boton se habilitara para hacer clic
+        private void VerificarConexionBD()
+        {
+            try
+            {
+                var repo = new MecanicoRepository();
+                ConexionBDActiva = repo.TestConexion(); 
+            }
+            catch
+            {
+                ConexionBDActiva = false;
+            }
+        }
         private bool CanExecuteLoginCommand(object? obj)
         {
-            bool validData;
-            if (string.IsNullOrWhiteSpace(Username) || Username.Length < 5
-                || Password == null || Password.Length < 3) validData = false;
-            else validData = true;
-            return validData;
+            return !(string.IsNullOrWhiteSpace(Username) || Username.Length < 5 || Password == null || Password.Length < 3);
         }
 
         private void ExecuteLoginCommand(object obj)
@@ -94,15 +120,17 @@ namespace Prueba.viewModel
                 var repo = new MecanicoRepository();
                 var mecanico = repo.Login(Username, plainPassword);
 
-                if (mecanico != null) //MIRAR Y APRENDER
+                if (mecanico != null)
                 {
                     var identity = new IdentidadMecanico(mecanico.Id, mecanico.Nombre);
-                    var roles = new[] { "mecanico" }; // si usas roles más adelante
-
+                    var roles = new[] { "mecanico", "admin" };
                     Thread.CurrentPrincipal = new GenericPrincipal(identity, roles);
 
-                    IsViewVisible = false;
-                    CerrarVentanaAction?.Invoke();
+                    var ventanaPrincipal = new VentanaPrincipal();
+                    ventanaPrincipal.Show();
+
+                    if (obj is Window window)
+                        window.Close();
                 }
                 else
                 {
@@ -119,7 +147,7 @@ namespace Prueba.viewModel
                     Marshal.ZeroFreeBSTR(passwordBSTR);
             }
         }
-        #endregion
 
+        #endregion
     }
 }

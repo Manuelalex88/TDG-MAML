@@ -12,17 +12,8 @@ namespace Prueba
 
         private void Application_Startup(object sender, StartupEventArgs e)
         {
-            var Login = new Login();
-            Login.Show();
-            Login.IsVisibleChanged += (s, ev) =>
-            {
-                if (Login.IsVisible == false && Login.IsLoaded)
-                {
-                    var VentanaPrincipal = new VentanaPrincipal();
-                    VentanaPrincipal.Show();
-                    Login.Close();
-                }
-            };
+            var loginView = new Login(); 
+            loginView.Show();
         }
     }
 

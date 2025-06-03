@@ -8,124 +8,139 @@
              xmlns:local="clr-namespace:Prueba.view"
              mc:Ignorable="d" 
              d:DesignHeight="600" d:DesignWidth="800">
-  
+
     <ScrollViewer VerticalScrollBarVisibility="Auto" Background="Transparent">
         <StackPanel Margin="20" Orientation="Vertical">
 
-            <!-- Bienvenida -->
+            <!-- Texto Bienvenida -->
             <TextBlock Text="{Binding TextoEntrada}" 
-                       FontSize="28" FontWeight="Bold" Foreground="#2C3E50"
+                       FontSize="20" FontWeight="Bold" Foreground="{StaticResource colorIconosVentanaPrincipal}"
                        Margin="0,0,0,20"/>
 
-            <!-- Resumen Rápido -->
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Margin="0,0,0,20">
-                <Border Background="#DFF0D8" CornerRadius="10" Padding="15" Margin="0,0,20,0">
-                    <TextBlock>
-                        <Run Text="🛠 Reparaciones asignadas: "/>
-                        <Run Text="{Binding VehiculosAsignados.Count}"/>
-                    </TextBlock>
-                </Border>
-                <Border Background="#D9EDF7" CornerRadius="10" Padding="15" Width="227">
-                    <TextBlock>
-                        <Run Text="📄 Facturas emitidas: "/>
-                        <Run Text="{Binding ListaFacturas.Count}"/>
-                    </TextBlock>
-                </Border>
-            </StackPanel>
+            <!-- Grid para dos columnas -->
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <!-- Columna izquierda -->
+                    <ColumnDefinition Width="*" />
+                    <!-- Columna derecha -->
+                </Grid.ColumnDefinitions>
 
-            <!-- Historial de Facturas -->
-            <TextBlock Text="Mis Facturas" FontSize="22" FontWeight="SemiBold" Foreground="#34495E" Margin="0,10,0,10"/>
+                <!-- Columna Izquierda: Reparaciones -->
+                <StackPanel Grid.Column="0" Margin="0,0,20,0" Orientation="Vertical">
 
-            <Border Background="White" CornerRadius="8" Padding="10" Margin="0,0,0,20">
-                <ListView ItemsSource="{Binding ListaFacturas}" ScrollViewer.VerticalScrollBarVisibility="Auto">
-                    <ListView.View>
-                        <GridView>
-                            <GridViewColumn Header="ID" DisplayMemberBinding="{Binding Id}" Width="80"/>
+                    <!-- Resumen Reparaciones  -->
+                    <Border Background="#DFF0D8" CornerRadius="10" Padding="15" Margin="0,0,0,20" Width="230" HorizontalAlignment="Left">
+                        <TextBlock>
+                            <Run Text="🛠 Reparaciones asignadas: "/>
+                            <Run Text="{Binding ReparacionesAsignadas.Count, Mode=OneWay}"/>
+                        </TextBlock>
+                    </Border>
 
-                            <GridViewColumn Header="Cliente" Width="200">
-                                <GridViewColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <TextBlock Text="{Binding ClienteNombre}" 
-                                                   TextWrapping="Wrap"
-                                                   TextTrimming="CharacterEllipsis"/>
-                                    </DataTemplate>
-                                </GridViewColumn.CellTemplate>
-                            </GridViewColumn>
+                    <TextBlock Text="Mis Reparaciones Actuales" FontSize="22" FontWeight="SemiBold" Foreground="{StaticResource colorIconosVentanaPrincipal}" Margin="0,0,0,10"/>
+                    <Border Background="White" CornerRadius="8" Padding="10" HorizontalAlignment="Stretch" Height="Auto" MinHeight="250">
+                        <ListView ItemsSource="{Binding ReparacionesAsignadas}" ScrollViewer.VerticalScrollBarVisibility="Auto">
+                            <ListView.View>
+                                <GridView>
+                                    <GridViewColumn Header="Matrícula" Width="Auto">
+                                        <GridViewColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <TextBlock Text="{Binding Matricula}" TextWrapping="Wrap" TextTrimming="CharacterEllipsis"/>
+                                            </DataTemplate>
+                                        </GridViewColumn.CellTemplate>
+                                    </GridViewColumn>
 
-                            <GridViewColumn Header="Fecha" Width="150">
-                                <GridViewColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <TextBlock Text="{Binding FechaEmision, StringFormat='{}{0:dd/MM/yyyy}'}"/>
-                                    </DataTemplate>
-                                </GridViewColumn.CellTemplate>
-                            </GridViewColumn>
+                                    <GridViewColumn Header="Marca" Width="Auto">
+                                        <GridViewColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <TextBlock Text="{Binding Marca}" TextWrapping="Wrap" TextTrimming="CharacterEllipsis"/>
+                                            </DataTemplate>
+                                        </GridViewColumn.CellTemplate>
+                                    </GridViewColumn>
 
-                            <GridViewColumn Header="Total" DisplayMemberBinding="{Binding Total}" Width="100"/>
+                                    <GridViewColumn Header="Modelo" Width="Auto">
+                                        <GridViewColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <TextBlock Text="{Binding Modelo}" TextWrapping="Wrap" TextTrimming="CharacterEllipsis"/>
+                                            </DataTemplate>
+                                        </GridViewColumn.CellTemplate>
+                                    </GridViewColumn>
 
-                            <GridViewColumn Header="Descargar" Width="100">
-                                <GridViewColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <Button ToolTip="Descargar Factura" 
-                                                Command="{Binding DataContext.DescargarFacturaCommand, RelativeSource={RelativeSource AncestorType=ListView}}"
-                                                CommandParameter="{Binding}">
-                                            <fa:IconBlock Icon="FileDownload" Foreground="DarkSlateGray" Width="20" Height="20"/>
-                                        </Button>
-                                    </DataTemplate>
-                                </GridViewColumn.CellTemplate>
-                            </GridViewColumn>
-                        </GridView>
-                    </ListView.View>
-                </ListView>
-            </Border>
+                                    <GridViewColumn Header="Fecha Inicio" Width="Auto">
+                                        <GridViewColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <TextBlock Text="{Binding Fecha_Inicio, StringFormat='{}{0:dd/MM/yyyy}'}"/>
+                                            </DataTemplate>
+                                        </GridViewColumn.CellTemplate>
+                                    </GridViewColumn>
+                                </GridView>
+                            </ListView.View>
+                        </ListView>
+                    </Border>
 
-            <!-- Reparaciones asignadas -->
-            <TextBlock Text="Mis Reparaciones Actuales" FontSize="22" FontWeight="SemiBold" Foreground="#34495E" Margin="0,10,0,10"/>
+                </StackPanel>
 
-            <Border Background="White" CornerRadius="8" Padding="10" Margin="0,0,0,40">
-                <ListView ItemsSource="{Binding ReparacionesAsignadas}" ScrollViewer.VerticalScrollBarVisibility="Auto">
-                    <ListView.View>
-                        <GridView>
-                            <GridViewColumn Header="Matrícula" Width="120">
-                                <GridViewColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <TextBlock Text="{Binding Matricula}" 
-                                                   TextWrapping="Wrap"
-                                                   TextTrimming="CharacterEllipsis"/>
-                                    </DataTemplate>
-                                </GridViewColumn.CellTemplate>
-                            </GridViewColumn>
+                <!-- Columna Derecha: Facturas -->
+                <StackPanel Grid.Column="1" Orientation="Vertical">
 
-                            <GridViewColumn Header="Marca" Width="150">
-                                <GridViewColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <TextBlock Text="{Binding Marca}" 
-                                                   TextWrapping="Wrap"
-                                                   TextTrimming="CharacterEllipsis"/>
-                                    </DataTemplate>
-                                </GridViewColumn.CellTemplate>
-                            </GridViewColumn>
+                    <!-- Resumen Facturas -->
+                    <Border Background="#D9EDF7" CornerRadius="10" Padding="15" Margin="0,0,0,20" Width="230" HorizontalAlignment="Left">
+                        <TextBlock>
+                            <Run Text="📄 Facturas emitidas: "/>
+                            <Run Text="{Binding MisFacturas.Count, Mode=OneWay}"/>
+                        </TextBlock>
+                    </Border>
 
-                            <GridViewColumn Header="Modelo" Width="150">
-                                <GridViewColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <TextBlock Text="{Binding Modelo}" 
-                                                   TextWrapping="Wrap"
-                                                   TextTrimming="CharacterEllipsis"/>
-                                    </DataTemplate>
-                                </GridViewColumn.CellTemplate>
-                            </GridViewColumn>
+                    <TextBlock Text="Mis Facturas" FontSize="22" FontWeight="SemiBold" Foreground="{StaticResource colorIconosVentanaPrincipal}" Margin="0,0,0,10"/>
+                    <Border Background="White" CornerRadius="8" Padding="10" HorizontalAlignment="Stretch" Height="Auto" MinHeight="250">
+                        <ListView ItemsSource="{Binding MisFacturas}" ScrollViewer.VerticalScrollBarVisibility="Auto" HorizontalAlignment="Stretch">
+                            <ListView.View>
+                                <GridView>
+                                    <GridViewColumn Header="Matricula" DisplayMemberBinding="{Binding Matricula}" Width="Auto"/>
 
-                            <GridViewColumn Header="Fecha Inicio" Width="150">
-                                <GridViewColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <TextBlock Text="{Binding Fecha_Inicio, StringFormat='{}{0:dd/MM/yyyy}'}"/>
-                                    </DataTemplate>
-                                </GridViewColumn.CellTemplate>
-                            </GridViewColumn>
-                        </GridView>
-                    </ListView.View>
-                </ListView>
-            </Border>
+                                    <GridViewColumn Header="Cliente" Width="Auto">
+                                        <GridViewColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <TextBlock Text="{Binding ClienteNombre}" TextWrapping="Wrap" TextTrimming="CharacterEllipsis"/>
+                                            </DataTemplate>
+                                        </GridViewColumn.CellTemplate>
+                                    </GridViewColumn>
+
+                                    <GridViewColumn Header="Fecha" Width="Auto">
+                                        <GridViewColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <TextBlock Text="{Binding FechaEmision, StringFormat='{}{0:dd/MM/yyyy}'}"/>
+                                            </DataTemplate>
+                                        </GridViewColumn.CellTemplate>
+                                    </GridViewColumn>
+
+                                    <GridViewColumn Header="Total" DisplayMemberBinding="{Binding Total}" Width="Auto"/>
+
+                                    <GridViewColumn Header="Descargar" Width="Auto">
+                                        <GridViewColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <Button ToolTip="Descargar Factura" 
+                                                        Command="{Binding DataContext.DescargarFacturaCommand, RelativeSource={RelativeSource AncestorType=ListView}}"
+                                                        CommandParameter="{Binding}"
+                                                        Background="Transparent"
+                                                        HorizontalAlignment="Center"
+                                                        VerticalAlignment="Center"
+                                                        BorderThickness="0"
+                                                        Padding="0"
+                                                        Cursor="Hand">
+                                                    <fa:IconBlock Icon="Download" Foreground="DarkSlateGray" Width="20" Height="20"/>
+                                                </Button>
+                                            </DataTemplate>
+                                        </GridViewColumn.CellTemplate>
+                                    </GridViewColumn>
+                                </GridView>
+                            </ListView.View>
+                        </ListView>
+                    </Border>
+
+                </StackPanel>
+
+            </Grid>
 
         </StackPanel>
     </ScrollViewer>
