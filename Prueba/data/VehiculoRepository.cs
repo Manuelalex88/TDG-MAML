@@ -14,33 +14,39 @@ namespace Prueba.data
 {
     public class VehiculoRepository : Conexion
     {
-        
+
 
         public List<Vehiculo> ObtenerVehiculosEnTaller()
         {
             var vehiculos = new List<Vehiculo>();
 
-            using (var connection = GetConection())
+            try
             {
-                connection.Open();
-
-                string query = "SELECT matricula, marca, modelo FROM vehiculo WHERE asignado = false AND salida_taller = false";
-
-
-                using (var command = new NpgsqlCommand(query, connection))
-                using (var reader = command.ExecuteReader())
+                using (var connection = GetConection())
                 {
-                    while (reader.Read())
+                    connection.Open();
+
+                    string query = "SELECT matricula, marca, modelo FROM vehiculo WHERE asignado = false AND salida_taller = false";
+
+                    using (var command = new NpgsqlCommand(query, connection))
+                    using (var reader = command.ExecuteReader())
                     {
-                        var vehiculo = new Vehiculo
+                        while (reader.Read())
                         {
-                            Matricula = reader.GetString(reader.GetOrdinal("matricula")),
-                            Marca = reader.GetString(reader.GetOrdinal("marca")),
-                            Modelo = reader.GetString(reader.GetOrdinal("modelo")),
-                        };
-                        vehiculos.Add(vehiculo);
+                            var vehiculo = new Vehiculo
+                            {
+                                Matricula = reader.GetString(reader.GetOrdinal("matricula")),
+                                Marca = reader.GetString(reader.GetOrdinal("marca")),
+                                Modelo = reader.GetString(reader.GetOrdinal("modelo")),
+                            };
+                            vehiculos.Add(vehiculo);
+                        }
                     }
                 }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error al obtener vehículos en taller: " + ex.Message);
             }
 
             return vehiculos;
@@ -49,45 +55,44 @@ namespace Prueba.data
         {
             var lista = new List<VehiculoReparacionDTO>();
 
-            using (var conn  = GetConection())
+            try
             {
-                conn.Open();
-                var cmd = new NpgsqlCommand(@"
-                    SELECT r.id, v.marca, v.modelo, v.matricula, r.estado, r.trabajo_a_realizar, r.fecha_inicio
-                    FROM vehiculo v
-                    JOIN reparacion r ON v.matricula = r.matricula_vehiculo
-                    WHERE r.mecanico_id = @id 
-                      AND v.salida_taller = false
-                      AND r.estado NOT IN (@estado5, @estado6)", conn);
-
-                cmd.Parameters.AddWithValue("@id", idMecanico);
-                cmd.Parameters.AddWithValue("@estado5", DatosConstantes.Estado5);
-                cmd.Parameters.AddWithValue("@estado6", DatosConstantes.Estado6);
-
-                using (var reader = cmd.ExecuteReader())
+                using (var conn = GetConection())
                 {
-                    int idIndex = reader.GetOrdinal("id");
-                    int marcaIndex = reader.GetOrdinal("marca");
-                    int modelo = reader.GetOrdinal("modelo");
-                    int matriculaIndex = reader.GetOrdinal("matricula");
-                    int estadoIndex = reader.GetOrdinal("estado");
-                    int trabajoIndex = reader.GetOrdinal("trabajo_a_realizar");
-                    int fechaInicioIndex = reader.GetOrdinal("fecha_inicio");
+                    conn.Open();
+                    var cmd = new NpgsqlCommand(@"
+                        SELECT r.id, v.marca, v.modelo, v.matricula, r.estado, r.trabajo_a_realizar, r.fecha_inicio
+                        FROM vehiculo v
+                        JOIN reparacion r ON v.matricula = r.matricula_vehiculo
+                        WHERE r.mecanico_id = @id 
+                          AND v.salida_taller = false
+                          AND r.estado NOT IN (@estado5, @estado6)", conn);
 
-                    while (reader.Read())
+                    cmd.Parameters.AddWithValue("@id", idMecanico);
+                    cmd.Parameters.AddWithValue("@estado5", DatosConstantes.Estado5);
+                    cmd.Parameters.AddWithValue("@estado6", DatosConstantes.Estado6);
+
+                    using (var reader = cmd.ExecuteReader())
                     {
-                        lista.Add(new VehiculoReparacionDTO
+                        while (reader.Read())
                         {
-                            Id = reader.GetInt32(idIndex),
-                            Marca = reader.IsDBNull(marcaIndex) ? string.Empty : reader.GetString(marcaIndex),
-                            Modelo = reader.IsDBNull(modelo) ? string.Empty : reader.GetString(modelo),
-                            Matricula = reader.IsDBNull(matriculaIndex) ? string.Empty : reader.GetString(matriculaIndex),
-                            Estado = reader.IsDBNull(estadoIndex) ? string.Empty : reader.GetString(estadoIndex),
-                            TrabajoARealizar = reader.IsDBNull(trabajoIndex) ? string.Empty : reader.GetString(trabajoIndex),
-                            Fecha_Inicio = reader.IsDBNull(fechaInicioIndex) ? DateTime.MinValue : reader.GetDateTime(fechaInicioIndex)
-                        });
+                            lista.Add(new VehiculoReparacionDTO
+                            {
+                                Id = reader.GetInt32(reader.GetOrdinal("id")),
+                                Marca = reader.IsDBNull(reader.GetOrdinal("marca")) ? string.Empty : reader.GetString(reader.GetOrdinal("marca")),
+                                Modelo = reader.IsDBNull(reader.GetOrdinal("modelo")) ? string.Empty : reader.GetString(reader.GetOrdinal("modelo")),
+                                Matricula = reader.IsDBNull(reader.GetOrdinal("matricula")) ? string.Empty : reader.GetString(reader.GetOrdinal("matricula")),
+                                Estado = reader.IsDBNull(reader.GetOrdinal("estado")) ? string.Empty : reader.GetString(reader.GetOrdinal("estado")),
+                                TrabajoARealizar = reader.IsDBNull(reader.GetOrdinal("trabajo_a_realizar")) ? string.Empty : reader.GetString(reader.GetOrdinal("trabajo_a_realizar")),
+                                Fecha_Inicio = reader.IsDBNull(reader.GetOrdinal("fecha_inicio")) ? DateTime.MinValue : reader.GetDateTime(reader.GetOrdinal("fecha_inicio"))
+                            });
+                        }
                     }
                 }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error al obtener vehículos asignados: " + ex.Message);
             }
 
             return lista;
@@ -97,49 +102,52 @@ namespace Prueba.data
         // Elimina todos los repuestos asociados a una reparación de un vehículo por matrícula
         public void CancelarReparacionPorMatricula(string matricula)
         {
-            using (var connection = GetConection())
+            try
             {
-                connection.Open();
-
-                using (var transaction = connection.BeginTransaction())
+                using (var connection = GetConection())
                 {
-                    try
+                    connection.Open();
+                    using (var transaction = connection.BeginTransaction())
                     {
-                        // Obtener ID de la reparación
-                        var getIdCmd = new NpgsqlCommand("SELECT id FROM reparacion WHERE matricula_vehiculo = @matricula", connection);
-                        getIdCmd.Parameters.AddWithValue("@matricula", matricula);
-                        var reparacionId = getIdCmd.ExecuteScalar();
+                        try
+                        {
+                            var getIdCmd = new NpgsqlCommand("SELECT id FROM reparacion WHERE matricula_vehiculo = @matricula", connection);
+                            getIdCmd.Parameters.AddWithValue("@matricula", matricula);
+                            var reparacionId = getIdCmd.ExecuteScalar();
 
-                        if (reparacionId == null)
-                            throw new Exception("No se encontró la reparación para la matrícula dada.");
+                            if (reparacionId == null)
+                                throw new Exception("No se encontró la reparación para la matrícula dada.");
 
-                        int repId = Convert.ToInt32(reparacionId);
+                            int repId = Convert.ToInt32(reparacionId);
 
-                        // Eliminar repuestos usados
-                        var deleteRepuestosCmd = new NpgsqlCommand("DELETE FROM repuesto_usado WHERE reparacion_id = @repId", connection);
-                        deleteRepuestosCmd.Parameters.AddWithValue("@repId", repId);
-                        deleteRepuestosCmd.ExecuteNonQuery();
+                            var deleteRepuestosCmd = new NpgsqlCommand("DELETE FROM repuesto_usado WHERE reparacion_id = @repId", connection);
+                            deleteRepuestosCmd.Parameters.AddWithValue("@repId", repId);
+                            deleteRepuestosCmd.ExecuteNonQuery();
 
-                        // Marcar vehículo como no asignado
-                        var updateVehiculoCmd = new NpgsqlCommand("UPDATE vehiculo SET asignado = false WHERE matricula = @matricula", connection);
-                        updateVehiculoCmd.Parameters.AddWithValue("@matricula", matricula);
-                        updateVehiculoCmd.ExecuteNonQuery();
+                            var updateVehiculoCmd = new NpgsqlCommand("UPDATE vehiculo SET asignado = false WHERE matricula = @matricula", connection);
+                            updateVehiculoCmd.Parameters.AddWithValue("@matricula", matricula);
+                            updateVehiculoCmd.ExecuteNonQuery();
 
-                        // También podrías eliminar la reparación si lo deseas:
-                        var deleteReparacionCmd = new NpgsqlCommand("DELETE FROM reparacion WHERE id = @repId", connection);
-                        deleteReparacionCmd.Parameters.AddWithValue("@repId", repId);
-                        deleteReparacionCmd.ExecuteNonQuery();
+                            var deleteReparacionCmd = new NpgsqlCommand("DELETE FROM reparacion WHERE id = @repId", connection);
+                            deleteReparacionCmd.Parameters.AddWithValue("@repId", repId);
+                            deleteReparacionCmd.ExecuteNonQuery();
 
-                        transaction.Commit();
-                    }
-                    catch (Exception)
-                    {
-                        transaction.Rollback();
-                        throw; // vuelve a lanzar el error
+                            transaction.Commit();
+                        }
+                        catch (Exception)
+                        {
+                            transaction.Rollback();
+                            throw;
+                        }
                     }
                 }
             }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error al cancelar reparación: " + ex.Message);
+            }
         }
+
         public void AsignarVehiculoAVista(string matricula, string mecanicoId)
         {
             using var conn = GetConection();
@@ -186,39 +194,53 @@ namespace Prueba.data
         }
         public void MarcarSalidaTaller(string matricula)
         {
-            using var conn = GetConection();
-            conn.Open();
+            try
+            {
+                using var conn = GetConection();
+                conn.Open();
 
-            using var cmd = new NpgsqlCommand("UPDATE vehiculo SET salida_taller = true WHERE matricula = @matricula", conn);
-            cmd.Parameters.AddWithValue("matricula", matricula);
-            cmd.ExecuteNonQuery();
+                using var cmd = new NpgsqlCommand("UPDATE vehiculo SET salida_taller = true WHERE matricula = @matricula", conn);
+                cmd.Parameters.AddWithValue("matricula", matricula);
+                cmd.ExecuteNonQuery();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error al marcar salida del taller: " + ex.Message);
+            }
         }
         public Vehiculo? BuscarPorMatricula(string matricula)
         {
-            
             Vehiculo? vehiculo = null;
 
-            using (var conn = GetConection())
+            try
             {
-                conn.Open();
-                const string sql = "SELECT marca, modelo FROM vehiculo WHERE matricula = @matricula";
-                using (var cmd = new NpgsqlCommand(sql, conn))
+                using (var conn = GetConection())
                 {
-                    cmd.Parameters.AddWithValue("matricula", matricula);
-
-                    using (var reader = cmd.ExecuteReader())
+                    conn.Open();
+                    const string sql = "SELECT marca, modelo FROM vehiculo WHERE matricula = @matricula";
+                    using (var cmd = new NpgsqlCommand(sql, conn))
                     {
-                        if (reader.Read())
+                        cmd.Parameters.AddWithValue("matricula", matricula);
+
+                        using (var reader = cmd.ExecuteReader())
                         {
-                            vehiculo = new Vehiculo
+                            if (reader.Read())
                             {
-                                Marca = reader["marca"]?.ToString() ?? string.Empty,
-                                Modelo = reader["modelo"]?.ToString() ?? string.Empty,
-                            };
+                                vehiculo = new Vehiculo
+                                {
+                                    Marca = reader["marca"]?.ToString() ?? string.Empty,
+                                    Modelo = reader["modelo"]?.ToString() ?? string.Empty,
+                                };
+                            }
                         }
                     }
                 }
             }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error al buscar vehículo: " + ex.Message);
+            }
+
             return vehiculo;
         }
 

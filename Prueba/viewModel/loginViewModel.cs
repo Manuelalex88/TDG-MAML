@@ -104,7 +104,10 @@ namespace Prueba.viewModel
         }
         private bool CanExecuteLoginCommand(object? obj)
         {
-            return !(string.IsNullOrWhiteSpace(Username) || Username.Length < 5 || Password == null || Password.Length < 3);
+            // Quita espacios al inicio y fin para la validación de longitud (Ejemplo (espacio)Prueba(espacio) ok || Prueb(espacio)a No)
+            var trimmedUsername = Username?.Trim() ?? string.Empty;
+
+            return !(string.IsNullOrWhiteSpace(trimmedUsername) || trimmedUsername.Length < 5 || Password == null || Password.Length < 3);
         }
 
         private void ExecuteLoginCommand(object obj)
@@ -118,7 +121,7 @@ namespace Prueba.viewModel
                 plainPassword = Marshal.PtrToStringBSTR(passwordBSTR);
 
                 var repo = new MecanicoRepository();
-                var mecanico = repo.Login(Username, plainPassword);
+                var mecanico = repo.Login(Username.Trim(), plainPassword);
 
                 if (mecanico != null)
                 {

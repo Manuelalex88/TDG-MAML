@@ -1,6 +1,10 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <!--Colores Solidos para el fondo/letras-->
+    <SolidColorBrush x:Key="colorFondo" Color="#EEEEEE"/>
+    <SolidColorBrush x:Key="colorFondo2" Color="#DDDDDD"/>
+    <SolidColorBrush x:Key="colorBorde" Color="#2A4759"/>
+    <SolidColorBrush x:Key="colorTexto" Color="#F79B72"/>
     <SolidColorBrush x:Key="colorFondoPrimario" Color="#0f0c29" />
     <SolidColorBrush x:Key="colorBlanco" Color="#FFFFFF"/>
     <SolidColorBrush x:Key="colorIconosVentanaPrincipal" Color="#ff6deb"/>

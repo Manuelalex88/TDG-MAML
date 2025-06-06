@@ -3,16 +3,16 @@
 
     <!-- Estilo para los encabezados del GridView -->
     <Style x:Key="EstiloEncabezadoGridView" TargetType="GridViewColumnHeader">
-        <Setter Property="Background" Value="{StaticResource colorGray}"/>
-        <Setter Property="Foreground" Value="White"/>
+        <Setter Property="Background" Value="{StaticResource colorTexto}"/>
+        <Setter Property="Foreground" Value="{StaticResource colorFondo}"/>
         <Setter Property="FontWeight" Value="Bold"/>
         <Setter Property="HorizontalContentAlignment" Value="Center"/>
         <Setter Property="Padding" Value="5,3"/>
     </Style>
     <!-- Estilo para los Items del ListView -->
     <Style x:Key="EstiloListViewItemHover" TargetType="ListViewItem">
-        <Setter Property="Foreground" Value="Black"/>
-        <Setter Property="Background" Value="LightGray"/>
+        <Setter Property="Foreground" Value="{StaticResource colorBorde}"/>
+        <Setter Property="Background" Value="{StaticResource colorFondo}"/>
         <Setter Property="FontWeight" Value="Bold"/>
         <Setter Property="Padding" Value="5,2"/>
         <Setter Property="Margin" Value="1"/>
@@ -20,26 +20,26 @@
         <Style.Triggers>
             <!-- Hover -->
             <Trigger Property="IsMouseOver" Value="True">
-                <Setter Property="Background" Value="White"/>
-                <Setter Property="Foreground" Value="Black"/>
+                <Setter Property="Background" Value="{StaticResource colorBorde}"/>
+                <Setter Property="Foreground" Value="{StaticResource colorFondo}"/>
             </Trigger>
             <!-- Selección -->
             <Trigger Property="IsSelected" Value="True">
-                <Setter Property="Background" Value="#FFB0B0B0"/>
-                <Setter Property="Foreground" Value="Black"/>
+                <Setter Property="Background" Value="{StaticResource colorBorde}"/>
+                <Setter Property="Foreground" Value="{StaticResource colorFondo}"/>
             </Trigger>
         </Style.Triggers>
     </Style>
     <!-- Estilo para los ítems del ListView -->
     <Style x:Key="EstiloListViewFacturas" TargetType="ListView">
-        <Setter Property="Foreground" Value="{StaticResource colorSilver}"/>
+        <Setter Property="Foreground" Value="{StaticResource colorTexto}"/>
         <Setter Property="Background" Value="Transparent"/>
         <Setter Property="FontSize" Value="13"/>
         <Setter Property="Margin" Value="5"/>
         <Setter Property="ItemContainerStyle">
             <Setter.Value>
                 <Style TargetType="ListViewItem">
-                    <Setter Property="Foreground" Value="Silver"/>
+                    <Setter Property="Foreground" Value="{StaticResource colorTexto}"/>
                 </Style>
             </Setter.Value>
         </Setter>
@@ -60,7 +60,7 @@
                             </Track.DecreaseRepeatButton>
 
                             <Track.Thumb>
-                                <Thumb Background="{StaticResource colorGray}" Height="10">
+                                <Thumb Background="{StaticResource colorTexto}" Height="10">
                                     <Thumb.Template>
                                         <ControlTemplate TargetType="Thumb">
                                             <Border Background="{TemplateBinding Background}" 

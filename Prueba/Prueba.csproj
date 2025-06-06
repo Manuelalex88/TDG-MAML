@@ -35,7 +35,9 @@
     <Resource Include="images\login\avatar.png" />
     <Resource Include="images\login\fondoLogin.jpg" />
     <Resource Include="images\login\Login.png" />
-    <Resource Include="images\ventanaPrincipal\fondotaller.png" />
+    <Resource Include="images\ventanaPrincipal\fondotaller.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
     <Resource Include="images\ventanaPrincipal\registrarVehiculo.png" />
   </ItemGroup>
 

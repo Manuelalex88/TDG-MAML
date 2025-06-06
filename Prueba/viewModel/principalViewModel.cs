@@ -12,6 +12,9 @@ using Prueba.data;
 using System.Windows.Input;
 using System.Windows;
 using System.Runtime.CompilerServices;
+using QuestPDF.Fluent;
+using System.Diagnostics;
+using System.IO;
 
 
 namespace Prueba.viewModel
@@ -28,7 +31,10 @@ namespace Prueba.viewModel
         private readonly VehiculoRepository _vehiculoRepository;
         private readonly FacturaRepository _facturaRepository;
         public string _textoEntrada;
+        private string _nombreMecanico;
+
         #endregion
+        #region Propiedades
         public ObservableCollection<FacturaVehiculoClienteDTO> MisFacturas
         {
             get => _misFacturas;
@@ -39,6 +45,10 @@ namespace Prueba.viewModel
             get => _textoEntrada;
             set => SetProperty(ref _textoEntrada, value);
         }
+        #endregion
+        #region Comandos
+        public ICommand DescargarFacturaCommand { get; }
+        #endregion
         public PrincipalViewModel()
         {
             //Identidad Mecanico
@@ -47,15 +57,19 @@ namespace Prueba.viewModel
             
             //Instanciar
             _textoEntrada = string.Empty;
-            TextoEntrada = "Bienvenido, " + (identity?.NombreCompleto ?? "Desconocido");
+            _nombreMecanico = identity?.NombreCompleto ?? "Desconocido";
+            TextoEntrada = "Bienvenido, " + _nombreMecanico;
             ReparacionesAsignadas = new ObservableCollection<VehiculoReparacionDTO>();
             _vehiculoRepository = new VehiculoRepository();
             _misFacturas = new ObservableCollection<FacturaVehiculoClienteDTO>();
             _facturaRepository = new FacturaRepository();
+
+            DescargarFacturaCommand = new comandoViewModel(DescargarFactura);
             //Metodos
             CargarReparacionesAsignadas(idMecanico);
             CargarFacturasFinalizas(idMecanico);
         }
+
         #region Metodos
         //Metodo para no poner set { _loquesea = value; OnPropertyChanged(loquesea) y poner simplemente SetProperty(ref Loquesea, value)
         protected bool SetProperty<T>(ref T backingField, T value, [CallerMemberName] string? propertyName = null)
@@ -69,6 +83,74 @@ namespace Prueba.viewModel
                 OnPropertyChanged(propertyName);
 
             return true;
+        }
+        
+        //Tengo que modificar esto
+        public void DescargarFactura(object obj)
+        {
+            if (obj is not FacturaVehiculoClienteDTO facturaSeleccionada)
+            {
+                MessageBox.Show("No se pudo determinar la factura a descargar.");
+                return;
+            }
+
+            try
+            {
+                QuestPDF.Settings.License = QuestPDF.Infrastructure.LicenseType.Community;
+                
+                // Datos necesarios para el PDF
+                var cliente = new Cliente
+                {
+                    Nombre = facturaSeleccionada.ClienteNombre,
+                    Dni = facturaSeleccionada.Dni,
+                    Telefono = facturaSeleccionada.Telefono
+                };
+
+                var vehiculo = new Vehiculo
+                {
+                    Matricula = facturaSeleccionada.Matricula,
+                    Marca = facturaSeleccionada.Marca,
+                    Modelo = facturaSeleccionada.Modelo
+                };
+
+                var mecanico = new Mecanico
+                {
+                    Nombre = _nombreMecanico
+                };
+
+                // Obtener todos los repuestos usados para esta factura
+                var repuestosUsados = _facturaRepository.ObtenerRepuestosUsadosPorReparacion(facturaSeleccionada.Id) ?? new List<Repuesto>();
+                decimal total = repuestosUsados.Sum(r => r.Precio * r.Cantidad);
+
+                var factura = new FacturaDocument
+                {
+                    Cliente = cliente,
+                    Vehiculo = vehiculo,
+                    Mecanico = mecanico,
+                    Repuestos = repuestosUsados,
+                    Total = total
+                };
+
+                string timestamp = DateTime.Now.ToString("yyyy-MM-dd_HHmm");
+                string fileName = $"Factura_{timestamp}.pdf";
+                string ruta = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), fileName);
+
+                factura.GeneratePdf(ruta);
+
+                _facturaRepository.MarcarRepuestosComoFacturados(facturaSeleccionada.Id);
+                _facturaRepository.MarcarFacturaComoPagada(facturaSeleccionada.Id);
+
+                // Actualizamos la lista
+                CargarFacturasFinalizas(Thread.CurrentPrincipal?.Identity?.Name ?? "");
+
+                // Abrir el archivo generado
+                Process.Start(new ProcessStartInfo(ruta) { UseShellExecute = true });
+            }
+            catch (Exception ex)
+            {
+                Clipboard.SetText(ex.ToString());
+                MessageBox.Show($"Error al generar o abrir el PDF:\n\n{ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
         private void CargarFacturasFinalizas(string idMecanico)
         {

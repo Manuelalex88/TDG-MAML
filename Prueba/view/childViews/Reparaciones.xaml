@@ -14,13 +14,15 @@
         </Grid.ColumnDefinitions>
 
         <!-- Lista de reparaciones -->
-        <GroupBox Header="Reparaciones en curso" Grid.Column="0" Margin="5">
+        <GroupBox Header="Reparaciones en curso" Grid.Column="0" Margin="5" Style="{StaticResource gbocStilos}">
             <StackPanel>
                 <ListView Name="ReparacionesListView" Height="327" VerticalAlignment="Top"
-                  ItemsSource="{Binding VehiculosAsignados}"
-                  SelectedItem="{Binding VehiculoSeleccionado, Mode=TwoWay}">
+                          ItemsSource="{Binding VehiculosAsignados}"
+                          SelectedItem="{Binding VehiculoSeleccionado, Mode=TwoWay}"
+                          Style="{StaticResource EstiloListViewFacturas}"
+                          ItemContainerStyle="{StaticResource EstiloListViewItemHover}">
                     <ListView.View>
-                        <GridView>
+                        <GridView ColumnHeaderContainerStyle="{StaticResource EstiloEncabezadoGridView}">
                             <GridViewColumn Header="Marca" DisplayMemberBinding="{Binding Marca}" Width="70"/>
                             <GridViewColumn Header="Matricula" DisplayMemberBinding="{Binding Matricula}" Width="70"/>
                             <GridViewColumn Header="Estado" DisplayMemberBinding="{Binding Estado}" Width="145"/>
@@ -33,7 +35,8 @@
                 Command="{Binding CancelarReparacionCommand}"
                 Margin="5"
                 HorizontalAlignment="Center"
-                Width="150"/>
+                Width="150"
+                Style="{StaticResource btnChildView}"/>
             </StackPanel>
         </GroupBox>
 
@@ -41,7 +44,7 @@
         <StackPanel Grid.Column="1" Margin="5" VerticalAlignment="Stretch" >
 
             <!-- Detalles de Reparación -->
-            <GroupBox Header="Detalles de Reparación" Margin="0,0,0,10" >
+            <GroupBox Header="Detalles de Reparación" Margin="0,0,0,10" Style="{StaticResource gbocStilos}">
                 <StackPanel Margin="10">
                     <TextBlock Text="Trabajo a realizar:" FontWeight="Bold"/>
                     <TextBox Text="{Binding TrabajoRealizar, UpdateSourceTrigger=PropertyChanged}"
@@ -50,12 +53,13 @@
                     <TextBlock Text="Estado de reparación:" FontWeight="Bold"/>
                     <ComboBox ItemsSource="{Binding ListaEstadoReparacion}"
                               SelectedItem="{Binding EstadoSeleccionado, Mode=TwoWay}"
+                              Style="{StaticResource ComboBoxRegistrarVehiculo}"
                               Margin="0,0,0,0"/>
                 </StackPanel>
             </GroupBox>
 
             <!-- Coste de la reparación -->
-            <GroupBox Header="Coste de la reparación" Height="260" >
+            <GroupBox Header="Coste de la reparación" Height="260" Style="{StaticResource gbocStilos}">
                 <Grid Margin="10">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
@@ -70,7 +74,8 @@
                         <Button Content="Agregar Mantenimiento (120€)"
                                 Width="220"
                                 Margin="0,0,0,10"
-                                Command="{Binding AgregarMantenimientoCommand}"/>
+                                Command="{Binding AgregarMantenimientoCommand}"
+                                Style="{StaticResource btnChildView}"/>
 
                         <StackPanel Orientation="Horizontal" Margin="0,0,0,10" Height="20">
                             <!-- Nombre del repuesto -->
@@ -97,14 +102,17 @@
                                           Foreground="Gray"/>
                             <!-- Botón -->
                             <Button Content="Agregar Repuesto"
-                                    Command="{Binding AgregarRepuestoCommand}"/>
+                                    Command="{Binding AgregarRepuestoCommand}"
+                                    Style="{StaticResource btnChildView}"/>
                         </StackPanel>
                     </StackPanel>
 
                     <ListView Grid.Row="1" ItemsSource="{Binding RepuestosSeleccionados}" Margin="0,0,0,10"
-                              SelectedItem="{Binding RepuestoSeleccionado, Mode=TwoWay}">
+                              SelectedItem="{Binding RepuestoSeleccionado, Mode=TwoWay}"
+                              ItemContainerStyle="{StaticResource EstiloListViewItemHover}"
+                              Style="{StaticResource EstiloListViewFacturas}">
                         <ListView.View>
-                            <GridView>
+                            <GridView ColumnHeaderContainerStyle="{StaticResource EstiloEncabezadoGridView}">
                                 <GridViewColumn Header="Nombre" DisplayMemberBinding="{Binding Nombre}" Width="200"/>
                                 <GridViewColumn Header="Precio" DisplayMemberBinding="{Binding Precio}" Width="100"/>
                                 <GridViewColumn Header="Cantidad" DisplayMemberBinding="{Binding Cantidad}" Width="100"/>
@@ -124,8 +132,8 @@
                         </Grid.ColumnDefinitions>
 
                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Grid.Column="2" Width="320">
-                            <Button Content="Guardar Cambios" Width="150" Margin="5" Command="{Binding GuardarCambiosCommand}"/>
-                            <Button Content="Finalizar Reparación" Width="150" Margin="5" Command="{Binding FinalizarReparacionCommand}"/>
+                            <Button Content="Guardar Cambios" Width="150" Margin="5" Command="{Binding GuardarCambiosCommand}" Style="{StaticResource btnChildView}"/>
+                            <Button Content="Finalizar Reparación" Width="150" Margin="5" Command="{Binding FinalizarReparacionCommand}" Style="{StaticResource btnChildView}" />
                         </StackPanel>
                     </Grid>
                 </Grid>

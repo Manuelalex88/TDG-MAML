@@ -1,5 +1,6 @@
 ﻿using FontAwesome.Sharp;
 using Prueba.model;
+using Prueba.view;
 using Prueba.view.childViews;
 using System;
 using System.Collections.Generic;
@@ -8,6 +9,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Input;
 
 
@@ -51,23 +53,25 @@ namespace Prueba.viewModel
         #endregion
 
         #region Comandos
-        public ICommand showPrimerachildView {  get;}
-        public ICommand showSegundachildView {  get;}
-        public ICommand showReparacionesChildView {  get;}
-        public ICommand showFacturasChildView{  get;}
-        public ICommand ShowVehiculosEnTallerChildView {  get;}
+        public ICommand showPrimerachildViewCommand {  get;}
+        public ICommand showSegundachildViewCommand {  get;}
+        public ICommand showReparacionesChildViewCommand {  get;}
+        public ICommand showFacturasChildViewCommand{  get;}
+        public ICommand ShowVehiculosEnTallerChildViewCommand {  get;}
+        public ICommand CerrarSesionCommand { get; }
         #endregion
         //Constructor
         public MainViewModel()
         {   // Obtener el ID del mecánico desde el hilo actual
             var identity = Thread.CurrentPrincipal?.Identity as IdentidadMecanico;
             var idMecanico = identity?.Name;
-
-            showPrimerachildView = new comandoViewModel(ExecuteShowCommand);
-            showSegundachildView = new comandoViewModel(ExecuteShowCommand2);
-            showReparacionesChildView = new comandoViewModel(ExecuteShowCommand3);
-            showFacturasChildView = new comandoViewModel(ExecuteShowCommand4);
-            ShowVehiculosEnTallerChildView = new comandoViewModel(ExecuteShowCommand5);
+            //Instanciaar
+            showPrimerachildViewCommand = new comandoViewModel(ExecuteShowCommand);
+            showSegundachildViewCommand = new comandoViewModel(ExecuteShowCommand2);
+            showReparacionesChildViewCommand = new comandoViewModel(ExecuteShowCommand3);
+            showFacturasChildViewCommand = new comandoViewModel(ExecuteShowCommand4);
+            ShowVehiculosEnTallerChildViewCommand = new comandoViewModel(ExecuteShowCommand5);
+            CerrarSesionCommand = new comandoViewModel(CerrarSesion);
             // Cargar el nombre del usuario desde UserData
             _nombreUsuario = identity?.NombreCompleto ?? "Desconocido"; 
             OnPropertyChanged(nameof(NombreUsuario));  
@@ -88,6 +92,23 @@ namespace Prueba.viewModel
                 OnPropertyChanged(propertyName);
 
             return true;
+        }
+        private void CerrarSesion(object obj)
+        {
+            // Crear una nueva instancia de la ventana de login
+            var loginWindow = new Login();
+            loginWindow.Show();
+
+            // Cerrar la ventana actual (MainView)
+            // Buscamos la ventana activa que sea del tipo MainView y la cerramos
+            foreach (Window window in Application.Current.Windows)
+            {
+                if (window is VentanaPrincipal)
+                {
+                    window.Close();
+                    break;
+                }
+            }
         }
         private void ExecuteShowCommand5(object obj)
         {

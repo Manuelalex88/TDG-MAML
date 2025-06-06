@@ -36,10 +36,10 @@
         </Border.Background>
         <!--Segundo Border para la Creacion de la ventana -->
         <Border CornerRadius="10"
-            Background="{StaticResource colorFondoPrimario}"
-            BorderBrush="{StaticResource colorFondoPrimario}"
+            Background="{StaticResource colorFondo}"
+            BorderBrush="{StaticResource colorBorde}"
             BorderThickness="5"
-            Opacity="0.82">
+            Opacity="1">
             
             <Grid>
                 <Grid.RowDefinitions>
@@ -58,8 +58,9 @@
                     </Grid.ColumnDefinitions>
 
                     <TextBlock Text="TALLER MANUEL"
-                               Foreground="{StaticResource colorBlanco}"
+                               Foreground="{StaticResource colorTexto}"
                                FontSize="20"
+                               FontWeight="Bold"
                                FontFamily="Montserrat"
                                Grid.Column="0"
                                VerticalAlignment="Center"
@@ -89,12 +90,12 @@
                         <!--Estilo del boton (Ambos iguales) -->
                         <Button.Style>
                             <Style TargetType="Button">
-                                <Setter Property="Background" Value="{StaticResource colorB1}"/>
-                                <Setter Property="Foreground" Value="White"/>
+                                <Setter Property="Background" Value="{StaticResource colorBorde}"/>
+                                <Setter Property="Foreground" Value="{StaticResource colorBlanco}"/>
                                 <Style.Triggers>
                                     <Trigger Property="IsMouseOver" Value="True">
-                                        <Setter Property="Background" Value="#EBE5C2"/>
-                                        <Setter Property="Foreground" Value="#504B38"/>
+                                        <Setter Property="Background" Value="{StaticResource colorBlanco}"/>
+                                        <Setter Property="Foreground" Value="{StaticResource colorBorde}"/>
                                     </Trigger>
                                 </Style.Triggers>
                             </Style>
@@ -126,12 +127,12 @@
 
                         <Button.Style>
                             <Style TargetType="Button">
-                                <Setter Property="Background" Value="{StaticResource colorB1}"/>
-                                <Setter Property="Foreground" Value="White"/>
+                                <Setter Property="Background" Value="{StaticResource colorBorde}"/>
+                                <Setter Property="Foreground" Value="{StaticResource colorBlanco}"/>
                                 <Style.Triggers>
                                     <Trigger Property="IsMouseOver" Value="True">
-                                        <Setter Property="Background" Value="#EBE5C2"/>
-                                        <Setter Property="Foreground" Value="#504B38"/>
+                                        <Setter Property="Background" Value="{StaticResource colorBlanco}"/>
+                                        <Setter Property="Foreground" Value="{StaticResource colorBorde}"/>
                                     </Trigger>
                                 </Style.Triggers>
                             </Style>
@@ -151,18 +152,18 @@
                            Height="100"/>
                     <!--Texblock del Titulo -->
                     <TextBlock Text="ACCESO"
-                               Foreground="{StaticResource colorBlanco}"
+                               Foreground="{StaticResource colorTexto}"
                                FontSize="25"
-                               FontWeight="Medium"
+                               FontWeight="Bold"
                                FontFamily="Montserrat"
                                HorizontalAlignment="Center"
                                Margin="0,5,0,0"/>
                     
                     <!--Texblock del nombre del usuario -->
                     <TextBlock Text="Usuario"
-                               Foreground="{StaticResource colorBlanco}"
+                               Foreground="{StaticResource colorTexto}"
                                FontSize="15"
-                               FontWeight="Medium"
+                               FontWeight="Bold"
                                FontFamily="Montserrat"
                                Margin="0,35,0,0"/>
 
@@ -171,7 +172,7 @@
                              FontSize="13"
                              FontWeight="Bold"
                              FontFamily="Montserrat"
-                             Background="{StaticResource colorB1}"
+                             Background="{StaticResource colorBorde}"
                              Foreground="White"
                              CaretBrush="LightGray"
                              Height="20"
@@ -180,9 +181,9 @@
                     </TextBox>
                     <!--Texblock del password -->
                     <TextBlock Text="Contraseña"
-                               Foreground="{StaticResource colorBlanco}"
+                               Foreground="{StaticResource colorTexto}"
                                FontSize="15"
-                               FontWeight="Medium"
+                               FontWeight="Bold"
                                FontFamily="Montserrat"
                                Margin="0,10,0,0"/>
 
@@ -226,7 +227,7 @@
 
                         <Button.Style>
                             <Style TargetType="Button">
-                                <Setter Property="Background" Value="{StaticResource colorB1}"/>
+                                <Setter Property="Background" Value="{StaticResource colorBorde}"/>
                                 <Setter Property="Foreground" Value="{StaticResource colorBlanco}"/>
                                 <Style.Triggers>
                                     <Trigger Property="IsMouseOver" Value="True">
@@ -248,13 +249,14 @@
                       Width="20"
                       Height="20"
                       VerticalAlignment="Center"
-                      Foreground="{StaticResource colorBlanco}"/>
+                      Foreground="{StaticResource colorBorde}"/>
                     <fa:IconBlock Width="20"
                       Height="20"
                       Margin="5,0,0,0"
                       VerticalAlignment="Center"
                       Icon="{Binding ConexionBDActiva, Converter={StaticResource EstadoIconoConverter}}"
-                      Foreground="{StaticResource colorBlue}"/>
+                      Foreground="{StaticResource colorTexto}"
+                      FontWeight="Bold"/>
                 </StackPanel>
             </Grid>
         </Border>

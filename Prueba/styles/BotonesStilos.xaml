@@ -24,14 +24,14 @@
         <Style.Triggers>
             <Trigger Property="IsMouseOver" Value="True">
                 <Setter Property="Margin" Value="0,0,0,5"/>
-                <Setter Property="Background" Value="{StaticResource colorFondoVentanaPrincipal1}"/>
+                <Setter Property="Background" Value="{StaticResource colorBorde}"/>
                 <Setter Property="Foreground" Value="{StaticResource colorBlanco}"/>
                 <Setter Property="BorderBrush" Value="{Binding Path=Tag, RelativeSource={RelativeSource Self}}"/>
             </Trigger>
             <!--Estilo cuando el boton esta activo-->
             <Trigger Property="IsChecked" Value="True">
                 <Setter Property="Margin" Value="0,0,0,5"/>
-                <Setter Property="Background" Value="{StaticResource colorFondoVentanaPrincipal1}"/>
+                <Setter Property="Background" Value="{StaticResource colorBorde}"/>
                 <Setter Property="Foreground" Value="{StaticResource colorBlanco}"/>
                 <Setter Property="BorderBrush" Value="{Binding Path=Tag, RelativeSource={RelativeSource Self}}"/>
             </Trigger>
@@ -58,7 +58,7 @@
         <!--Estilo de normal-->
         <Setter Property="Width" Value="35"/>
         <Setter Property="Background" Value="Transparent"/>
-        <Setter Property="Foreground" Value="{StaticResource colorBlanco}"/>
+        <Setter Property="Foreground" Value="{StaticResource colorFondo}"/>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="Button">
@@ -72,7 +72,7 @@
         <!--Diseño del boton al pasar el raton-->
         <Style.Triggers>
             <Trigger Property="IsMouseOver" Value="True">
-                <Setter Property="Background" Value="{StaticResource colorFondoVentanaPrincipal1}"/>
+                <Setter Property="Background" Value="{StaticResource colorFondo}"/>
                 <Setter Property="Foreground" Value="{Binding Path=Tag, RelativeSource={RelativeSource Self}}"/>
             </Trigger>
 
@@ -113,16 +113,16 @@
     </Style>
     <!--Estilo del icono del menu-->
     <Style x:Key="botonCabezero" TargetType="fa:IconImage">
-        <Setter Property="Foreground" Value="{Binding Path=Foreground, RelativeSource={RelativeSource AncestorType=Button}}"/>
+        <Setter Property="Foreground" Value="{Binding Path=Tag, RelativeSource={RelativeSource AncestorType=Button}}"/>
         <Setter Property="Width" Value="16"/>
         <Setter Property="Height" Value="16"/>
     </Style>
     
     <!--ESTILO DEL BOTON DE LAS CHILDVIEW-->
     <Style x:Key="btnChildView" TargetType="Button">
-        <Setter Property="Background" Value="Transparent"/>
-        <Setter Property="Foreground" Value="{StaticResource colorB2}"/>
-        <Setter Property="BorderBrush" Value="{StaticResource colorB2}"/>
+        <Setter Property="Background" Value="{StaticResource  colorFondo}"/>
+        <Setter Property="Foreground" Value="{StaticResource colorTexto}"/>
+        <Setter Property="BorderBrush" Value="{StaticResource colorTexto}"/>
         <Setter Property="BorderThickness" Value="2"/>
         <Setter Property="Padding" Value="8,4"/>
         <Setter Property="FontWeight" Value="Bold"/>
@@ -142,8 +142,8 @@
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
-                            <Setter TargetName="border" Property="BorderBrush" Value="White"/>
-                            <Setter TargetName="contentPresenter" Property="TextElement.Foreground" Value="White"/>
+                            <Setter TargetName="border" Property="BorderBrush" Value="Transparent"/>
+                            <Setter TargetName="contentPresenter" Property="TextElement.Foreground" Value="{StaticResource colorBorde}"/>
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>

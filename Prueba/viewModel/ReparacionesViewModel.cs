@@ -155,14 +155,14 @@ namespace Prueba.viewModel
         {
             if (VehiculoSeleccionado == null)
             {
-                
+
                 MessageBox.Show("Selecciona un vehículo para guardar cambios.");
                 return;
             }
 
             try
             {
-                
+
                 _reparacionRepository.GuardarCambiosReparacion(
                     VehiculoSeleccionado,
                     TrabajoRealizar,
@@ -196,6 +196,7 @@ namespace Prueba.viewModel
 
         private void FinalizarReparacion(object obj)
         {
+
             if (VehiculoSeleccionado == null)
             {
                 MessageBox.Show("Selecciona una reparación para finalizar.");
@@ -204,17 +205,17 @@ namespace Prueba.viewModel
 
             try
             {
-                var reparacionId = VehiculoSeleccionado.Id;
 
-                _reparacionRepository.FinalizarReparacionActual(VehiculoSeleccionado,reparacionId);
+                // Finalizar reparación
+                var reparacionId = VehiculoSeleccionado.Id;
+                _reparacionRepository.FinalizarReparacionActual(VehiculoSeleccionado, reparacionId);
 
                 MessageBox.Show("Reparación finalizada correctamente.");
 
-                // Actualizar la UI
+                // Actualizar UI
                 VehiculosAsignados.Clear();
                 VehiculosAsignadosActualmente();
 
-                // Limpieza selección y datos
                 VehiculoSeleccionado = null;
                 TrabajoRealizar = string.Empty;
                 EstadoSeleccionado = string.Empty;
@@ -224,6 +225,7 @@ namespace Prueba.viewModel
             {
                 MessageBox.Show("Error al finalizar la reparación: " + ex.Message);
             }
+
         }
         private void AgregarPieza(object? obj)
         {

@@ -61,5 +61,6 @@ namespace Prueba.view
             this.WindowState = WindowState.Maximized;
             else this.WindowState=WindowState.Normal;
         }
+
     }
 }

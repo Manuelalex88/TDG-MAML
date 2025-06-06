@@ -9,8 +9,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
+using System.Threading;
 using System.Windows;
 using System.Windows.Input;
 
@@ -28,9 +27,7 @@ namespace Prueba.viewModel
         private string _nombreCliente = string.Empty;
         private string _dniCliente = string.Empty;
         private string _telefonoCliente = string.Empty;
-        private decimal _precioTotal = decimal.Zero;
 
-        
         private FacturaVehiculoClienteDTO _facturaSeleccionada = new();
         public string _nombreMecanico { get; set; } = string.Empty;
         private readonly FacturaRepository _facturaRepository;
@@ -73,17 +70,13 @@ namespace Prueba.viewModel
             get => _telefonoCliente;
             set => SetProperty(ref _telefonoCliente, value);
         }
-        public decimal PrecioTotal
-        {
-            get => _precioTotal;
-            set => SetProperty(ref _precioTotal, value);
-        }
 
         public string MatriculaVehiculo
         {
             get => _matriculaVehiculo;
             set => SetProperty(ref _matriculaVehiculo, value);
         }
+
         public FacturaVehiculoClienteDTO FacturaSeleccionada
         {
             get => _facturaSeleccionada;
@@ -99,11 +92,9 @@ namespace Prueba.viewModel
                         NombreCliente = _facturaSeleccionada.ClienteNombre;
                         DniCliente = _facturaSeleccionada.Dni;
                         TelefonoCliente = _facturaSeleccionada.Telefono;
-                        CalcularTotalFactura();
                     }
                     else
                     {
-                        
                         ModeloVehiculo = string.Empty;
                         MarcaVehiculo = string.Empty;
                         NombreCliente = string.Empty;
@@ -111,9 +102,17 @@ namespace Prueba.viewModel
                         TelefonoCliente = string.Empty;
                         MatriculaVehiculo = string.Empty;
                     }
+                    // Notificar cambio en Total
+                    OnPropertyChanged(nameof(Total));
                 }
             }
         }
+
+        public decimal Total
+        {
+            get => FacturaSeleccionada?.Total ?? 0m;
+        }
+
         public ObservableCollection<FacturaVehiculoClienteDTO> FacturasPendientes
         {
             get => _facturasPendientes;
@@ -125,27 +124,30 @@ namespace Prueba.viewModel
         public ICommand MostrarFacturasPendientesCommand { get; }
         public ICommand EliminarFacturaCommand { get; set; }
         #endregion
+
         public FacturaViewModel()
         {
             //Identidad Mecanico
             var identity = Thread.CurrentPrincipal?.Identity as IdentidadMecanico;
             var idMecanico = identity?.Name;
             NombreMecanico = identity?.NombreCompleto ?? "Desconocido";
+
             //Instancias
             _facturasPendientes = new ObservableCollection<FacturaVehiculoClienteDTO>();
             _facturaSeleccionada = new FacturaVehiculoClienteDTO();
             _facturaRepository = new FacturaRepository();
             FacturasPendientes = new ObservableCollection<FacturaVehiculoClienteDTO>();
+
             //Comandos
             ConfirmarFacturaCommand = new comandoViewModel(GenerarFacturaPDF, PuedeGenerarFactura);
             MostrarFacturasPendientesCommand = new comandoViewModel(MostrarFacturasPendientes);
             EliminarFacturaCommand = new comandoViewModel(EliminarLaFactura, PuedeEliminar);
+
             //Metodos
             MostrarFacturasPendientes(null);
         }
 
         #region Metodos
-        //Metodo para no poner set { _loquesea = value; OnPropertyChanged(loquesea) y poner simplemente SetProperty(ref Loquesea, value)
         protected bool SetProperty<T>(ref T backingField, T value, [CallerMemberName] string? propertyName = null)
         {
             if (EqualityComparer<T>.Default.Equals(backingField, value))
@@ -158,15 +160,16 @@ namespace Prueba.viewModel
 
             return true;
         }
+
         private void MostrarFacturasPendientes(object? obj)
         {
             if (FacturasPendientes == null)
                 FacturasPendientes = new ObservableCollection<FacturaVehiculoClienteDTO>();
+
             try
             {
                 FacturasPendientes.Clear();
 
-                // Obtener el ID del mecánico desde el hilo actual
                 var identity = Thread.CurrentPrincipal?.Identity as IdentidadMecanico;
                 var idMecanico = identity?.Name;
 
@@ -187,28 +190,19 @@ namespace Prueba.viewModel
                 "Mensaje: " + ex.Message + "\n" +
                 "Fuente: " + ex.Source + "\n" +
                 "StackTrace: " + ex.StackTrace);
-
             }
         }
 
         private bool PuedeGenerarFactura(object? obj)
         {
-            return FacturaSeleccionada != null && PrecioTotal > 0;
+            return FacturaSeleccionada != null && Total > 0;
         }
+
         private bool PuedeEliminar(object? obj)
         {
-            return FacturaSeleccionada != null && PrecioTotal > 0;
+            return FacturaSeleccionada != null;
         }
-        private void CalcularTotalFactura()
-        {
-            if (FacturaSeleccionada == null)
-                return;
 
-            var repuestosUsados = _facturaRepository.ObtenerRepuestosUsadosPorReparacion(FacturaSeleccionada.Id);
-
-            var total = repuestosUsados.Sum(p => p.Precio * p.Cantidad);
-            PrecioTotal = total;
-        }
         private void EliminarLaFactura(object obj)
         {
             if (FacturaSeleccionada == null)
@@ -231,6 +225,7 @@ namespace Prueba.viewModel
                 MessageBox.Show("Error al eliminar factura: " + ex.Message);
             }
         }
+
         private void GenerarFacturaPDF(object obj)
         {
             if (FacturaSeleccionada == null)
@@ -262,9 +257,9 @@ namespace Prueba.viewModel
                     Nombre = NombreMecanico
                 };
 
-                // Obtén la lista real de repuestos usados para la reparación asociada a la factura seleccionada
+                // Obtener todos los repuestos usados para esta factura
                 var repuestosUsados = _facturaRepository.ObtenerRepuestosUsadosPorReparacion(FacturaSeleccionada.Id) ?? new List<Repuesto>();
-                var total = repuestosUsados.Sum(p => p.Precio);
+                decimal total = repuestosUsados.Sum(r => r.Precio * r.Cantidad);
                 #endregion
 
                 var factura = new FacturaDocument
@@ -281,16 +276,12 @@ namespace Prueba.viewModel
                 string ruta = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), fileName);
 
                 factura.GeneratePdf(ruta);
-                // Marcamos los repuestos como facturados
-                _facturaRepository.MarcarRepuestosComoFacturados(FacturaSeleccionada.Id);
 
-                // Marcamos como pagada la factura
+                _facturaRepository.MarcarRepuestosComoFacturados(FacturaSeleccionada.Id);
                 _facturaRepository.MarcarFacturaComoPagada(FacturaSeleccionada.Id);
 
-                // Actualizamos las facturas para que no salga más
                 MostrarFacturasPendientes(null);
 
-                // Abrir PDF
                 Process.Start(new ProcessStartInfo(ruta) { UseShellExecute = true });
             }
             catch (Exception ex)

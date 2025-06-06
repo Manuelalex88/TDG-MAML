@@ -43,8 +43,8 @@
     </Window.Resources>
 
     <Border CornerRadius="10"
-            BorderBrush="{StaticResource colorFondoVentanaPrincipal1}"
-            Background="{StaticResource colorFondoVentanaPrincipal1}"
+            BorderBrush="{StaticResource colorFondo}"
+            Background="{StaticResource colorFondo}"
            >
 
         <Grid>
@@ -58,7 +58,7 @@
             <!--Menu de navegacion borde-->
             <Border CornerRadius="10,0,0,10"
                     Grid.Column="0"
-                    Background="{StaticResource colorFondoPrimario}">
+                    Background="{StaticResource colorFondo}">
                 <StackPanel>
                     <!--Logo-->
                     <StackPanel Orientation="Horizontal"
@@ -66,18 +66,18 @@
                                 Margin="15,25,0,40">
                         <Image Source="\images\ventanaPrincipal\fondotaller.png"/>
                         <TextBlock Text="TALLER MANUEL"
-                                   Foreground="{StaticResource colorBlanco}"
+                                   Foreground="{StaticResource colorTexto}"
                                    FontSize="20"
                                    FontFamily="Montserrat"
-                                   FontWeight="Medium"
+                                   FontWeight="Bold"
                                    VerticalAlignment="Center"
                                    Margin="10,0,0,0"/>
                     </StackPanel>
 
                     <RadioButton Style="{StaticResource botones}" 
-                                 Tag="{StaticResource colorIconosVentanaPrincipal}"
+                                 Tag="{StaticResource colorTexto}"
                                  IsChecked="True"
-                                 Command="{Binding showPrimerachildView}">
+                                 Command="{Binding showPrimerachildViewCommand}">
                         <StackPanel Orientation="Horizontal">
                             <fa:IconImage Icon="Home" Style="{StaticResource botonMenu}"/>
                             <TextBlock Text="Principal" Style="{StaticResource botonMenuTexto}"/>
@@ -85,8 +85,8 @@
                     </RadioButton>
 
                     <RadioButton Style="{StaticResource botones}" 
-                                 Tag="{StaticResource colorB2}"
-                                 Command="{Binding showSegundachildView}">
+                                 Tag="{StaticResource colorTexto}"
+                                 Command="{Binding showSegundachildViewCommand}">
                         <StackPanel Orientation="Horizontal">
                             <fa:IconImage Icon="Database" Style="{StaticResource botonMenu}"/>
                             <TextBlock Text="Registrar Vehiculo" Style="{StaticResource botonMenuTexto}"/>
@@ -94,8 +94,8 @@
                     </RadioButton>
 
                     <RadioButton Style="{StaticResource botones}" 
-                                 Tag="{StaticResource colorGreen}"
-                                 Command="{Binding showReparacionesChildView}">
+                                 Tag="{StaticResource colorTexto}"
+                                 Command="{Binding showReparacionesChildViewCommand}">
                         <StackPanel Orientation="Horizontal">
                             <fa:IconImage Icon="Wrench" Style="{StaticResource botonMenu}"/>
                             <TextBlock Text="Reparaciones" Style="{StaticResource botonMenuTexto}"/>
@@ -103,8 +103,8 @@
                     </RadioButton>
 
                     <RadioButton Style="{StaticResource botones}" 
-                                 Tag="{StaticResource colorBlue}"
-                                 Command="{Binding ShowVehiculosEnTallerChildView}">
+                                 Tag="{StaticResource colorTexto}"
+                                 Command="{Binding ShowVehiculosEnTallerChildViewCommand}">
                         <StackPanel Orientation="Horizontal">
                             <fa:IconImage Icon="Car" Style="{StaticResource botonMenu}"/>
                             <TextBlock Text="Vehiculos En Taller" Style="{StaticResource botonMenuTexto}"/>
@@ -112,8 +112,8 @@
                     </RadioButton>
 
                     <RadioButton Style="{StaticResource botones}" 
-                                 Tag="{StaticResource colorSilver}"
-                                 Command="{Binding showFacturasChildView}">
+                                 Tag="{StaticResource colorTexto}"
+                                 Command="{Binding showFacturasChildViewCommand}">
                         <StackPanel Orientation="Horizontal">
                             <fa:IconImage Icon="MoneyBill" Style="{StaticResource botonMenu}"/>
                             <TextBlock Text="Facturas" Style="{StaticResource botonMenuTexto}"/>
@@ -128,14 +128,7 @@
             <!--Seccion Principal-->
             <Border CornerRadius="0,10,10,0"
                     Grid.Column="1"
-                    >
-                <Border.Background>
-                    <LinearGradientBrush StartPoint="1,1" EndPoint="1,0">
-                        <GradientStop Color="{StaticResource colorParaGradientes1}" Offset="0"/>
-                        <GradientStop Color="{StaticResource colorParaGradientes2}" Offset="0.5"/>
-                        <GradientStop Color="{StaticResource colorParaGradientes3}" Offset="1"/>
-                    </LinearGradientBrush>
-                </Border.Background>
+                    Background="{StaticResource colorBorde}">
 
                 <Grid>
                     <Grid.RowDefinitions>
@@ -146,7 +139,7 @@
                         <!--Para la seccion de contenido o los childs views-->
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
-                    
+
 
                     <StackPanel x:Name="pnlBarraControl"
                                 Grid.Row="0"
@@ -156,24 +149,22 @@
                                 Margin="0,0,5,0"
                                 MouseDown="Window_MouseDown"
                                 MouseEnter="pnlBarraControl_MouseEnter">
-                        <!--Ver si interesa mas en que se pueda mover haciendo clic
-                        en toda la aplicacion o solo arriba-->
                         <Button x:Name="btnClose"
                                 Style="{StaticResource botonesVentana}"
-                                Tag="{StaticResource colorIconosVentanaPrincipal}"
+                                Tag="{StaticResource colorBorde}"
                                 Click="btnClose_Click">
                             <fa:IconImage Icon="Xmark" Style="{StaticResource botonCerrar}"/>
 
                         </Button>
                         <Button x:Name="btnMaximizar"
                                 Style="{StaticResource botonesVentana}"
-                                Tag="{StaticResource colorIconosVentanaPrincipal}"
+                                Tag="{StaticResource colorBorde}"
                                 Click="btnMaximizar_Click">
                             <fa:IconImage Icon="WindowMaximize" Style="{StaticResource botonCerrar}"/>
                         </Button>
                         <Button x:Name="btnminimize"
                                 Style="{StaticResource botonesVentana}"
-                                Tag="{StaticResource colorIconosVentanaPrincipal}"
+                                Tag="{StaticResource colorBorde}"
                                 Click="btnminimize_Click">
                             <fa:IconImage Icon="WindowMinimize" Width="12" Style="{StaticResource botonCerrar}"/>
                         </Button>
@@ -191,10 +182,10 @@
                             <fa:IconImage Icon="{Binding Icon}"
                                           Height="20"
                                           Width="20"
-                                          Foreground="{StaticResource colorBlanco}"
+                                          Foreground="{StaticResource colorTexto}"
                                           Margin="35,0,10,0"/>
                             <TextBlock Text="{Binding Caption, UpdateSourceTrigger=PropertyChanged}"
-                                       Foreground="{StaticResource colorBlanco}"
+                                       Foreground="{StaticResource colorTexto}"
                                        FontSize="16"
                                        FontFamily="Montserrat"
                                        FontWeight="Medium"
@@ -206,7 +197,7 @@
                                     FlowDirection="RightToLeft"
                                     VerticalAlignment="Center"
                                     Margin="0,0,10,0">
-                            <Menu Style="{StaticResource menuStilo}" Tag="{StaticResource colorBlanco}">
+                            <Menu Style="{StaticResource menuStilo}" Tag="{StaticResource colorTexto}">
                                 <MenuItem Height="36" Width="23">
                                     <MenuItem.Header>
                                         <fa:IconImage Icon="AngleDown"
@@ -216,21 +207,20 @@
                                     </MenuItem.Header>
                                     <!-- Aplicar el estilo a los submenús -->
                                     <MenuItem.ItemContainerStyle>
-                                        <Style TargetType="MenuItem" BasedOn="{StaticResource submenuEstilo}" />
+                                        <Style TargetType="MenuItem" BasedOn="{StaticResource submenuEstilo}"/>
                                     </MenuItem.ItemContainerStyle>
 
                                     <!-- Submenú -->
-                                    <MenuItem Header="Opción 1"/>
-                                    <MenuItem Header="Opción 2"/>
+                                    <MenuItem Header="Cerrar Sesión" Command="{Binding CerrarSesionCommand}" Style="{StaticResource submenuEstilo}"/>
                                 </MenuItem>
                             </Menu>
                             <TextBlock Text="{Binding NombreUsuario}"
-                                       Foreground="{StaticResource colorBlanco}"
+                                       Foreground="{StaticResource colorTexto}"
                                        FontFamily="Montserrat"
                                        FontSize="12"
                                        VerticalAlignment="Center"/>
                             <Ellipse Height="35" Width="35"
-                                     Stroke="{StaticResource colorBlanco}"
+                                     Stroke="{StaticResource colorTexto}"
                                      StrokeThickness="2"
                                      Margin="10,0,10,0">
                                 <Ellipse.Fill>
@@ -238,7 +228,7 @@
                                 </Ellipse.Fill>
                             </Ellipse>
                             <Button Style="{StaticResource botonesCabezero}"
-                                    Tag="{StaticResource colorBlanco}">
+                                    Tag="{StaticResource colorTexto}">
                                 <fa:IconImage Icon="QuestionCircle" Style="{StaticResource botonCabezero}"/>
                             </Button>
                         </StackPanel>

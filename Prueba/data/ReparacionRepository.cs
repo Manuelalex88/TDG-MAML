@@ -51,13 +51,16 @@ namespace Prueba.data
                 {
                     int repuestoId;
 
-                    // Insertar repuesto si no existe
+                    // Asegurar que el nombre del repuesto esté en mayúsculas
+                    var nombreMayus = repuesto.Nombre.ToUpperInvariant();
+
+                    // Insertar repuesto si no existe (o actualizar precio si ya existe)
                     using (var cmdInsertRepuesto = new NpgsqlCommand(@"
-                            INSERT INTO repuesto (nombre, precio)
-                            VALUES (@nombre, @precio)
-                            ON CONFLICT (nombre) DO UPDATE SET precio = EXCLUDED.precio;", conn))
+                        INSERT INTO repuesto (nombre, precio)
+                        VALUES (@nombre, @precio)
+                        ON CONFLICT (nombre) DO UPDATE SET precio = EXCLUDED.precio;", conn))
                     {
-                        cmdInsertRepuesto.Parameters.AddWithValue("nombre", repuesto.Nombre);
+                        cmdInsertRepuesto.Parameters.AddWithValue("nombre", nombreMayus);
                         cmdInsertRepuesto.Parameters.AddWithValue("precio", repuesto.Precio);
                         cmdInsertRepuesto.ExecuteNonQuery();
                     }
@@ -65,20 +68,20 @@ namespace Prueba.data
                     // Obtener ID del repuesto
                     using (var cmdGetRepuestoId = new NpgsqlCommand("SELECT id FROM repuesto WHERE nombre = @nombre", conn))
                     {
-                        cmdGetRepuestoId.Parameters.AddWithValue("nombre", repuesto.Nombre);
+                        cmdGetRepuestoId.Parameters.AddWithValue("nombre", nombreMayus);
                         repuestoId = Convert.ToInt32(cmdGetRepuestoId.ExecuteScalar());
                     }
 
-                    // Insertar en repuesto_usado (acumular cantidad si ya existe)
+                    // Insertar en repuesto_usado (sumar cantidad si ya existe)
                     using (var cmdInsertUsado = new NpgsqlCommand(@"
-                            INSERT INTO repuesto_usado (reparacion_id, repuesto_id, cantidad)
-                            VALUES (@reparacion_id, @repuesto_id, @cantidad)
-                            ON CONFLICT (reparacion_id, repuesto_id)
-                            DO UPDATE SET cantidad = EXCLUDED.cantidad;", conn))
+                        INSERT INTO repuesto_usado (reparacion_id, repuesto_id, cantidad)
+                        VALUES (@reparacion_id, @repuesto_id, @cantidad)
+                        ON CONFLICT (reparacion_id, repuesto_id)
+                        DO UPDATE SET cantidad = repuesto_usado.cantidad + EXCLUDED.cantidad;", conn))
                     {
                         cmdInsertUsado.Parameters.AddWithValue("reparacion_id", reparacionId);
                         cmdInsertUsado.Parameters.AddWithValue("repuesto_id", repuestoId);
-                        cmdInsertUsado.Parameters.AddWithValue("cantidad", repuesto.Cantidad); 
+                        cmdInsertUsado.Parameters.AddWithValue("cantidad", repuesto.Cantidad);
                         cmdInsertUsado.ExecuteNonQuery();
                     }
                 }

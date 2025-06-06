@@ -8,13 +8,18 @@
              xmlns:local="clr-namespace:Prueba.view"
              mc:Ignorable="d" 
              d:DesignHeight="600" d:DesignWidth="800">
-
+    
+    <UserControl.DataContext>
+        <viewmodel:PrincipalViewModel/>
+    </UserControl.DataContext>
+    
+    
     <ScrollViewer VerticalScrollBarVisibility="Auto" Background="Transparent">
         <StackPanel Margin="20" Orientation="Vertical">
 
             <!-- Texto Bienvenida -->
             <TextBlock Text="{Binding TextoEntrada}" 
-                       FontSize="20" FontWeight="Bold" Foreground="{StaticResource colorIconosVentanaPrincipal}"
+                       FontSize="20" FontWeight="Bold" Foreground="{StaticResource colorTexto}"
                        Margin="0,0,0,20"/>
 
             <!-- Grid para dos columnas -->
@@ -37,11 +42,14 @@
                         </TextBlock>
                     </Border>
 
-                    <TextBlock Text="Mis Reparaciones Actuales" FontSize="22" FontWeight="SemiBold" Foreground="{StaticResource colorIconosVentanaPrincipal}" Margin="0,0,0,10"/>
-                    <Border Background="White" CornerRadius="8" Padding="10" HorizontalAlignment="Stretch" Height="Auto" MinHeight="250">
-                        <ListView ItemsSource="{Binding ReparacionesAsignadas}" ScrollViewer.VerticalScrollBarVisibility="Auto">
+                    <TextBlock Text="Mis Reparaciones Actuales" FontSize="22" FontWeight="Bold" Foreground="{StaticResource colorTexto}" Margin="0,0,0,10"/>
+                    <Border Background="{StaticResource colorFondo}" CornerRadius="8" Padding="10" HorizontalAlignment="Stretch" Height="Auto" MinHeight="250">
+                        <ListView ItemsSource="{Binding ReparacionesAsignadas}" ScrollViewer.VerticalScrollBarVisibility="Auto" 
+                                  Style="{StaticResource EstiloListViewFacturas}"
+                                  ItemContainerStyle="{StaticResource EstiloListViewItemHover}"
+                                  >
                             <ListView.View>
-                                <GridView>
+                                <GridView ColumnHeaderContainerStyle="{StaticResource EstiloEncabezadoGridView}">
                                     <GridViewColumn Header="Matrícula" Width="Auto">
                                         <GridViewColumn.CellTemplate>
                                             <DataTemplate>
@@ -91,11 +99,13 @@
                         </TextBlock>
                     </Border>
 
-                    <TextBlock Text="Mis Facturas" FontSize="22" FontWeight="SemiBold" Foreground="{StaticResource colorIconosVentanaPrincipal}" Margin="0,0,0,10"/>
-                    <Border Background="White" CornerRadius="8" Padding="10" HorizontalAlignment="Stretch" Height="Auto" MinHeight="250">
-                        <ListView ItemsSource="{Binding MisFacturas}" ScrollViewer.VerticalScrollBarVisibility="Auto" HorizontalAlignment="Stretch">
+                    <TextBlock Text="Mis Facturas" FontSize="22" FontWeight="Bold" Foreground="{StaticResource colorTexto}" Margin="0,0,0,10"/>
+                    <Border Background="{StaticResource colorFondo}" CornerRadius="8" Padding="10" HorizontalAlignment="Stretch" Height="Auto" MinHeight="250">
+                        <ListView ItemsSource="{Binding MisFacturas}" ScrollViewer.VerticalScrollBarVisibility="Auto" HorizontalAlignment="Stretch"
+                                  Style="{StaticResource EstiloListViewFacturas}"
+                                  ItemContainerStyle="{StaticResource EstiloListViewItemHover}">
                             <ListView.View>
-                                <GridView>
+                                <GridView ColumnHeaderContainerStyle="{StaticResource EstiloEncabezadoGridView}">
                                     <GridViewColumn Header="Matricula" DisplayMemberBinding="{Binding Matricula}" Width="Auto"/>
 
                                     <GridViewColumn Header="Cliente" Width="Auto">

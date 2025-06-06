@@ -13,7 +13,7 @@
         </Grid.ColumnDefinitions>
 
         <!-- Mis Facturas Pendientes -->
-        <GroupBox Header="Mis Facturas Pendientes" FontWeight="Bold" FontSize="14" Grid.Column="0" Margin="5">
+        <GroupBox Header="Mis Facturas Pendientes" FontWeight="Bold" FontSize="14" Grid.Column="0" Margin="5" Style="{StaticResource gbocStilos}">
             <ListView ItemContainerStyle="{StaticResource EstiloListViewItemHover}"
                       ItemsSource="{Binding FacturasPendientes}"
                       SelectedItem="{Binding FacturaSeleccionada}"
@@ -39,7 +39,7 @@
         </GroupBox>
 
         <!-- Facturar -->
-        <GroupBox Header="Facturar" FontWeight="Bold" FontSize="14" Grid.Column="1" Margin="5">
+        <GroupBox Header="Facturar" FontWeight="Bold" FontSize="14" Grid.Column="1" Margin="5" Style="{StaticResource gbocStilos}">
             <ScrollViewer>
                 <StackPanel Margin="10" VerticalAlignment="Top">
 
@@ -62,20 +62,20 @@
                     </GroupBox>
 
                     <!-- Mecánico -->
-                    <GroupBox Header="Mecánico" FontSize="12" Margin="0,10,0,0" Height="53">
+                    <GroupBox Header="Mecánico" FontSize="12" Margin="0,10,0,0" Height="53" Style="{StaticResource gbocStilos}">
                         <StackPanel Margin="5">
                             <TextBox Text="{Binding NombreMecanico}" Margin="0,0,0,5" IsReadOnly="True"/>
                         </StackPanel>
                     </GroupBox>
                     <!-- Precio total -->
-                    <Border Background="{StaticResource colorSilver}"
+                    <Border Background="{StaticResource colorTexto}"
                             CornerRadius="10"
                             Padding="10"
                             Margin="0,20,0,0">
                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                            <TextBlock Text="Precio Total:" VerticalAlignment="Center" FontWeight="Bold"/>
-                            <TextBlock Text="{Binding PrecioTotal, StringFormat=C}" 
-                                             Margin="10,0,0,0" FontSize="14"/>
+                            <TextBlock Text="Precio Total:" VerticalAlignment="Center" FontWeight="Bold" Foreground="{StaticResource colorBorde}"/>
+                            <TextBlock Text="{Binding Total, StringFormat=C}" 
+                                             Margin="10,0,0,0" FontSize="14" Foreground="{StaticResource colorBorde}"/>
                         </StackPanel>
                     </Border>
 

@@ -3,11 +3,11 @@
     
         <!-- ToggleButton Template con flecha amarilla -->
         <ControlTemplate x:Key="ComboBoxToggleButton" TargetType="ToggleButton">
-        <Border BorderBrush="{StaticResource colorB2}" BorderThickness="2" Background="Transparent">
+        <Border BorderBrush="{StaticResource colorTexto}" BorderThickness="2" Background="Transparent">
                 <Grid>
                     <Path x:Name="Arrow"
                       Data="M 0 0 L 4 4 L 8 0 Z"
-                      Fill="{StaticResource colorB2}"
+                      Fill="{StaticResource colorTexto}"
                       HorizontalAlignment="Right"
                       VerticalAlignment="Center"
                       Margin="0,0,10,0"/>
@@ -22,10 +22,10 @@
         </ControlTemplate>
 
         <!-- ComboBox completo -->
-        <Style x:Key="ComboBoxAmarilloTransparente" TargetType="ComboBox">
-            <Setter Property="Foreground" Value="{StaticResource colorB2}"/>
-            <Setter Property="Background" Value="White"/>
-            <Setter Property="BorderBrush" Value="{StaticResource colorB2}"/>
+        <Style x:Key="ComboBoxRegistrarVehiculo" TargetType="ComboBox">
+        <Setter Property="Foreground" Value="{StaticResource colorTexto}"/>
+            <Setter Property="Background" Value="{StaticResource colorFondo}"/>
+        <Setter Property="BorderBrush" Value="{StaticResource colorTexto}"/>
             <Setter Property="BorderThickness" Value="2"/>
             <Setter Property="FontWeight" Value="Bold"/>
             <Setter Property="Padding" Value="4"/>
@@ -58,7 +58,7 @@
                                PopupAnimation="Slide">
                                 <Border BorderBrush="{TemplateBinding BorderBrush}"
                                     BorderThickness="{TemplateBinding BorderThickness}"
-                                    Background="White"
+                                    Background="{StaticResource colorFondo}"
                                     MinWidth="{TemplateBinding ActualWidth}"
                                     MaxHeight="{TemplateBinding MaxDropDownHeight}">
                                     <ScrollViewer Margin="4,6,4,6">
@@ -72,7 +72,7 @@
                                 <Setter TargetName="ToggleButton" Property="BorderBrush" Value="White"/>
                             </Trigger>
                             <Trigger Property="IsEnabled" Value="False">
-                                <Setter Property="Foreground" Value="Gray"/>
+                                <Setter Property="Foreground" Value="{StaticResource colorFondo}"/>
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
@@ -100,13 +100,13 @@
                     <Style.Triggers>
                         <!-- Fondo de los ítems cuando pasas el mouse por encima -->
                         <Trigger Property="IsMouseOver" Value="True">
-                            <Setter Property="Background" Value="{StaticResource colorB2}"/>
+                            <Setter Property="Background" Value="{StaticResource colorBorde}"/>
                             <Setter Property="Foreground" Value="Black"/>
                         </Trigger>
                         <!-- Fondo de los ítems seleccionados -->
                         <Trigger Property="IsSelected" Value="True">
-                            <Setter Property="Background" Value="Orange"/>
-                            <Setter Property="Foreground" Value="White"/>
+                            <Setter Property="Background" Value="{StaticResource colorBorde}"/>
+                            <Setter Property="Foreground" Value="{StaticResource colorFondo}"/>
                         </Trigger>
                     </Style.Triggers>
                 </Style>

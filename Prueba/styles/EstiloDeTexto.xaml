@@ -17,7 +17,7 @@
     <Style x:Key="GroupBoxText" TargetType="Label">
         <Setter Property="FontSize" Value="15"/>
         <Setter Property="FontWeight" Value="Bold"/>
-        <Setter Property="Foreground" Value="{StaticResource colorB2}"/>
+        <Setter Property="Foreground" Value="{StaticResource colorTexto}"/>
     </Style>
     <!--Otro estilo-->
     <Style x:Key="txtChildViews" TargetType="TextBlock">
