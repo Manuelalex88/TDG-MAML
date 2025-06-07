@@ -18,22 +18,61 @@ namespace Prueba.viewModel.viewModelAdmin
         #region Campos
         private Mecanico _mecanicoSeleccionado;
         private MecanicoRepository _mecanicoRepository;
+
+        private string _nombreMecanico;
+        private string _idMecanico;
+        private string _contrasena;
         #endregion
         #region Propiedades
         public Mecanico MecanicoSeleccionado
         {
             get => _mecanicoSeleccionado;
-            set => SetProperty(ref _mecanicoSeleccionado, value);
+            set
+            {
+                if (SetProperty(ref _mecanicoSeleccionado, value))
+                {
+                    if (_mecanicoSeleccionado != null)
+                    {
+                        NombreMecanico = _mecanicoSeleccionado.Nombre;
+                        MecanicoID = _mecanicoSeleccionado.Id;
+                        Contrasena = _mecanicoSeleccionado.Contrasena;
+                    }
+                    else
+                    {
+                        NombreMecanico = string.Empty;
+                        MecanicoID = string.Empty;
+                        Contrasena = string.Empty;
+                    }
+                }
+            }
         }
         public ObservableCollection<Mecanico> MecanicoList
         {
             get => _mecanicoList;
             set => SetProperty(ref _mecanicoList, value);
         }
+        public string NombreMecanico
+        {
+            get => _nombreMecanico;
+            set => SetProperty(ref _nombreMecanico, value);
+        }
+        public string MecanicoID
+        {
+            get => _idMecanico;
+            set => SetProperty(ref _idMecanico, value);
+        }
+        public string Contrasena
+        {
+            get => _contrasena;
+            set => SetProperty(ref _contrasena, value);
+        }
         #endregion
 
         #region Comandos
         public ICommand MostrarMecanicosCommand { get; }
+        public ICommand GuardarMecanicoCommand { get; }
+        public ICommand EliminarMecanicoCommand { get; }
+        public ICommand NuevoMecanicoCommand { get; }
         #endregion
 
         public MecanicosViewModel()
@@ -41,10 +80,18 @@ namespace Prueba.viewModel.viewModelAdmin
             //Instanciar
             MecanicoList = new ObservableCollection<Mecanico>();
             _mecanicoList = new ObservableCollection<Mecanico>();
-            _mecanicoSeleccionado = new Mecanico();
+            _mecanicoSeleccionado = null!; //  PON NULL PARA QUE FUNCIONE LA COMPROBACION DEL NULL
+            _nombreMecanico = string.Empty;
+            _idMecanico = string.Empty;
+            _contrasena = string.Empty;
             _mecanicoRepository = new MecanicoRepository();
             //Comando
             MostrarMecanicosCommand = new comandoViewModel(MostrarMecanicos);
+            GuardarMecanicoCommand = new comandoViewModel(GuardarMecanico);
+            EliminarMecanicoCommand = new comandoViewModel(EliminarMecanico);
+            NuevoMecanicoCommand = new comandoViewModel(NuevoMecanico);
+   
+            MostrarMecanicosCommand.Execute(null);
         }
         #region Metodos
         protected bool SetProperty<T>(ref T backingField, T value, [CallerMemberName] string? propertyName = null)
@@ -59,7 +106,7 @@ namespace Prueba.viewModel.viewModelAdmin
 
             return true;
         }
-        private void MostrarMecanicos(object obj)
+        private void MostrarMecanicos(object? obj)
         {
             try
             {
@@ -78,6 +125,24 @@ namespace Prueba.viewModel.viewModelAdmin
                     "Fuente: " + ex.Source + "\n" +
                     "StackTrace: " + ex.StackTrace);
             }
+        }
+        private void GuardarMecanico(object obj)
+        {
+            
+        }
+        private void EliminarMecanico(object obj)
+        {
+            if (MecanicoSeleccionado == null) //ESTA COMPROBACIONN
+            {
+
+                MessageBox.Show("Selecciona un Mecanico para guardar cambios.");
+                return;
+            }
+            MessageBox.Show("Eliminar Siu");
+        }
+        private void NuevoMecanico(object obj)
+        {
+
         }
         #endregion
     }

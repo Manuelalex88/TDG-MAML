@@ -63,7 +63,7 @@ namespace Prueba.repository
                                 {
                                     Id = reader.GetString(reader.GetOrdinal("id")),
                                     Nombre = reader.GetString(reader.GetOrdinal("nombre")),
-                                    Contrasena = reader.GetString(reader.GetOrdinal("contraseña"))
+                                    Contrasena = reader.GetString(reader.GetOrdinal("contrasena"))
                                 };
 
                                 lista.Add(mecanico);
