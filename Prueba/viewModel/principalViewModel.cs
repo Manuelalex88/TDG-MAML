@@ -48,6 +48,7 @@ namespace Prueba.viewModel
         #endregion
         #region Comandos
         public ICommand DescargarFacturaCommand { get; }
+        
         #endregion
         public PrincipalViewModel()
         {
@@ -64,6 +65,7 @@ namespace Prueba.viewModel
             _misFacturas = new ObservableCollection<FacturaVehiculoClienteDTO>();
             _facturaRepository = new FacturaRepository();
 
+            
             DescargarFacturaCommand = new comandoViewModel(DescargarFactura);
             //Metodos
             CargarReparacionesAsignadas(idMecanico);
@@ -85,7 +87,7 @@ namespace Prueba.viewModel
             return true;
         }
         
-        //Tengo que modificar esto
+        
         public void DescargarFactura(object obj)
         {
             if (obj is not FacturaVehiculoClienteDTO facturaSeleccionada)
@@ -119,7 +121,7 @@ namespace Prueba.viewModel
                 };
 
                 // Obtener todos los repuestos usados para esta factura
-                var repuestosUsados = _facturaRepository.ObtenerRepuestosUsadosPorReparacion(facturaSeleccionada.Id) ?? new List<Repuesto>();
+                var repuestosUsados = _facturaRepository.ObtenerRepuestosUsadosPorReparacion(facturaSeleccionada.Id) ?? new List<RepuestoUsadoDTO>();
                 decimal total = repuestosUsados.Sum(r => r.Precio * r.Cantidad);
 
                 var factura = new FacturaDocument
@@ -127,7 +129,7 @@ namespace Prueba.viewModel
                     Cliente = cliente,
                     Vehiculo = vehiculo,
                     Mecanico = mecanico,
-                    Repuestos = repuestosUsados,
+                    RepuestosUsados = repuestosUsados,
                     Total = total
                 };
 

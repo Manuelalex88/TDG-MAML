@@ -200,7 +200,7 @@ namespace Prueba.viewModel
 
         private bool PuedeEliminar(object? obj)
         {
-            return FacturaSeleccionada != null;
+            return FacturaSeleccionada != null && Total > 0;
         }
 
         private void EliminarLaFactura(object obj)
@@ -257,20 +257,24 @@ namespace Prueba.viewModel
                     Nombre = NombreMecanico
                 };
 
-                // Obtener todos los repuestos usados para esta factura
-                var repuestosUsados = _facturaRepository.ObtenerRepuestosUsadosPorReparacion(FacturaSeleccionada.Id) ?? new List<Repuesto>();
-                decimal total = repuestosUsados.Sum(r => r.Precio * r.Cantidad);
-                #endregion
+                var repuestosUsados = _facturaRepository.ObtenerRepuestosUsadosPorReparacion(FacturaSeleccionada.Id);
+                if (repuestosUsados == null || !repuestosUsados.Any())
+                {
+                    MessageBox.Show("No se encontraron repuestos usados para esta reparación.(Una reparacion sin repuestos no tiene sentido)");
+                    return;
+                }
+                decimal total = repuestosUsados.Sum(r => r.Precio * r.Cantidad)+DatosConstantes.ManoDeObra;
 
                 var factura = new FacturaDocument
                 {
                     Cliente = cliente,
                     Vehiculo = vehiculo,
                     Mecanico = mecanico,
-                    Repuestos = repuestosUsados,
+                    RepuestosUsados = repuestosUsados,
                     Total = total
                 };
 
+                #endregion
                 string timestamp = DateTime.Now.ToString("yyyy-MM-dd_HHmm");
                 string fileName = $"Factura_{timestamp}.pdf";
                 string ruta = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), fileName);

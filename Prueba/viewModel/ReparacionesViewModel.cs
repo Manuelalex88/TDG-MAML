@@ -21,7 +21,7 @@ namespace Prueba.viewModel
         };
 
         public ObservableCollection<VehiculoReparacionDTO> VehiculosAsignados { get; set; } = new();
-        public ObservableCollection<Repuesto> RepuestosSeleccionados { get; set; } = new();
+        public ObservableCollection<RepuestoUsadoDTO> RepuestosSeleccionados { get; set; } = new();
 
         // Campos privados
         private readonly ReparacionRepository _reparacionRepository;
@@ -95,8 +95,8 @@ namespace Prueba.viewModel
                 }
             }
         }
-        private Repuesto? _repuestoSeleccionado;
-        public Repuesto? RepuestoSeleccionado
+        private RepuestoUsadoDTO? _repuestoSeleccionado;
+        public RepuestoUsadoDTO? RepuestoSeleccionado
         {
             get => _repuestoSeleccionado;
             set
@@ -257,7 +257,7 @@ namespace Prueba.viewModel
             }
             else
             {
-                RepuestosSeleccionados.Add(new Repuesto
+                RepuestosSeleccionados.Add(new RepuestoUsadoDTO
                 {
                     Nombre = NuevoRepuesto,
                     Precio = RepuestoPrecio,
@@ -278,9 +278,9 @@ namespace Prueba.viewModel
             if (!_mantenimientoAgregado)
             {
                 // Agregar mantenimiento básico
-                RepuestosSeleccionados.Add(new Repuesto { Nombre = "Filtros", Precio = 20, Cantidad = 3 });
-                RepuestosSeleccionados.Add(new Repuesto { Nombre = "Aceite", Precio = 40, Cantidad = 1 });
-                RepuestosSeleccionados.Add(new Repuesto { Nombre = "Anticongelante", Precio = 20, Cantidad = 1 });
+                RepuestosSeleccionados.Add(new RepuestoUsadoDTO { Nombre = "Filtros", Precio = 20, Cantidad = 3 });
+                RepuestosSeleccionados.Add(new RepuestoUsadoDTO { Nombre = "Aceite", Precio = 40, Cantidad = 1 });
+                RepuestosSeleccionados.Add(new RepuestoUsadoDTO { Nombre = "Anticongelante", Precio = 20, Cantidad = 1 });
 
                 _mantenimientoAgregado = true;
             }

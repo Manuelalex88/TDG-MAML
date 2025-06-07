@@ -12,8 +12,7 @@
         WindowStyle="None"
         WindowStartupLocation="CenterScreen"
         Background="Transparent"
-        AllowsTransparency="True"
-        >
+        AllowsTransparency="True">
     <!--Le pasamos el contexto del viewmodel-->
     <Window.DataContext>
         <viewmodel:MainViewModel/>
@@ -228,7 +227,9 @@
                                 </Ellipse.Fill>
                             </Ellipse>
                             <Button Style="{StaticResource botonesCabezero}"
-                                    Tag="{StaticResource colorTexto}">
+                                    Tag="{StaticResource colorTexto}"
+                                    ToolTip="Ayuda"
+                                    Command="{Binding MostrarAyudaCommand}">
                                 <fa:IconImage Icon="QuestionCircle" Style="{StaticResource botonCabezero}"/>
                             </Button>
                         </StackPanel>

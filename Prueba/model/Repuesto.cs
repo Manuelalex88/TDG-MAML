@@ -8,55 +8,10 @@ using System.Threading.Tasks;
 
 namespace Prueba.model
 {
-    public class Repuesto : INotifyPropertyChanged
+    public class Repuesto 
     {
-        private string _nombre = string.Empty;
-        private decimal _precio;
-        private int _cantidad;
-
-        public string Nombre
-        {
-            get => _nombre;
-            set
-            {
-                if (_nombre != value)
-                {
-                    _nombre = value;
-                    OnPropertyChanged();
-                }
-            }
-        }
-
-        public decimal Precio
-        {
-            get => _precio;
-            set
-            {
-                if (_precio != value)
-                {
-                    _precio = value;
-                    OnPropertyChanged();
-                }
-            }
-        }
-
-        public int Cantidad
-        {
-            get => _cantidad;
-            set
-            {
-                if (_cantidad != value)
-                {
-                    _cantidad = value;
-                    OnPropertyChanged();
-                }
-            }
-        }
-
-        public event PropertyChangedEventHandler? PropertyChanged;
-        protected void OnPropertyChanged([CallerMemberName] string? propertyName = null)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
+        public int Id { get; set; }
+        public string Nombre { get; set; } = string.Empty;
+        public decimal Precio { get; set; }
     }
 }

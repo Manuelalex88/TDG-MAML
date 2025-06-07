@@ -14,7 +14,8 @@ namespace Prueba.data
         public Cliente Cliente { get; set; } = new Cliente();
         public Vehiculo Vehiculo { get; set; } = new Vehiculo();
         public Mecanico Mecanico { get; set; } = new Mecanico();
-        public List<Repuesto> Repuestos { get; set; } = new List<Repuesto>();
+        public List<RepuestoUsadoDTO> RepuestosUsados { get; set; } = new List<RepuestoUsadoDTO>();
+
         public decimal Total { get; set; }
 
         public void Compose(IDocumentContainer container)
@@ -80,7 +81,7 @@ namespace Prueba.data
                         });
 
                         // Tabla de repuestos
-                        if (Repuestos?.Any() == true)
+                        if (RepuestosUsados?.Any() == true)
                         {
                             column.Item().PaddingTop(15).Text("Piezas Utilizadas").Bold().FontSize(14);
 
@@ -102,7 +103,7 @@ namespace Prueba.data
                                     header.Cell().Text("Total").Bold().AlignRight();
                                 });
 
-                                foreach (var pieza in Repuestos)
+                                foreach (var pieza in RepuestosUsados)
                                 {
                                     table.Cell().Text(pieza.Nombre);
                                     table.Cell().Text(pieza.Cantidad.ToString()).AlignRight();
@@ -113,16 +114,23 @@ namespace Prueba.data
                         }
 
                         // Resumen financiero
-                        var subtotal = Repuestos?.Sum(r => r.Precio * r.Cantidad) ?? 0m;
-                        var iva = subtotal * 0.21m; 
-                        var totalFinal = subtotal + iva;
+                        var subtotal = RepuestosUsados?.Sum(r => r.Precio * r.Cantidad) ?? 0m;
+                        var manoObra = DatosConstantes.ManoDeObra;
+                        var baseImponible = subtotal + manoObra;
+                        var iva = baseImponible * 0.21m;
+                        var totalFinal = baseImponible + iva;
 
                         column.Item().PaddingTop(20).AlignRight().Column(col =>
                         {
                             col.Item().Row(row =>
                             {
-                                row.RelativeItem().Text("Subtotal:");
+                                row.RelativeItem().Text("Subtotal piezas:");
                                 row.ConstantItem(100).Text($"{subtotal:C}");
+                            });
+                            col.Item().Row(row =>
+                            {
+                                row.RelativeItem().Text("Mano de obra:");
+                                row.ConstantItem(100).Text($"{manoObra:C}");
                             });
                             col.Item().Row(row =>
                             {

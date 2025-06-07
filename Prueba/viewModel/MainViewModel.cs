@@ -5,6 +5,7 @@ using Prueba.view.childViews;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -59,6 +60,7 @@ namespace Prueba.viewModel
         public ICommand showFacturasChildViewCommand{  get;}
         public ICommand ShowVehiculosEnTallerChildViewCommand {  get;}
         public ICommand CerrarSesionCommand { get; }
+        public ICommand MostrarAyudaCommand { get; }
         #endregion
         //Constructor
         public MainViewModel()
@@ -72,6 +74,7 @@ namespace Prueba.viewModel
             showFacturasChildViewCommand = new comandoViewModel(ExecuteShowCommand4);
             ShowVehiculosEnTallerChildViewCommand = new comandoViewModel(ExecuteShowCommand5);
             CerrarSesionCommand = new comandoViewModel(CerrarSesion);
+            MostrarAyudaCommand = new comandoViewModel(MostrarAyuda);
             // Cargar el nombre del usuario desde UserData
             _nombreUsuario = identity?.NombreCompleto ?? "Desconocido"; 
             OnPropertyChanged(nameof(NombreUsuario));  
@@ -92,6 +95,24 @@ namespace Prueba.viewModel
                 OnPropertyChanged(propertyName);
 
             return true;
+        }
+        public void MostrarAyuda(object obj)
+        {
+            string rutaPdf = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "resources", "Ayuda_GestionTalleres.pdf");
+
+
+            if (File.Exists(rutaPdf))
+            {
+                System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
+                {
+                    FileName = rutaPdf,
+                    UseShellExecute = true
+                });
+            }
+            else
+            {
+                MessageBox.Show("El archivo de ayuda no fue encontrado.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
         private void CerrarSesion(object obj)
         {

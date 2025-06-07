@@ -8,6 +8,9 @@ namespace Prueba.data
 {
     public static class DatosConstantes
     {
+        //Nombre Taller
+        public const string NombreTaller = "TALLER MANUEL S.A";
+
         // Precios constantes
         public const decimal MantenimientoBasico = 120.00m;
         public const decimal ManoDeObra = 50.00m;

@@ -31,16 +31,14 @@
 
     <!--Primer Border para la imagen de fondo mas que todo -->
     <Border CornerRadius="10">
-        <Border.Background>
-            <ImageBrush ImageSource="/images/login/fondoLogin.jpg"/>
-        </Border.Background>
+
         <!--Segundo Border para la Creacion de la ventana -->
         <Border CornerRadius="10"
             Background="{StaticResource colorFondo}"
             BorderBrush="{StaticResource colorBorde}"
             BorderThickness="5"
             Opacity="1">
-            
+
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="30"/>
@@ -57,7 +55,7 @@
                         <ColumnDefinition Width="5"/>
                     </Grid.ColumnDefinitions>
 
-                    <TextBlock Text="TALLER MANUEL"
+                    <TextBlock Text="{Binding NombreTaller}"
                                Foreground="{StaticResource colorTexto}"
                                FontSize="20"
                                FontWeight="Bold"
@@ -158,7 +156,7 @@
                                FontFamily="Montserrat"
                                HorizontalAlignment="Center"
                                Margin="0,5,0,0"/>
-                    
+
                     <!--Texblock del nombre del usuario -->
                     <TextBlock Text="Usuario"
                                Foreground="{StaticResource colorTexto}"
@@ -238,7 +236,7 @@
                             </Style>
                         </Button.Style>
                     </Button>
-                <!--Icono de BD con la confirmacion-->    
+                    <!--Icono de BD con la confirmacion-->
                 </StackPanel>
                 <StackPanel Grid.Row="3"
                     Orientation="Horizontal"
@@ -249,7 +247,12 @@
                       Width="20"
                       Height="20"
                       VerticalAlignment="Center"
-                      Foreground="{StaticResource colorBorde}"/>
+                      Foreground="{StaticResource colorBorde}">
+                        <fa:IconBlock.ToolTip>
+                         <ToolTip Style="{StaticResource EstiloPersonalizadoToolTip}"
+                         Content="{Binding MensajeEstadoConexion}" />
+                        </fa:IconBlock.ToolTip>
+                    </fa:IconBlock>
                     <fa:IconBlock Width="20"
                       Height="20"
                       Margin="5,0,0,0"

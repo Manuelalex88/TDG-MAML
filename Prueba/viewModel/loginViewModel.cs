@@ -1,5 +1,6 @@
 ﻿using FontAwesome.Sharp;
 using Npgsql;
+using Prueba.data;
 using Prueba.model;
 using Prueba.repository;
 using Prueba.view;
@@ -18,10 +19,14 @@ namespace Prueba.viewModel
     public class loginViewModel : BaseViewModel
     {
         #region Campos
+        public string NombreTaller => DatosConstantes.NombreTaller;
         private string _username;
         private SecureString _password = new SecureString();
         private string _mensajeError;
         private bool _conexionBDActiva;
+        public string MensajeEstadoConexion => ConexionBDActiva
+        ? "✅ Base de datos conectada correctamente."
+        : "❌ Error: No se pudo conectar a la base de datos.";
         #endregion
 
         #region Propiedades
@@ -30,7 +35,11 @@ namespace Prueba.viewModel
         public bool ConexionBDActiva
         {
             get => _conexionBDActiva;
-            set => SetProperty(ref _conexionBDActiva, value);
+            set
+            {
+                if (SetProperty(ref _conexionBDActiva, value))
+                    OnPropertyChanged(nameof(MensajeEstadoConexion));
+            }
         }
         public string Username
         {

@@ -4,20 +4,13 @@ using Prueba.model;
 using Prueba.view.childViews;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Configuration;
 using System.Windows;
 
 namespace Prueba.data
 {
     public class ReparacionRepository : Conexion
     {
-        
-
-
-        public void GuardarCambiosReparacion(VehiculoReparacionDTO vehiculo, string trabajo, string estado, List<Repuesto> repuestos)
+        public void GuardarCambiosReparacion(VehiculoReparacionDTO vehiculo, string trabajo, string estado, List<RepuestoUsadoDTO> repuestos)
         {
             using var conn = GetConection();
             conn.Open();
@@ -51,33 +44,32 @@ namespace Prueba.data
                 {
                     int repuestoId;
 
-                    // Asegurar que el nombre del repuesto esté en mayúsculas
                     var nombreMayus = repuesto.Nombre.ToUpperInvariant();
 
-                    // Insertar repuesto si no existe (o actualizar precio si ya existe)
+                    // Insertar o actualizar repuesto
                     using (var cmdInsertRepuesto = new NpgsqlCommand(@"
-                        INSERT INTO repuesto (nombre, precio)
-                        VALUES (@nombre, @precio)
-                        ON CONFLICT (nombre) DO UPDATE SET precio = EXCLUDED.precio;", conn))
+                            INSERT INTO repuesto (nombre, precio)
+                            VALUES (@nombre, @precio)
+                            ON CONFLICT (nombre) DO UPDATE SET precio = EXCLUDED.precio;", conn))
                     {
                         cmdInsertRepuesto.Parameters.AddWithValue("nombre", nombreMayus);
                         cmdInsertRepuesto.Parameters.AddWithValue("precio", repuesto.Precio);
                         cmdInsertRepuesto.ExecuteNonQuery();
                     }
 
-                    // Obtener ID del repuesto
+                    // Obtener id del repuesto
                     using (var cmdGetRepuestoId = new NpgsqlCommand("SELECT id FROM repuesto WHERE nombre = @nombre", conn))
                     {
                         cmdGetRepuestoId.Parameters.AddWithValue("nombre", nombreMayus);
                         repuestoId = Convert.ToInt32(cmdGetRepuestoId.ExecuteScalar());
                     }
 
-                    // Insertar en repuesto_usado (sumar cantidad si ya existe)
+                    // Insertar o actualizar repuesto_usado sumando cantidad
                     using (var cmdInsertUsado = new NpgsqlCommand(@"
-                        INSERT INTO repuesto_usado (reparacion_id, repuesto_id, cantidad)
-                        VALUES (@reparacion_id, @repuesto_id, @cantidad)
-                        ON CONFLICT (reparacion_id, repuesto_id)
-                        DO UPDATE SET cantidad = repuesto_usado.cantidad + EXCLUDED.cantidad;", conn))
+                            INSERT INTO repuesto_usado (reparacion_id, repuesto_id, cantidad, facturado)
+                            VALUES (@reparacion_id, @repuesto_id, @cantidad, FALSE)
+                            ON CONFLICT (reparacion_id, repuesto_id)
+                            DO UPDATE SET cantidad = repuesto_usado.cantidad + EXCLUDED.cantidad;", conn))
                     {
                         cmdInsertUsado.Parameters.AddWithValue("reparacion_id", reparacionId);
                         cmdInsertUsado.Parameters.AddWithValue("repuesto_id", repuestoId);
@@ -88,13 +80,14 @@ namespace Prueba.data
 
                 transaction.Commit();
             }
-            catch
+            catch (Exception ex)
             {
                 transaction.Rollback();
-                throw;
+                MessageBox.Show($"Error al guardar cambios en la reparación: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
-        public void FinalizarReparacionActual(VehiculoReparacionDTO vehiculo,int reparacionId)
+
+        public void FinalizarReparacionActual(VehiculoReparacionDTO vehiculo, int reparacionId)
         {
             using var conn = GetConection();
             conn.Open();
@@ -129,7 +122,6 @@ namespace Prueba.data
                 decimal total = CalcularTotal(reparacionId, conn, transaction);
 
                 // Insertar factura
-
                 using (var cmd = new NpgsqlCommand(@"
                         INSERT INTO factura (id_reparacion, fecha_emision, pagado, total)
                         VALUES (@idReparacion, @fechaEmision, FALSE, @total);", conn, transaction))
@@ -140,68 +132,97 @@ namespace Prueba.data
 
                     cmd.ExecuteNonQuery();
                 }
-                
+
                 transaction.Commit();
             }
             catch (Exception ex)
             {
                 transaction.Rollback();
-                MessageBox.Show($"Error: {ex.Message}\n\n{ex.StackTrace}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show($"Error al finalizar reparación: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
-
         }
-        public List<Repuesto> ObtenerRepuestosUsados(int reparacionId)
+
+        public List<RepuestoUsadoDTO> ObtenerRepuestosUsados(int reparacionId)
         {
-            var repuestos = new List<Repuesto>();
+            var repuestos = new List<RepuestoUsadoDTO>();
 
-            using var conn = GetConection();
-            conn.Open();
+            try
+            {
+                using var conn = GetConection();
+                conn.Open();
 
-            string query = @"
+                string query = @"
                     SELECT r.nombre, r.precio, ru.cantidad
                     FROM repuesto_usado ru
                     JOIN repuesto r ON r.id = ru.repuesto_id
                     WHERE ru.reparacion_id = @reparacionId;";
 
-            using var cmd = new NpgsqlCommand(query, conn);
-            cmd.Parameters.AddWithValue("reparacionId", reparacionId);
+                using var cmd = new NpgsqlCommand(query, conn);
+                cmd.Parameters.AddWithValue("reparacionId", reparacionId);
 
-            using var reader = cmd.ExecuteReader();
-            while (reader.Read())
-            {
-                repuestos.Add(new Repuesto
+                using var reader = cmd.ExecuteReader();
+                while (reader.Read())
                 {
-                    Nombre = reader.GetString(0),
-                    Precio = reader.GetDecimal(1),
-                    Cantidad = reader.GetInt32(2)
-                });
+                    repuestos.Add(new RepuestoUsadoDTO
+                    {
+                        Nombre = reader.GetString(0),
+                        Precio = reader.GetDecimal(1),
+                        Cantidad = reader.GetInt32(2)
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error al obtener repuestos usados: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
 
             return repuestos;
         }
+
         public int ObtenerIdReparacionPorMatricula(string matricula)
         {
-            using var conn = GetConection();
-            conn.Open();
+            try
+            {
+                using var conn = GetConection();
+                conn.Open();
 
-            using var cmd = new NpgsqlCommand("SELECT id FROM reparacion WHERE matricula_vehiculo = @matricula", conn);
-            cmd.Parameters.AddWithValue("matricula", matricula);
+                using var cmd = new NpgsqlCommand("SELECT id FROM reparacion WHERE matricula_vehiculo = @matricula", conn);
+                cmd.Parameters.AddWithValue("matricula", matricula);
 
-            return Convert.ToInt32(cmd.ExecuteScalar());
+                var result = cmd.ExecuteScalar();
+                if (result == null || result == DBNull.Value)
+                    return -1; // o valor que indique no encontrado
+
+                return Convert.ToInt32(result);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error al obtener ID de reparación: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                return -1;
+            }
         }
+
         private decimal CalcularTotal(int reparacionId, NpgsqlConnection conn, NpgsqlTransaction transaction)
         {
-            string query = @"
+            try
+            {
+                string query = @"
                     SELECT COALESCE(SUM(ru.cantidad * r.precio), 0)
                     FROM repuesto_usado ru
                     JOIN repuesto r ON ru.repuesto_id = r.id
                     WHERE ru.reparacion_id = @reparacionId;";
 
-            using var cmd = new NpgsqlCommand(query, conn, transaction);
-            cmd.Parameters.AddWithValue("reparacionId", reparacionId);
+                using var cmd = new NpgsqlCommand(query, conn, transaction);
+                cmd.Parameters.AddWithValue("reparacionId", reparacionId);
 
-            object result = cmd.ExecuteScalar();
-            return Convert.ToDecimal(result);
+                object result = cmd.ExecuteScalar();
+                return Convert.ToDecimal(result);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error al calcular total: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                return 0m;
+            }
         }
     }
 }

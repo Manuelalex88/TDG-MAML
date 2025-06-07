@@ -1,46 +1,52 @@
 ﻿using Npgsql;
 using Prueba.model;
 using System;
+using System.Windows;
 
 namespace Prueba.repository
 {
     public class MecanicoRepository : Conexion
     {
-        
-
         public Mecanico? Login(string id, string password)
         {
-            using (var conn = GetConection())
+            try
             {
-                conn.Open();
-
-                string query = "SELECT id, nombre FROM Mecanico WHERE id = @id AND contrasena = @contrasena";
-
-                using (var cmd = new NpgsqlCommand(query, conn))
+                using (var conn = GetConection())
                 {
-                    cmd.Parameters.AddWithValue("@id", id);
-                    cmd.Parameters.AddWithValue("@contrasena", password);
+                    conn.Open();
 
-                    using (var reader = cmd.ExecuteReader())
+                    string query = "SELECT id, nombre FROM Mecanico WHERE id = @id AND contrasena = @contrasena";
+
+                    using (var cmd = new NpgsqlCommand(query, conn))
                     {
-                        if (reader.Read())
+                        cmd.Parameters.AddWithValue("@id", id);
+                        cmd.Parameters.AddWithValue("@contrasena", password);
+
+                        using (var reader = cmd.ExecuteReader())
                         {
-                            return new Mecanico
+                            if (reader.Read())
                             {
-                                Id = reader.GetString(0),
-                                Nombre = reader.GetString(1)
-                            };
+                                return new Mecanico
+                                {
+                                    Id = reader.GetString(0),
+                                    Nombre = reader.GetString(1)
+                                };
+                            }
                         }
                     }
                 }
             }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error al iniciar sesión: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
 
-            return null; 
+            return null;
         }
 
         public bool TestConexion()
         {
-            using var conexion = GetConection(); 
+            using var conexion = GetConection();
             try
             {
                 conexion.Open();

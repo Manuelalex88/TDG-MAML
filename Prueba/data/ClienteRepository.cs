@@ -1,48 +1,51 @@
 ﻿using Npgsql;
 using Prueba.model;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 
 namespace Prueba.data
 {
     public class ClienteRepository : Conexion
     {
-        
-
         public Cliente? ObtenerPorDni(string dni)
         {
-         
             if (string.IsNullOrWhiteSpace(dni))
-                throw new ArgumentException("El DNI no puede ser nulo o vacío", nameof(dni));
+            {
+                MessageBox.Show("El DNI no puede ser nulo o vacío", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return null;
+            }
 
             Cliente? cliente = null;
 
-            using (var conn = GetConection())
+            try
             {
-                conn.Open();
-                const string sql = "SELECT dni, nombre, telefono FROM cliente WHERE dni = @dni";
-
-                using (var cmd = new NpgsqlCommand(sql, conn))
+                using (var conn = GetConection())
                 {
-                    cmd.Parameters.AddWithValue("dni", dni);
+                    conn.Open();
+                    const string sql = "SELECT dni, nombre, telefono FROM cliente WHERE dni = @dni";
 
-                    using (var reader = cmd.ExecuteReader())
+                    using (var cmd = new NpgsqlCommand(sql, conn))
                     {
-                        if (reader.Read())
+                        cmd.Parameters.AddWithValue("dni", dni);
+
+                        using (var reader = cmd.ExecuteReader())
                         {
-                            cliente = new Cliente
+                            if (reader.Read())
                             {
-                                Dni = reader["dni"]?.ToString() ?? string.Empty,
-                                Nombre = reader["nombre"]?.ToString() ?? string.Empty,
-                                Telefono = reader["telefono"]?.ToString() ?? string.Empty
-                            };
+                                cliente = new Cliente
+                                {
+                                    Dni = reader["dni"]?.ToString() ?? string.Empty,
+                                    Nombre = reader["nombre"]?.ToString() ?? string.Empty,
+                                    Telefono = reader["telefono"]?.ToString() ?? string.Empty
+                                };
+                            }
                         }
                     }
                 }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error al obtener cliente por DNI: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
 
             return cliente;
