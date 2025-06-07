@@ -6,7 +6,10 @@
         xmlns:fa="http://schemas.awesome.incremented/wpf/xaml/fontawesome.sharp"
         xmlns:local="clr-namespace:Prueba.view" 
         xmlns:viewmodel="clr-namespace:Prueba.viewModel"
+        xmlns:viewmodelAdmin="clr-namespace:Prueba.viewModel.viewModelAdmin"
         xmlns:localChild="clr-namespace:Prueba.view.childViews" 
+        xmlns:conv="clr-namespace:Prueba.converters"
+        xmlns:localChildAdmin="clr-namespace:Prueba.view.adminChildViews" 
         mc:Ignorable="d"
         Height="600" Width="1200"
         WindowStyle="None"
@@ -17,7 +20,7 @@
     <Window.DataContext>
         <viewmodel:MainViewModel/>
     </Window.DataContext>
-    <!--Recursos del view model (Para las childViews)-->
+    <!--Recursos del view model (Para las childViews) y Visibilidad-->
     <Window.Resources>
         <DataTemplate DataType="{x:Type viewmodel:PrincipalViewModel}">
             <local:principalView/>
@@ -38,8 +41,15 @@
         <DataTemplate DataType="{x:Type viewmodel:VehiculosEnTallerViewModel}">
             <localChild:VehiculosEnTaller/>
         </DataTemplate>
+
+        <DataTemplate DataType="{x:Type viewmodelAdmin:MecanicosViewModel}">
+            <localChildAdmin:Mecanicos/>
+        </DataTemplate>
+        <!--Visibilidad-->
+       <conv:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
         
     </Window.Resources>
+    
 
     <Border CornerRadius="10"
             BorderBrush="{StaticResource colorFondo}"
@@ -116,6 +126,16 @@
                         <StackPanel Orientation="Horizontal">
                             <fa:IconImage Icon="MoneyBill" Style="{StaticResource botonMenu}"/>
                             <TextBlock Text="Facturas" Style="{StaticResource botonMenuTexto}"/>
+                        </StackPanel>
+                    </RadioButton>
+
+                    <RadioButton Style="{StaticResource botones}"
+                                 Tag="{StaticResource colorTexto}"
+                                 Visibility="{Binding EsAdmin, Converter={StaticResource BoolToVisibilityConverter}}"
+                                 Command="{Binding showMecanicosChildViewCommand}">
+                        <StackPanel Orientation="Horizontal">
+                            <fa:IconImage Icon="User" Style="{StaticResource botonMenu}"/>
+                            <TextBlock Text="Mecanicos" Style="{StaticResource botonMenuTexto}"/>
                         </StackPanel>
                     </RadioButton>
 

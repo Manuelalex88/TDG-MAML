@@ -43,7 +43,42 @@ namespace Prueba.repository
 
             return null;
         }
+        public List<Mecanico> ObtenerMecanicos()
+        {
+            var lista = new List<Mecanico>();
+            try
+            {
+                using (var connection = GetConection())
+                {
+                    connection.Open();
+                    string query = @"SELECT id, nombre, contrasena FROM mecanico";
 
+                    using (var command = new NpgsqlCommand(query, connection))
+                    {
+                        using (var reader = command.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                var mecanico = new Mecanico
+                                {
+                                    Id = reader.GetString(reader.GetOrdinal("id")),
+                                    Nombre = reader.GetString(reader.GetOrdinal("nombre")),
+                                    Contrasena = reader.GetString(reader.GetOrdinal("contraseña"))
+                                };
+
+                                lista.Add(mecanico);
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error al obtener los mecanicos: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+
+            return lista;
+        }
         public bool TestConexion()
         {
             using var conexion = GetConection();

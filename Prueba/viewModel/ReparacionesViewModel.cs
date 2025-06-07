@@ -88,7 +88,7 @@ namespace Prueba.viewModel
                         {
                             RepuestosSeleccionados.Add(r);
                         }
-                        // Actualizar estado de _mantenimientoAgregado para que se elimine correctamente
+                        // Actualizamos el estado de _mantenimientoAgregado para que se elimine correctamente
                         var nombresMantenimiento = new[] { "Filtros", "Aceite", "Anticongelante" };
                         _mantenimientoAgregado = RepuestosSeleccionados.Any(r => nombresMantenimiento.Contains(r.Nombre));
                     }
@@ -338,8 +338,8 @@ namespace Prueba.viewModel
         {
             // Obtener el ID del mecánico desde el hilo actual
             var identity = Thread.CurrentPrincipal?.Identity as IdentidadMecanico;
-            var idMecanico = identity?.Name;
-
+            var idMecanico = identity?.Name ?? "Desconocido";
+            
             if (string.IsNullOrEmpty(idMecanico))
             {
                 MessageBox.Show("El ID del mecánico no está definido.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);

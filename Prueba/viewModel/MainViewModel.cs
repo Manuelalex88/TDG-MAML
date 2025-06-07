@@ -2,6 +2,7 @@
 using Prueba.model;
 using Prueba.view;
 using Prueba.view.childViews;
+using Prueba.viewModel.viewModelAdmin;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -23,7 +24,8 @@ namespace Prueba.viewModel
         private string _caption = String.Empty;
         private IconChar _icon;
         private string _nombreUsuario = String.Empty;
-        
+        public bool EsAdmin => Thread.CurrentPrincipal?.IsInRole("admin") == true;
+
         #endregion
         #region Propiedades
         public string NombreUsuario
@@ -59,6 +61,7 @@ namespace Prueba.viewModel
         public ICommand showReparacionesChildViewCommand {  get;}
         public ICommand showFacturasChildViewCommand{  get;}
         public ICommand ShowVehiculosEnTallerChildViewCommand {  get;}
+        public ICommand showMecanicosChildViewCommand { get;}
         public ICommand CerrarSesionCommand { get; }
         public ICommand MostrarAyudaCommand { get; }
         #endregion
@@ -67,14 +70,23 @@ namespace Prueba.viewModel
         {   // Obtener el ID del mecánico desde el hilo actual
             var identity = Thread.CurrentPrincipal?.Identity as IdentidadMecanico;
             var idMecanico = identity?.Name;
+
             //Instanciaar
             showPrimerachildViewCommand = new comandoViewModel(ExecuteShowCommand);
             showSegundachildViewCommand = new comandoViewModel(ExecuteShowCommand2);
             showReparacionesChildViewCommand = new comandoViewModel(ExecuteShowCommand3);
             showFacturasChildViewCommand = new comandoViewModel(ExecuteShowCommand4);
             ShowVehiculosEnTallerChildViewCommand = new comandoViewModel(ExecuteShowCommand5);
+            showMecanicosChildViewCommand = new comandoViewModel(MostrarMecanicoChildView, _ => EsAdmin);
             CerrarSesionCommand = new comandoViewModel(CerrarSesion);
             MostrarAyudaCommand = new comandoViewModel(MostrarAyuda);
+
+            // Inicializar comandos solo si es admin
+            if (EsAdmin)
+            {
+                
+            }
+
             // Cargar el nombre del usuario desde UserData
             _nombreUsuario = identity?.NombreCompleto ?? "Desconocido"; 
             OnPropertyChanged(nameof(NombreUsuario));  
@@ -130,6 +142,12 @@ namespace Prueba.viewModel
                     break;
                 }
             }
+        }
+        private void MostrarMecanicoChildView(object obj)
+        {
+            CurrentChildView = new MecanicosViewModel();
+            Caption = "Mecanicos";
+            Icon = IconChar.User;
         }
         private void ExecuteShowCommand5(object obj)
         {

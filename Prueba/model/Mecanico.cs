@@ -10,5 +10,6 @@ namespace Prueba.model
     {
         public string Id { get; set; } = string.Empty;
         public string Nombre { get; set; } = string.Empty;
+        public string Contrasena {  get; set; } = string.Empty;
     }
 }

@@ -123,6 +123,7 @@ namespace Prueba.viewModel
         {
             IntPtr passwordBSTR = IntPtr.Zero;
             string plainPassword = string.Empty;
+            string[] roles;
 
             try
             {
@@ -135,7 +136,15 @@ namespace Prueba.viewModel
                 if (mecanico != null)
                 {
                     var identity = new IdentidadMecanico(mecanico.Id, mecanico.Nombre);
-                    var roles = new[] { "mecanico", "admin" };
+                    
+                    if (mecanico.Nombre.Equals("Administrador", StringComparison.OrdinalIgnoreCase))
+                    {
+                        roles = new[] { "admin" };
+                    }
+                    else
+                    {
+                        roles = new[] { "mecanico" };
+                    }
                     Thread.CurrentPrincipal = new GenericPrincipal(identity, roles);
 
                     var ventanaPrincipal = new VentanaPrincipal();

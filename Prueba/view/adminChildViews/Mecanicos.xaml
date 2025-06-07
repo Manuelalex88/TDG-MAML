@@ -1,0 +1,58 @@
+﻿<UserControl x:Class="Prueba.view.adminChildViews.Mecanicos"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Prueba.view.adminChildViews"
+             xmlns:viewmodel="clr-namespace:Prueba.viewModel.viewModelAdmin"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+
+    <UserControl.DataContext>
+        <viewmodel:MecanicosViewModel/>
+    </UserControl.DataContext>
+
+
+    <Grid Margin="10">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="2*" />
+            <ColumnDefinition Width="3*" />
+        </Grid.ColumnDefinitions>
+
+        <!-- Lista de mecánicos -->
+        <GroupBox Header="Mecánicos" Grid.Column="0" Margin="5" Style="{StaticResource gbocStilos}">
+            <ListView Name="listViewMecanicos" SelectionMode="Single" Margin="5"
+                      Style="{StaticResource EstiloListViewFacturas}"
+                      ItemsSource="{Binding MecanicoList}"
+                      SelectedItem="{Binding MecanicoSeleccionado, Mode=TwoWay}">
+                <ListView.View>
+                    <GridView ColumnHeaderContainerStyle="{StaticResource EstiloEncabezadoGridView}">
+                        <GridViewColumn Header="ID" Width="50" DisplayMemberBinding="{Binding Id}" />
+                        <GridViewColumn Header="Nombre" Width="120" DisplayMemberBinding="{Binding Nombre}" />
+                        <GridViewColumn Header="Contraseña" Width="120" DisplayMemberBinding="{Binding Contrasena}"/>
+                    </GridView>
+                </ListView.View>
+            </ListView>
+        </GroupBox>
+
+        <!-- Edición / creación -->
+        <GroupBox Header="Editar Mecánico" Grid.Column="1" Margin="5" Style="{StaticResource gbocStilos}">
+            <StackPanel Margin="10" VerticalAlignment="Top">
+                <Label Content="ID:" Margin="0,0,0,5"  Style="{StaticResource GroupBoxText}"/>
+                <TextBox Name="txtId" IsReadOnly="True" />
+
+                <Label Content="Nombre:" Margin="0,10,0,5" Style="{StaticResource GroupBoxText}"/>
+                <TextBox Name="txtNombre" />
+
+                <Label Content="Contraseña:" Margin="0,10,0,5"  Style="{StaticResource GroupBoxText}"/>
+                <PasswordBox Name="txtContraseña" />
+
+                <StackPanel Orientation="Horizontal" Margin="0,20,0,0" HorizontalAlignment="Left" >
+                    <Button Name="btnNuevo" Content="Nuevo" Width="75" Margin="0,0,10,0" Style="{StaticResource btnChildView}"/>
+                    <Button Name="btnGuardar" Content="Guardar" Width="75" Margin="0,0,10,0" Style="{StaticResource btnChildView}"/>
+                    <Button Name="btnEliminar" Content="Eliminar" Width="75" Style="{StaticResource btnChildView}"/>
+                </StackPanel>
+            </StackPanel>
+        </GroupBox>
+    </Grid>
+</UserControl>
