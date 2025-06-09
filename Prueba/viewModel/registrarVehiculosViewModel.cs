@@ -39,7 +39,7 @@ namespace Prueba.viewModel
         private string _telefonoCliente = String.Empty;
         private Boolean _asignar = false;
         private bool _mostrarDescripcion = false;
-
+        public string Error => null!;
 
         private readonly VehiculoRepository _vehiculoRepository;
         private readonly ClienteRepository _clienteRepository;
@@ -119,13 +119,13 @@ namespace Prueba.viewModel
         }
         #endregion
         #region Formatos
-        //Para el formato del dni este correcto
+        //Para el formato del dni/matricula este correcto 
         public string this[string propertyName]
         {
             get
             {
                 string result = string.Empty;
-                //Formato del DNI
+
                 if (propertyName == nameof(DniCliente))
                 {
                     if (string.IsNullOrWhiteSpace(DniCliente))
@@ -140,22 +140,24 @@ namespace Prueba.viewModel
                     {
                         result = "La letra del DNI no es válida para los números proporcionados.";
                     }
-                }//El nombre y telefono obligatorios
-                else if (propertyName == nameof(NombreCliente))
-                {
-                    if (string.IsNullOrWhiteSpace(NombreCliente))
-                        result = "El nombre del cliente es obligatorio.";
                 }
-                else if (propertyName == nameof(TelefonoCliente))
+                else if (propertyName == nameof(Matricula))
                 {
-                    if (string.IsNullOrWhiteSpace(TelefonoCliente))
-                        result = "El teléfono del cliente es obligatorio.";
+                    if (string.IsNullOrWhiteSpace(Matricula))
+                    {
+                        result = "La matrícula es obligatoria.";
+                    }
+                    else if (!MatriculaValida(Matricula))
+                    {
+                        result = "Formato de matrícula inválido. Ejemplo correcto: 1234BCD. Sin vocales ni Ñ.";
+                    }
                 }
+
                 return result;
             }
         }
 
-        public string Error => null!;
+
 
         //Para la validacion de la letra correcta del DNI
         private bool LetraDniValida(string dni)
@@ -167,6 +169,24 @@ namespace Prueba.viewModel
             char letraEsperada = letras[numero % 23];
 
             return dni[8] == letraEsperada;
+        }
+        private bool MatriculaValida(string matricula)
+        {
+            string letrasProhibidas = "AEIOUÑ";
+
+            if (!Regex.IsMatch(matricula, @"^\d{4}[A-Z]{3}$"))
+                return false;
+
+            string letras = matricula.Substring(4);
+
+            // Comprobar que no hay letras prohibidas por la DGT española 
+            foreach (char c in letras)
+            {
+                if (letrasProhibidas.Contains(c))
+                    return false;
+            }
+
+            return true;
         }
         #endregion
         #region Comandos
@@ -271,12 +291,16 @@ namespace Prueba.viewModel
         {
             // Validar que matricula y nombre no estén vacíos
             bool camposObligatorios = !string.IsNullOrWhiteSpace(Matricula) &&
-                                      !string.IsNullOrWhiteSpace(NombreCliente);
-
-            // Validar que no haya error en DNI
+                              !string.IsNullOrWhiteSpace(NombreCliente) &&
+                              !string.IsNullOrWhiteSpace(Modelo) &&
+                              !string.IsNullOrEmpty(Marca) &&
+                              !string.IsNullOrEmpty(MotivoIngreso) &&
+                              !string.IsNullOrEmpty(TelefonoCliente);
+            // Validar el DNI y la MAtricula
             bool dniValido = string.IsNullOrEmpty(this[nameof(DniCliente)]);
+            bool matriculaValida = string.IsNullOrEmpty(this[nameof(Matricula)]);
 
-            return camposObligatorios && dniValido;
+            return camposObligatorios && dniValido && matriculaValida;
         }
         private void AgregarVehiculoCliente(object obj)
         {

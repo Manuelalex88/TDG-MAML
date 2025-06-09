@@ -9,7 +9,7 @@
              xmlns:viewmodel="clr-namespace:Prueba.viewModel"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
-    
+
     <UserControl.DataContext>
         <viewmodel:RegistrarVehiculosViewModel/>
     </UserControl.DataContext>
@@ -24,7 +24,7 @@
         <Grid.ColumnDefinitions>
             <!--Registrar el coche-->
             <ColumnDefinition Width="600"/>
-            <!--Registrar al cliente/-->
+            <!--Registrar al cliente-->
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
         <!-- Sección: Registro de Coche -->
@@ -41,8 +41,28 @@
 
                 <Label Content="Matrícula:" Style="{StaticResource GroupBoxText}"/>
                 <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
-                    <TextBox Text="{Binding Matricula, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" x:Name="txtMatricula"  Width="180" HorizontalAlignment="Left"
-                             VerticalAlignment="Center"/>
+                    <TextBox Text="{Binding Matricula, 
+                                    Mode=TwoWay, 
+                                    UpdateSourceTrigger=PropertyChanged, 
+                                    ValidatesOnDataErrors=True, 
+                                    NotifyOnValidationError=True}" 
+                             x:Name="txtMatricula"  
+                             Width="180" 
+                             HorizontalAlignment="Left"
+                             VerticalAlignment="Center">
+                        <TextBox.Style>
+                            <!--Para que el tooltip muestre el mensaje de error si lo pones mal-->
+                            <Style TargetType="TextBox">
+                                <Style.Triggers>
+                                    <Trigger Property="Validation.HasError" Value="True">
+                                        <Setter Property="ToolTip" 
+                                                Value="{Binding RelativeSource={RelativeSource Self}, 
+                                                Path=(Validation.Errors)[0].ErrorContent}" />
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBox.Style>
+                    </TextBox>
                     <Button Width="20" Height="20" Margin="5,0,0,0"
                             Command="{Binding BuscarVehiculoCommand}"
                             ToolTip="Buscar vehiculo"
@@ -59,7 +79,7 @@
                 <Label Content="Breve descripción del problema"
                        Style="{StaticResource GroupBoxText}"
                        Visibility="{Binding MostrarDescripcion, Converter={StaticResource BoolToVisibilityConverter}}"/>
-                
+
                 <TextBox Height="100"
                          Text="{Binding Descripcion, UpdateSourceTrigger=PropertyChanged}"
                          Visibility="{Binding MostrarDescripcion, Converter={StaticResource BoolToVisibilityConverter}}"
@@ -83,7 +103,27 @@
 
                     <Label Content="Dni:" Style="{StaticResource GroupBoxText}"/>
                     <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
-                        <TextBox x:Name="txtDni" Width="110" Text="{Binding DniCliente, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}" Height="17"/>
+                        <TextBox x:Name="txtDni"
+                                 Width="110"
+                                 Height="17"
+                                 Text="{Binding DniCliente, 
+                                                Mode=TwoWay, 
+                                                UpdateSourceTrigger=PropertyChanged, 
+                                                ValidatesOnDataErrors=True, 
+                                                NotifyOnValidationError=True}">
+                            <TextBox.Style>
+                                <!--Para que el tooltip muestre el mensaje de error si lo pones mal-->
+                                <Style TargetType="TextBox">
+                                    <Style.Triggers>
+                                        <Trigger Property="Validation.HasError" Value="True">
+                                            <Setter Property="ToolTip"
+                                                    Value="{Binding RelativeSource={RelativeSource Self}, 
+                                                    Path=(Validation.Errors)[0].ErrorContent}" />
+                                        </Trigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBox.Style>
+                        </TextBox>
                         <Button Width="30" Height="25" Margin="5,0,0,0"
                                 Command="{Binding BuscarClienteCommand}"
                                 ToolTip="Buscar cliente por DNI"

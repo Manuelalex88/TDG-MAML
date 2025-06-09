@@ -61,14 +61,15 @@ namespace Prueba.data
                 {
                     conn.Open();
                     var cmd = new NpgsqlCommand(@"
-                        SELECT r.id, v.marca, v.modelo, v.matricula, r.estado, r.trabajo_a_realizar, r.fecha_inicio
+                        SELECT r.id, v.marca, v.modelo, v.matricula, 
+                               r.estado, r.trabajo_a_realizar, r.fecha_inicio
                         FROM vehiculo v
                         JOIN reparacion r ON v.matricula = r.matricula_vehiculo
-                        WHERE r.mecanico_id = @id 
+                        WHERE r.mecanico_id = @idMecanico
                           AND v.salida_taller = false
-                          AND r.estado NOT IN (@estado5, @estado6)", conn);
+                          AND r.estado <> @estado5 AND r.estado <> @estado6;", conn);
 
-                    cmd.Parameters.AddWithValue("@id", idMecanico);
+                    cmd.Parameters.AddWithValue("@idMecanico", idMecanico);
                     cmd.Parameters.AddWithValue("@estado5", DatosConstantes.Estado5);
                     cmd.Parameters.AddWithValue("@estado6", DatosConstantes.Estado6);
 
@@ -166,7 +167,8 @@ namespace Prueba.data
                 var motivoCmd = new NpgsqlCommand("SELECT motivo_ingreso FROM vehiculo WHERE matricula = @matricula", conn);
                 motivoCmd.Parameters.AddWithValue("@matricula", matricula);
                 var result = motivoCmd.ExecuteScalar();
-
+                if (result is string s && !string.IsNullOrWhiteSpace(s))
+                    motivoIngreso = s;
 
                 // Determinar el estado inicial según el motivo
                 string estadoReparacion = motivoIngreso == "Problema sin identificar" ? "Diagnosticando" : "En Reparacion";

@@ -31,6 +31,7 @@ namespace Prueba.data
                         INSERT INTO cliente (dni, nombre, telefono)
                         VALUES (@dni, @nombre, @telefono)
                         ON CONFLICT (dni) DO NOTHING;";
+
                         using (var cmdCliente = new NpgsqlCommand(insertCliente, conn))
                         {
                             cmdCliente.Parameters.AddWithValue("dni", dniCliente ?? (object)DBNull.Value);

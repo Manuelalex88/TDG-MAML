@@ -35,13 +35,13 @@ namespace Prueba.viewModel.viewModelAdmin
                     {
                         NombreMecanico = _mecanicoSeleccionado.Nombre;
                         MecanicoID = _mecanicoSeleccionado.Id;
-                        Contrasena = _mecanicoSeleccionado.Contrasena;
+                        ContrasenaMecanico = _mecanicoSeleccionado.Contrasena;
                     }
                     else
                     {
                         NombreMecanico = string.Empty;
                         MecanicoID = string.Empty;
-                        Contrasena = string.Empty;
+                        ContrasenaMecanico = string.Empty;
                     }
                 }
             }
@@ -61,7 +61,7 @@ namespace Prueba.viewModel.viewModelAdmin
             get => _idMecanico;
             set => SetProperty(ref _idMecanico, value);
         }
-        public string Contrasena
+        public string ContrasenaMecanico
         {
             get => _contrasena;
             set => SetProperty(ref _contrasena, value);
@@ -70,7 +70,7 @@ namespace Prueba.viewModel.viewModelAdmin
 
         #region Comandos
         public ICommand MostrarMecanicosCommand { get; }
-        public ICommand GuardarMecanicoCommand { get; }
+        public ICommand ModificarMecanicoCommand { get; }
         public ICommand EliminarMecanicoCommand { get; }
         public ICommand NuevoMecanicoCommand { get; }
         #endregion
@@ -87,10 +87,10 @@ namespace Prueba.viewModel.viewModelAdmin
             _mecanicoRepository = new MecanicoRepository();
             //Comando
             MostrarMecanicosCommand = new comandoViewModel(MostrarMecanicos);
-            GuardarMecanicoCommand = new comandoViewModel(GuardarMecanico);
+            ModificarMecanicoCommand = new comandoViewModel(GuardarMecanico);
             EliminarMecanicoCommand = new comandoViewModel(EliminarMecanico);
             NuevoMecanicoCommand = new comandoViewModel(NuevoMecanico);
-   
+
             MostrarMecanicosCommand.Execute(null);
         }
         #region Metodos
@@ -128,21 +128,171 @@ namespace Prueba.viewModel.viewModelAdmin
         }
         private void GuardarMecanico(object obj)
         {
-            
+            // Eliminar espacios en blanco al inicio y final
+            MecanicoID = MecanicoID.Trim();
+            NombreMecanico = NombreMecanico.Trim();
+            ContrasenaMecanico = ContrasenaMecanico.Trim();
+
+            if (MecanicoSeleccionado == null)
+            {
+
+                MessageBox.Show("Selecciona un Mecanico para editarlo");
+                return;
+            }
+            else if (MecanicoSeleccionado.Id == "Admin")
+            {
+                MessageBox.Show("No se puede editar el admin");
+                return;
+            }
+
+            try
+            {
+
+                // Validar si el ID no existe ya (Haz exepcion del seleccionado)
+                var mecanicoExistente = _mecanicoRepository.ObtenerMecanicoPorId(MecanicoID);
+                if (mecanicoExistente != null && mecanicoExistente.Id != MecanicoSeleccionado.Id)
+                {
+                    MessageBox.Show("Ya existe un mecánico con ese ID.");
+                    return;
+                }
+
+                var nuevoMecanico = new Mecanico
+                {
+                    Id = MecanicoID,
+                    Nombre = NombreMecanico,
+                    Contrasena = ContrasenaMecanico
+                };
+
+                _mecanicoRepository.ModificarMecanico(nuevoMecanico, MecanicoSeleccionado.Id);
+                MessageBox.Show("Mecanico Modificado con exito");
+                LimpiarCampos(nuevoMecanico, 2);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error al guardar al Mecanico:\n" +
+                                    "Mensaje: " + ex.Message + "\n" +
+                                    "Fuente: " + ex.Source + "\n" +
+                                    "StackTrace: " + ex.StackTrace);
+            }
         }
         private void EliminarMecanico(object obj)
         {
-            if (MecanicoSeleccionado == null) //ESTA COMPROBACIONN
+            // Eliminar espacios en blanco al inicio y final
+            MecanicoID = MecanicoID.Trim();
+            NombreMecanico = NombreMecanico.Trim();
+            ContrasenaMecanico = ContrasenaMecanico.Trim();
+
+            if (MecanicoSeleccionado == null)
             {
 
-                MessageBox.Show("Selecciona un Mecanico para guardar cambios.");
+                MessageBox.Show("Selecciona un Mecanico para eliminarlo");
                 return;
             }
-            MessageBox.Show("Eliminar Siu");
+            else if (MecanicoSeleccionado.Id == "Admin")
+            {
+                MessageBox.Show("No se puede eliminar el admin");
+                return;
+            }
+
+            try
+            {
+
+                _mecanicoRepository.EliminarMecanico(MecanicoSeleccionado.Id);
+                LimpiarCampos(MecanicoSeleccionado,1);
+
+                MecanicoSeleccionado = null;
+
+                MessageBox.Show("Mecanico eliminado correctamente");
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error al eliminar a los Mecanicos:\n" +
+                                    "Mensaje: " + ex.Message + "\n" +
+                                    "Fuente: " + ex.Source + "\n" +
+                                    "StackTrace: " + ex.StackTrace);
+            }
         }
         private void NuevoMecanico(object obj)
         {
+            // Eliminar espacios en blanco al inicio y final
+            MecanicoID = MecanicoID.Trim();
+            NombreMecanico = NombreMecanico.Trim();
+            ContrasenaMecanico = ContrasenaMecanico.Trim();
 
+            if (MecanicoID == "Admin")
+            {
+                MessageBox.Show("No se puede crear otro admin");
+                return;
+            }
+
+            try
+            {
+
+                // Validar si el ID no existe ya
+                var mecanicoExistente = _mecanicoRepository.ObtenerMecanicoPorId(MecanicoID);
+                if (mecanicoExistente != null)
+                {
+                    MessageBox.Show("Ya existe un mecánico con ese ID.");
+                    return;
+                }
+
+                var nuevoMec = new Mecanico
+                {
+                    Id = MecanicoID,
+                    Nombre = NombreMecanico,
+                    Contrasena = ContrasenaMecanico
+                };
+
+                _mecanicoRepository.RegistrarMecanico(nuevoMec);
+                LimpiarCampos(nuevoMec,0);
+
+                MessageBox.Show("Mecanico creado correctamente");
+
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error al guardar al nuevo Mecanico:\n" +
+                                    "Mensaje: " + ex.Message + "\n" +
+                                    "Fuente: " + ex.Source + "\n" +
+                                    "StackTrace: " + ex.StackTrace);
+            }
+        }
+        private void LimpiarCampos(Mecanico mec, int accion)
+        {
+            var mecanicoActual = MecanicoSeleccionado;
+
+            MecanicoID = string.Empty;
+            ContrasenaMecanico = string.Empty;
+            NombreMecanico = string.Empty;
+            MecanicoSeleccionado = null;
+
+            switch (accion)
+            {
+                case 0: // Nuevo
+                    if (mec != null)
+                        MecanicoList.Add(mec);
+                    break;
+
+                case 1: // Eliminar
+                    if (mec != null)
+                        MecanicoList.Remove(mec);
+                    break;
+
+                case 2: // Modificar directamente de la lista sin recargar toda la lista
+                    if (mec != null && mecanicoActual != null)
+                    {
+                        var index = MecanicoList.IndexOf(mecanicoActual);
+                        if (index >= 0)
+                        {
+                            MecanicoList[index] = mec;
+                        }
+                        else
+                        {
+                            MostrarMecanicos(null);
+                        }
+                    }
+                    break;
+            }
         }
         #endregion
     }

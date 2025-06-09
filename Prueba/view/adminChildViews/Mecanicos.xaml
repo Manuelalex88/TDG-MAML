@@ -27,9 +27,9 @@
                       SelectedItem="{Binding MecanicoSeleccionado, Mode=TwoWay}">
                 <ListView.View>
                     <GridView ColumnHeaderContainerStyle="{StaticResource EstiloEncabezadoGridView}">
-                        <GridViewColumn Header="ID" Width="50" DisplayMemberBinding="{Binding Id}" />
-                        <GridViewColumn Header="Nombre" Width="120" DisplayMemberBinding="{Binding Nombre}" />
-                        <GridViewColumn Header="Contraseña" Width="120" DisplayMemberBinding="{Binding Contrasena}"/>
+                        <GridViewColumn Header="ID" Width="Auto" DisplayMemberBinding="{Binding Id}" />
+                        <GridViewColumn Header="Nombre" Width="Auto" DisplayMemberBinding="{Binding Nombre}" />
+                        <GridViewColumn Header="Contraseña" Width="Auto" DisplayMemberBinding="{Binding Contrasena}"/>
                     </GridView>
                 </ListView.View>
             </ListView>
@@ -45,11 +45,11 @@
                 <TextBox Text="{Binding NombreMecanico}" />
 
                 <Label Content="Contraseña:" Margin="0,10,0,5"  Style="{StaticResource GroupBoxText}"/>
-                <TextBox Text="{Binding Contrasena}" />
+                <TextBox Text="{Binding ContrasenaMecanico}" />
 
                 <StackPanel Orientation="Horizontal" Margin="0,20,0,0" HorizontalAlignment="Left" >
-                    <Button  Content="Nuevo" Width="75" Margin="0,0,10,0" Style="{StaticResource btnChildView}"/>
-                    <Button  Content="Guardar" Width="75" Margin="0,0,10,0" Style="{StaticResource btnChildView}"/>
+                    <Button  Content="Nuevo" Width="75" Margin="0,0,10,0" Style="{StaticResource btnChildView}" Command="{Binding NuevoMecanicoCommand}"/>
+                    <Button  Content="Modificar" Width="75" Margin="40,0,10,0" Style="{StaticResource btnChildView}" Command="{Binding ModificarMecanicoCommand}"/>
                     <Button  Content="Eliminar" Width="75" Style="{StaticResource btnChildView}" Command="{Binding EliminarMecanicoCommand}"/>
                 </StackPanel>
             </StackPanel>

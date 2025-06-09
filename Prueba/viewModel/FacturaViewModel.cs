@@ -28,7 +28,7 @@ namespace Prueba.viewModel
         private string _dniCliente = string.Empty;
         private string _telefonoCliente = string.Empty;
 
-        private FacturaVehiculoClienteDTO _facturaSeleccionada = new();
+        private FacturaVehiculoClienteDTO _facturaSeleccionada;
         public string _nombreMecanico { get; set; } = string.Empty;
         private readonly FacturaRepository _facturaRepository;
         #endregion
@@ -110,7 +110,7 @@ namespace Prueba.viewModel
 
         public decimal Total
         {
-            get => FacturaSeleccionada?.Total ?? 0m;
+            get => (FacturaSeleccionada?.Total ?? 0m) + DatosConstantes.ManoDeObra;
         }
 
         public ObservableCollection<FacturaVehiculoClienteDTO> FacturasPendientes
@@ -200,17 +200,12 @@ namespace Prueba.viewModel
 
         private bool PuedeEliminar(object? obj)
         {
-            return FacturaSeleccionada != null && Total > 0;
+            return FacturaSeleccionada != null && Total>0;
         }
 
         private void EliminarLaFactura(object obj)
         {
-            if (FacturaSeleccionada == null)
-            {
-                MessageBox.Show("Selecciona una factura para eliminar.");
-                return;
-            }
-
+            
             try
             {
                 _facturaRepository.EliminarFacturaSeleccionada(FacturaSeleccionada.Id);
@@ -228,11 +223,7 @@ namespace Prueba.viewModel
 
         private void GenerarFacturaPDF(object obj)
         {
-            if (FacturaSeleccionada == null)
-            {
-                MessageBox.Show("Por favor selecciona una factura antes de generar el PDF.");
-                return;
-            }
+            
             try
             {
                 QuestPDF.Settings.License = QuestPDF.Infrastructure.LicenseType.Community;

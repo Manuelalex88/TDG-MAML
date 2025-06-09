@@ -118,7 +118,7 @@ namespace Prueba.data
                     cmd.ExecuteNonQuery();
                 }
 
-                // Calcular total de la reparación
+                // Calcular _total de la reparación
                 decimal total = CalcularTotal(reparacionId, conn, transaction);
 
                 // Insertar factura
@@ -220,7 +220,7 @@ namespace Prueba.data
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error al calcular total: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show($"Error al calcular _total: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 return 0m;
             }
         }

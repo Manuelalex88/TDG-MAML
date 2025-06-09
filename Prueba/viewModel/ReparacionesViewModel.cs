@@ -129,8 +129,8 @@ namespace Prueba.viewModel
             //Comandos
             AgregarMantenimientoCommand = new comandoViewModel(AgregarMantenimientoBasico);
             AgregarRepuestoCommand = new comandoViewModel(AgregarPieza, PuedeAgregarPieza);
-            CancelarReparacionCommand = new comandoViewModel(CancelarReparacion, CanExecuteDeleteCommand);
-            FinalizarReparacionCommand = new comandoViewModel(FinalizarReparacion,CanExecuteFinalizarCommand);
+            CancelarReparacionCommand = new comandoViewModel(CancelarReparacion, PuedeCancelar);
+            FinalizarReparacionCommand = new comandoViewModel(FinalizarReparacion,PuedeFinalizar);
             GuardarCambiosCommand = new comandoViewModel(GuardarCambios);
             //Hacemos que se rellene la lista llamando a la funcion
             VehiculosAsignadosActualmente();
@@ -189,7 +189,7 @@ namespace Prueba.viewModel
                 MessageBox.Show("Error al guardar cambios: " + ex.Message);
             }
         }
-        private bool CanExecuteFinalizarCommand(object? obj)
+        private bool PuedeFinalizar(object? obj)
         {
             return EstadoSeleccionado == "En Reparacion";
         }
@@ -329,7 +329,7 @@ namespace Prueba.viewModel
             }
         }
 
-        private bool CanExecuteDeleteCommand(object? obj)
+        private bool PuedeCancelar(object? obj)
         {
             return VehiculoSeleccionado != null;
         }
