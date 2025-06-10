@@ -15,35 +15,34 @@
 
     <Grid>
         <ListView x:Name="FacturaListViewControl" ItemsSource="{Binding FacturaList}" Style="{StaticResource EstiloListViewFacturas}">
+            <ListView.Resources>
+                <Style TargetType="ScrollBar" BasedOn="{StaticResource ScrollBarHorizontalRedondeada}" />
+            </ListView.Resources>
             <ListView.View>
                 <GridView ColumnHeaderContainerStyle="{StaticResource EstiloEncabezadoGridView}">
-                    <GridViewColumn Header="ID FACTURA" Width="Auto" DisplayMemberBinding="{Binding Id}" />
-                    <GridViewColumn Header="DNI" Width="Auto" DisplayMemberBinding="{Binding Dni}" />
-                    <GridViewColumn Header="Nombre del Cliente" Width="Auto" DisplayMemberBinding="{Binding ClienteNombre}" />
-                    <GridViewColumn Header="Matricula" Width="Auto" DisplayMemberBinding="{Binding Matricula}" />
-                    <GridViewColumn Header="Fecha Emisión" Width="Auto" DisplayMemberBinding="{Binding FechaEmision, StringFormat=d}" />
-                    <GridViewColumn Header="Pagado" Width="Auto">
-                        <GridViewColumn.CellTemplate>
-                            <DataTemplate>
-                                <CheckBox IsChecked="{Binding Pagado}" IsEnabled="False" HorizontalAlignment="Center"/>
-                            </DataTemplate>
-                        </GridViewColumn.CellTemplate>
-                    </GridViewColumn>
-                    <GridViewColumn Header="Total" Width="Auto" DisplayMemberBinding="{Binding Total, StringFormat=C}" />
                     <GridViewColumn Header="Acciones" Width="150">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" >
                                     <Button Content="Descargar" Margin="0,0,5,0" 
-                                            Command="{Binding DataContext.DescargarFacturaCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                                            CommandParameter="{Binding}" Style="{StaticResource btnChildView}"/>
+                                        Command="{Binding DataContext.DescargarFacturaCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                        CommandParameter="{Binding}" Style="{StaticResource btnChildView}"/>
                                     <Button Content="Eliminar" 
-                                            Command="{Binding DataContext.BorrarFacturaCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                                            CommandParameter="{Binding}" Style="{StaticResource btnChildView}"/>
+                                        Command="{Binding DataContext.BorrarFacturaCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                        CommandParameter="{Binding}" Style="{StaticResource btnChildView}"/>
                                 </StackPanel>
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
+                    <GridViewColumn Header="Nombre Mecanico" Width="Auto" DisplayMemberBinding="{Binding MecanicoNombre}" />
+                    <GridViewColumn Header="Nombre del Cliente" Width="Auto" DisplayMemberBinding="{Binding NombreCliente}" />
+                    <GridViewColumn Header="DNI Cliente" Width="Auto" DisplayMemberBinding="{Binding DniCliente}" />
+                    <GridViewColumn Header="Telefono Cliente" Width="Auto" DisplayMemberBinding="{Binding TelefonoCliente}" />
+                    <GridViewColumn Header="Marca Vehiculo" Width="Auto" DisplayMemberBinding="{Binding VehiculoMarca}" />
+                    <GridViewColumn Header="Matricula Vehiculo" Width="Auto" DisplayMemberBinding="{Binding VehiculoMatricula}" />
+                    <GridViewColumn Header="Fecha Emisión" Width="Auto" DisplayMemberBinding="{Binding FechaEmision, StringFormat=d}" />
+                    <GridViewColumn Header="Total" Width="Auto" DisplayMemberBinding="{Binding Total, StringFormat=C}" />
+                    
                 </GridView>
             </ListView.View>
         </ListView>

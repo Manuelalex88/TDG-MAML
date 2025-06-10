@@ -41,7 +41,7 @@ namespace Prueba.data
                         row.RelativeItem().Column(column =>
                         {
                             column.Item().Text("TALLER MANUEL S.A.").Bold().FontSize(18);
-                            column.Item().Text("Calle Falsa 123, Sevilla, Pilas");
+                            column.Item().Text("Calle Tortilla 123, Sevilla, Pilas");
                             column.Item().Text("Tel: +34 666 666 666 | Email: info@tallermanuel.com");
                             column.Item().Text("CIF: B12345678");
                         });
@@ -50,7 +50,7 @@ namespace Prueba.data
                         {
                             col.Item().Text("FACTURA").Bold().FontSize(20).FontColor(Colors.Blue.Darken2);
                             col.Item().Text($"Fecha: {DateTime.Now:dd/MM/yyyy}");
-                            col.Item().Text($"Factura Nº: {Guid.NewGuid().ToString().Substring(0, 8).ToUpper()}");
+                            col.Item().Text($"Factura Nº: {Guid.NewGuid().ToString().Substring(0, 8).ToUpper()}"); //Numero aleatorio por GUID
                         });
                     });
 

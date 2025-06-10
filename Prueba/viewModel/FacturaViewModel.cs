@@ -30,7 +30,9 @@ namespace Prueba.viewModel
 
         private FacturaVehiculoClienteDTO _facturaSeleccionada;
         public string _nombreMecanico { get; set; } = string.Empty;
+        public string IdMecanico { get; set; }
         private readonly FacturaRepository _facturaRepository;
+        private readonly HistorialFacturaRepository _historialFacturaRepository;
         #endregion
         #region Propiedades
         public string ModeloVehiculo
@@ -134,15 +136,17 @@ namespace Prueba.viewModel
             var identity = Thread.CurrentPrincipal?.Identity as IdentidadMecanico;
             var idMecanico = identity?.Name;
             NombreMecanico = identity?.NombreCompleto ?? "Desconocido";
+            IdMecanico = idMecanico ?? string.Empty;
 
             //Instancias
             _facturasPendientes = new ObservableCollection<FacturaVehiculoClienteDTO>();
             _facturaSeleccionada = CrearFacturaPorDefecto();
             _facturaRepository = new FacturaRepository();
+            _historialFacturaRepository = new HistorialFacturaRepository();
             FacturasPendientes = new ObservableCollection<FacturaVehiculoClienteDTO>();
 
             //Comandos
-            ConfirmarFacturaCommand = new comandoViewModel(GenerarFacturaPDF, PuedeGenerarFactura);
+            ConfirmarFacturaCommand = new comandoViewModel(ConfirmarFactura, PuedeGenerarFactura);
             MostrarFacturasPendientesCommand = new comandoViewModel(MostrarFacturasPendientes);
             EliminarFacturaCommand = new comandoViewModel(EliminarLaFactura, PuedeEliminar);
 
@@ -242,8 +246,45 @@ namespace Prueba.viewModel
                 MessageBox.Show("Error al eliminar factura: " + ex.Message);
             }
         }
+        private void ConfirmarFactura(object obj){
 
-        private void GenerarFacturaPDF(object obj)
+            try
+            {
+                if (FacturaSeleccionada == null || FacturaSeleccionada.Id == 0)
+                {
+                    MessageBox.Show("Selecciona una factura válida antes de confirmar.");
+                    return;
+                }
+
+                
+                var historial = new HistorialFactura
+                {
+                    IdFactura = FacturaSeleccionada.Id,
+                    DniCliente = FacturaSeleccionada.Dni,
+                    NombreCliente = FacturaSeleccionada.ClienteNombre,
+                    TelefonoCliente = FacturaSeleccionada.Telefono,
+                    VehiculoMatricula = FacturaSeleccionada.Matricula,
+                    VehiculoMarca = FacturaSeleccionada.Marca,
+                    VehiculoModelo = FacturaSeleccionada.Modelo,
+                    MecanicoNombre = NombreMecanico,
+                    MecanicoId = IdMecanico,
+                    FechaEmision = DateTime.Now,
+                    Total = FacturaSeleccionada.Total + DatosConstantes.ManoDeObra
+                };
+
+                _historialFacturaRepository.GuardarFacturaEnHistorial(historial);
+
+                
+                GenerarFacturaPDF();
+            }
+            catch (Exception ex)
+            {
+                Clipboard.SetText(ex.ToString());
+                MessageBox.Show("Error al confirmar la factura:\n\n" + ex.Message);
+            }
+        }
+
+        private void GenerarFacturaPDF()
         {
             
             try

@@ -95,23 +95,23 @@
                     <Border Background="#D9EDF7" CornerRadius="10" Padding="15" Margin="0,0,0,20" Width="230" HorizontalAlignment="Left">
                         <TextBlock>
                             <Run Text="📄 Facturas emitidas: "/>
-                            <Run Text="{Binding MisFacturas.Count, Mode=OneWay}"/>
+                            <Run Text="{Binding FacturasMecanico.Count, Mode=OneWay}"/>
                         </TextBlock>
                     </Border>
 
                     <TextBlock Text="Mis Facturas" FontSize="22" FontWeight="Bold" Foreground="{StaticResource colorTexto}" Margin="0,0,0,10"/>
                     <Border Background="{StaticResource colorFondo}" CornerRadius="8" Padding="10" HorizontalAlignment="Stretch" Height="Auto" MinHeight="250">
-                        <ListView ItemsSource="{Binding MisFacturas}" ScrollViewer.VerticalScrollBarVisibility="Auto" HorizontalAlignment="Stretch"
+                        <ListView ItemsSource="{Binding FacturasMecanico}" ScrollViewer.VerticalScrollBarVisibility="Auto" HorizontalAlignment="Stretch"
                                   Style="{StaticResource EstiloListViewFacturas}"
                                   ItemContainerStyle="{StaticResource EstiloListViewItemHover}">
                             <ListView.View>
                                 <GridView ColumnHeaderContainerStyle="{StaticResource EstiloEncabezadoGridView}">
-                                    <GridViewColumn Header="Matricula" DisplayMemberBinding="{Binding Matricula}" Width="Auto"/>
+                                    <GridViewColumn Header="Matricula" DisplayMemberBinding="{Binding VehiculoMatricula}" Width="Auto"/>
 
                                     <GridViewColumn Header="Cliente" Width="Auto">
                                         <GridViewColumn.CellTemplate>
                                             <DataTemplate>
-                                                <TextBlock Text="{Binding ClienteNombre}" TextWrapping="Wrap" TextTrimming="CharacterEllipsis"/>
+                                                <TextBlock Text="{Binding NombreCliente}" TextWrapping="Wrap" TextTrimming="CharacterEllipsis"/>
                                             </DataTemplate>
                                         </GridViewColumn.CellTemplate>
                                     </GridViewColumn>

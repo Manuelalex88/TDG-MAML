@@ -25,20 +25,21 @@ namespace Prueba.viewModel
 
         #region Listas
         public ObservableCollection<VehiculoReparacionDTO> ReparacionesAsignadas { get; set; }
-        private ObservableCollection<FacturaVehiculoClienteDTO> _misFacturas;
+        private ObservableCollection<HistorialFactura> _facturasMecanico;
         #endregion
         #region Campos
         private readonly VehiculoRepository _vehiculoRepository;
         private readonly FacturaRepository _facturaRepository;
+        private readonly HistorialFacturaRepository _historialFacturaRepository;
         public string _textoEntrada;
         private string _nombreMecanico;
 
         #endregion
         #region Propiedades
-        public ObservableCollection<FacturaVehiculoClienteDTO> MisFacturas
+        public ObservableCollection<HistorialFactura> FacturasMecanico
         {
-            get => _misFacturas;
-            set => SetProperty(ref _misFacturas, value);
+            get => _facturasMecanico;
+            set => SetProperty(ref _facturasMecanico, value);
         }
         public string TextoEntrada
         {
@@ -62,8 +63,9 @@ namespace Prueba.viewModel
             TextoEntrada = "Bienvenido, " + _nombreMecanico;
             ReparacionesAsignadas = new ObservableCollection<VehiculoReparacionDTO>();
             _vehiculoRepository = new VehiculoRepository();
-            _misFacturas = new ObservableCollection<FacturaVehiculoClienteDTO>();
+            _facturasMecanico = new ObservableCollection<HistorialFactura>();
             _facturaRepository = new FacturaRepository();
+            _historialFacturaRepository = new HistorialFacturaRepository();
 
             
             DescargarFacturaCommand = new comandoViewModel(DescargarFactura);
@@ -150,20 +152,20 @@ namespace Prueba.viewModel
         }
         private void CargarFacturasFinalizas(string idMecanico)
         {
-            if(MisFacturas == null)
+            if(FacturasMecanico == null)
             {
-                MisFacturas = new ObservableCollection<FacturaVehiculoClienteDTO>();
+                FacturasMecanico = new ObservableCollection<HistorialFactura>();
             }
 
             try
             {
-                MisFacturas.Clear();
+                FacturasMecanico.Clear();
 
 
-                var lista = _facturaRepository.ObtenerFacturasPagadasPorMecanico(idMecanico);
+                var lista = _historialFacturaRepository.MostrarFacturasMecanico(idMecanico);
                 foreach (var v in lista)
                 {
-                    MisFacturas.Add(v);
+                    FacturasMecanico.Add(v);
                 }
             }
             catch(Exception ex) 
