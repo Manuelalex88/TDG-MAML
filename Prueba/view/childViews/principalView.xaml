@@ -124,7 +124,7 @@
                                         </GridViewColumn.CellTemplate>
                                     </GridViewColumn>
 
-                                    <GridViewColumn Header="Total" DisplayMemberBinding="{Binding Total}" Width="Auto"/>
+                                    <GridViewColumn Header="Total" DisplayMemberBinding="{Binding Total, StringFormat={}{0:C2}}" Width="Auto"/>
 
                                     <GridViewColumn Header="Descargar" Width="Auto">
                                         <GridViewColumn.CellTemplate>

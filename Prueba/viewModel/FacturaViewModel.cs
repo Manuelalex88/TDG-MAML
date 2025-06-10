@@ -110,7 +110,10 @@ namespace Prueba.viewModel
 
         public decimal Total
         {
-            get => (FacturaSeleccionada?.Total ?? 0m) + DatosConstantes.ManoDeObra;
+            //Si no esta seleccionada la factura no suma la mano de obra
+            get => (FacturaSeleccionada?.Id != null && FacturaSeleccionada.Id > 0)
+           ? FacturaSeleccionada.Total + DatosConstantes.ManoDeObra
+           : 0m;
         }
 
         public ObservableCollection<FacturaVehiculoClienteDTO> FacturasPendientes
@@ -134,7 +137,7 @@ namespace Prueba.viewModel
 
             //Instancias
             _facturasPendientes = new ObservableCollection<FacturaVehiculoClienteDTO>();
-            _facturaSeleccionada = new FacturaVehiculoClienteDTO();
+            _facturaSeleccionada = CrearFacturaPorDefecto();
             _facturaRepository = new FacturaRepository();
             FacturasPendientes = new ObservableCollection<FacturaVehiculoClienteDTO>();
 
@@ -160,6 +163,25 @@ namespace Prueba.viewModel
 
             return true;
         }
+        private FacturaVehiculoClienteDTO CrearFacturaPorDefecto()
+        {
+            //Creamos una factura por defecto para las comprobaciones y que esta no sea null
+            //Por defecto Postgresql no inicia el ID secuencial con 0 sino con 1
+            return new FacturaVehiculoClienteDTO
+            {
+                Id = 0,
+                FechaEmision = DateTime.MinValue,
+                Total = 0m,
+                Pagado = false,
+                Matricula = string.Empty,
+                ClienteNombre = string.Empty,
+                Dni = string.Empty,
+                Telefono = string.Empty,
+                Marca = string.Empty,
+                Modelo = string.Empty
+            };
+        }
+
 
         private void MostrarFacturasPendientes(object? obj)
         {
@@ -195,12 +217,12 @@ namespace Prueba.viewModel
 
         private bool PuedeGenerarFactura(object? obj)
         {
-            return FacturaSeleccionada != null && Total > 0;
+            return FacturaSeleccionada != null && FacturaSeleccionada.Id != 0;
         }
 
         private bool PuedeEliminar(object? obj)
         {
-            return FacturaSeleccionada != null && Total>0;
+            return FacturaSeleccionada != null && FacturaSeleccionada.Id != 0;
         }
 
         private void EliminarLaFactura(object obj)

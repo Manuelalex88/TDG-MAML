@@ -12,6 +12,7 @@ namespace Prueba.data
         public int Id { get; set; }
         public DateTime? FechaEmision { get; set; }
         public decimal Total { get; set; }
+        public bool Pagado { get; set; }
         //Vehiculo
         public string Marca { get; set; } = string.Empty;
         public string Modelo { get; set; } = string.Empty;

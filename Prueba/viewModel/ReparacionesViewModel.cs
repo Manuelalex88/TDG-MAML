@@ -14,7 +14,7 @@ namespace Prueba.viewModel
     public class ReparacionesViewModel : BaseViewModel
     {
         #region Campos
-        
+
         public List<string> ListaEstadoReparacion { get; set; } = new()
         {
             "Problema sin identificar", "Diagnosticando", "Esperando Repuesto", "En Reparacion"
@@ -119,6 +119,7 @@ namespace Prueba.viewModel
         public ICommand CancelarReparacionCommand { get; }
         public ICommand FinalizarReparacionCommand { get; set; }
         public ICommand GuardarCambiosCommand { get; set; }
+        public ICommand BorrarRepuestoCommand { get; }
         #endregion
         // Constructor
         public ReparacionesViewModel()
@@ -130,8 +131,9 @@ namespace Prueba.viewModel
             AgregarMantenimientoCommand = new comandoViewModel(AgregarMantenimientoBasico);
             AgregarRepuestoCommand = new comandoViewModel(AgregarPieza, PuedeAgregarPieza);
             CancelarReparacionCommand = new comandoViewModel(CancelarReparacion, PuedeCancelar);
-            FinalizarReparacionCommand = new comandoViewModel(FinalizarReparacion,PuedeFinalizar);
+            FinalizarReparacionCommand = new comandoViewModel(FinalizarReparacion, PuedeFinalizar);
             GuardarCambiosCommand = new comandoViewModel(GuardarCambios);
+            BorrarRepuestoCommand = new comandoViewModel(BorrarRepuesto);
             //Hacemos que se rellene la lista llamando a la funcion
             VehiculosAsignadosActualmente();
         }
@@ -339,7 +341,7 @@ namespace Prueba.viewModel
             // Obtener el ID del mecánico desde el hilo actual
             var identity = Thread.CurrentPrincipal?.Identity as IdentidadMecanico;
             var idMecanico = identity?.Name ?? "Desconocido";
-            
+
             if (string.IsNullOrEmpty(idMecanico))
             {
                 MessageBox.Show("El ID del mecánico no está definido.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
@@ -359,6 +361,33 @@ namespace Prueba.viewModel
                 MessageBox.Show("Error al cargar los vehículos asignados: " + ex.Message);
             }
         }
-        #endregion
+        private void BorrarRepuesto(object obj)
+        {
+            if (obj is not RepuestoUsadoDTO repuestoBorrar)
+            {
+                MessageBox.Show("No se pudo determinar el repuesto a borrar.");
+                return;
+            }
+            try
+            {
+                RepuestosSeleccionados.Remove(repuestoBorrar);
+
+                if (VehiculoSeleccionado != null)
+                {
+                    _reparacionRepository.EliminarRepuestoDeReparacion(repuestoBorrar.Id);
+
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error al borrar el repuesto:\n" +
+                                    "Mensaje: " + ex.Message + "\n" +
+                                    "Fuente: " + ex.Source + "\n" +
+                                    "StackTrace: " + ex.StackTrace);
+            }
+
+        }
     }
+    #endregion
 }
+

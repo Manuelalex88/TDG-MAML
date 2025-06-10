@@ -45,9 +45,15 @@
         <DataTemplate DataType="{x:Type viewmodelAdmin:MecanicosViewModel}">
             <localChildAdmin:Mecanicos/>
         </DataTemplate>
+        <!--Para el Admin-->
+        <DataTemplate DataType="{x:Type viewmodelAdmin:FacturasAdminViewModel}">
+            <localChildAdmin:FacturaAdmin/>
+        </DataTemplate>
         <!--Visibilidad-->
        <conv:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
-        
+       <conv:BoolToVisibilityConverter x:Key="BoolToVisibilityConverterInverted" Invert="True"/>
+
+
     </Window.Resources>
     
 
@@ -85,8 +91,9 @@
 
                     <RadioButton Style="{StaticResource botones}" 
                                  Tag="{StaticResource colorTexto}"
-                                 IsChecked="True"
-                                 Command="{Binding showPrimerachildViewCommand}">
+                                 IsChecked="{Binding IsCheckedPrincipal,Mode=OneWay}"
+                                 Visibility="{Binding EsAdmin, Converter={StaticResource BoolToVisibilityConverterInverted}}"
+                                 Command="{Binding showPrincipalChildViewCommand}">
                         <StackPanel Orientation="Horizontal">
                             <fa:IconImage Icon="Home" Style="{StaticResource botonMenu}"/>
                             <TextBlock Text="Principal" Style="{StaticResource botonMenuTexto}"/>
@@ -95,7 +102,7 @@
 
                     <RadioButton Style="{StaticResource botones}" 
                                  Tag="{StaticResource colorTexto}"
-                                 Command="{Binding showSegundachildViewCommand}">
+                                 Command="{Binding showRegistrarVehiculoChildViewCommand}">
                         <StackPanel Orientation="Horizontal">
                             <fa:IconImage Icon="Database" Style="{StaticResource botonMenu}"/>
                             <TextBlock Text="Registrar Vehiculo" Style="{StaticResource botonMenuTexto}"/>
@@ -104,6 +111,7 @@
 
                     <RadioButton Style="{StaticResource botones}" 
                                  Tag="{StaticResource colorTexto}"
+                                 Visibility="{Binding EsAdmin, Converter={StaticResource BoolToVisibilityConverterInverted}}"
                                  Command="{Binding showReparacionesChildViewCommand}">
                         <StackPanel Orientation="Horizontal">
                             <fa:IconImage Icon="Wrench" Style="{StaticResource botonMenu}"/>
@@ -113,7 +121,7 @@
 
                     <RadioButton Style="{StaticResource botones}" 
                                  Tag="{StaticResource colorTexto}"
-                                 Command="{Binding ShowVehiculosEnTallerChildViewCommand}">
+                                 Command="{Binding showVehiculosEnTallerChildViewCommand}">
                         <StackPanel Orientation="Horizontal">
                             <fa:IconImage Icon="Car" Style="{StaticResource botonMenu}"/>
                             <TextBlock Text="Vehiculos En Taller" Style="{StaticResource botonMenuTexto}"/>
@@ -131,6 +139,7 @@
 
                     <RadioButton Style="{StaticResource botones}"
                                  Tag="{StaticResource colorTexto}"
+                                 IsChecked="{Binding IsCheckedMecanicos,Mode=OneWay}"
                                  Visibility="{Binding EsAdmin, Converter={StaticResource BoolToVisibilityConverter}}"
                                  Command="{Binding showMecanicosChildViewCommand}">
                         <StackPanel Orientation="Horizontal">

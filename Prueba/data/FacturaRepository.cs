@@ -8,15 +8,27 @@ namespace Prueba.data
 {
     public class FacturaRepository : Conexion
     {
-        public List<Factura> MostrarFacturaAdmin()
+        public List<FacturaVehiculoClienteDTO> MostrarFacturaAdmin()
         {
-            var lista = new List<Factura>();
+            var lista = new List<FacturaVehiculoClienteDTO>();
             try
             {
                 using(var conn = GetConection())
                 {
                     conn.Open();
-                    string query = @"SELECT id, id_reparacion, fecha_emision, pagado, total FROM factura";
+                    string query = @"SELECT 
+                                    f.id AS factura_id,
+                                    f.fecha_emision,
+                                    f.total,
+                                    f.pagado,
+                                    v.matricula,
+                                    c.nombre AS cliente_nombre,
+                                    c.dni AS cliente_dni
+                                FROM factura f
+                                JOIN reparacion r ON f.id_reparacion = r.id
+                                JOIN vehiculo v ON r.matricula_vehiculo = v.matricula
+                                JOIN cliente_vehiculo cv ON v.matricula = cv.vehiculo_id
+                                JOIN cliente c ON cv.cliente_id = c.dni";
 
                     using (var command = new NpgsqlCommand(query, conn))
                     {
@@ -24,13 +36,15 @@ namespace Prueba.data
                         {
                             while (reader.Read())
                             {
-                                var factura = new Factura
+                                var factura = new FacturaVehiculoClienteDTO
                                 {
-                                    Id = reader.GetInt32(0),
-                                    IdReparacion = reader.GetInt32(1),
-                                    FechaEmision = reader.GetDateTime(2),
-                                    Pagado = reader.GetBoolean(3),
-                                    Total = reader.GetDecimal(4),
+                                    Id = reader.GetInt32(reader.GetOrdinal("factura_id")),
+                                    FechaEmision = reader.GetDateTime(reader.GetOrdinal("fecha_emision")),
+                                    Total = reader.GetDecimal(reader.GetOrdinal("total")),
+                                    Pagado = reader.GetBoolean(reader.GetOrdinal("pagado")),
+                                    Matricula = reader.GetString(reader.GetOrdinal("matricula")),
+                                    ClienteNombre = reader.GetString(reader.GetOrdinal("cliente_nombre")),
+                                    Dni = reader.GetString(reader.GetOrdinal("cliente_dni")),
                                 };
 
                                 lista.Add(factura);
@@ -39,8 +53,6 @@ namespace Prueba.data
                     }
                 }
                
-
-
             }catch (Exception ex)
             {
                 MessageBox.Show($"Error al obtener las facturas: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);

@@ -118,9 +118,26 @@
                               Style="{StaticResource EstiloListViewFacturas}">
                         <ListView.View>
                             <GridView ColumnHeaderContainerStyle="{StaticResource EstiloEncabezadoGridView}">
-                                <GridViewColumn Header="Nombre" DisplayMemberBinding="{Binding Nombre}" Width="200"/>
-                                <GridViewColumn Header="Precio" DisplayMemberBinding="{Binding Precio}" Width="100"/>
-                                <GridViewColumn Header="Cantidad" DisplayMemberBinding="{Binding Cantidad}" Width="100"/>
+                                <GridViewColumn Header="Nombre" DisplayMemberBinding="{Binding Nombre}" Width="Auto"/>
+                                <GridViewColumn Header="Precio" DisplayMemberBinding="{Binding Precio}" Width="Auto"/>
+                                <GridViewColumn Header="Cantidad" DisplayMemberBinding="{Binding Cantidad}" Width="Auto"/>
+                                <GridViewColumn Header="Eliminar"  Width="Auto">
+                                    <GridViewColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <Button ToolTip="Descargar Factura" 
+                                                    Command="{Binding DataContext.BorrarRepuestoCommand, RelativeSource={RelativeSource AncestorType=ListView}}"
+                                                    CommandParameter="{Binding}"
+                                                    Background="Transparent"
+                                                    HorizontalAlignment="Center"
+                                                    VerticalAlignment="Center"
+                                                    BorderThickness="0"
+                                                    Padding="0"
+                                                    Cursor="Hand">
+                                                <fa:IconBlock Icon="TrashCan" Foreground="DarkSlateGray" Width="20" Height="20"/>
+                                            </Button>
+                                        </DataTemplate>
+                                    </GridViewColumn.CellTemplate>
+                                </GridViewColumn>
                             </GridView>
                         </ListView.View>
                     </ListView>

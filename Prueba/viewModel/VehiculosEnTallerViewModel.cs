@@ -15,9 +15,15 @@ namespace Prueba.viewModel
 {
     public class VehiculosEnTallerViewModel : BaseViewModel
     {
-        //Campos
+        #region Listas
+        public ObservableCollection<Vehiculo> VehiculosEnTaller { get; set; }
+        #endregion
+
+        #region Campos
         private VehiculoRepository _vehiculoRepository;
-        public ObservableCollection<Vehiculo> VehiculosEnTaller { get; set; } = new();
+        public bool EsAdmin => Thread.CurrentPrincipal?.IsInRole("admin") == true;
+        #endregion
+        
         #region Comandos
         public ICommand AsignarVehiculoCommand { get; set; }
         public ICommand MarcarSalidaCommand { get; set; }
@@ -28,6 +34,7 @@ namespace Prueba.viewModel
         {
             //Inicializar
             _vehiculoRepository = new VehiculoRepository();
+            VehiculosEnTaller = new ObservableCollection<Vehiculo>();
             //Comandos
             AsignarVehiculoCommand = new comandoViewModel(AsignarVehiculo);
             MarcarSalidaCommand = new comandoViewModel(MarcarSalidaVehiculo);
@@ -57,6 +64,7 @@ namespace Prueba.viewModel
             //Identidad Mecanico
             var identity = Thread.CurrentPrincipal?.Identity as IdentidadMecanico;
             var idMecanico = identity?.Name;
+
             if (obj is Vehiculo vehiculo && !string.IsNullOrEmpty(idMecanico))
             {           
                 try

@@ -206,22 +206,48 @@ namespace Prueba.data
         {
             try
             {
-                string query = @"
-                    SELECT COALESCE(SUM(ru.cantidad * r.precio), 0)
-                    FROM repuesto_usado ru
-                    JOIN repuesto r ON ru.repuesto_id = r.id
-                    WHERE ru.reparacion_id = @reparacionId;";
+                // Obtener el total de repuestos usados
+                string queryRepuestos = @"
+                            SELECT COALESCE(SUM(ru.cantidad * r.precio), 0)
+                            FROM repuesto_usado ru
+                            JOIN repuesto r ON ru.repuesto_id = r.id
+                            WHERE ru.reparacion_id = @reparacionId;";
 
-                using var cmd = new NpgsqlCommand(query, conn, transaction);
-                cmd.Parameters.AddWithValue("reparacionId", reparacionId);
+                using var cmdRepuestos = new NpgsqlCommand(queryRepuestos, conn, transaction);
+                cmdRepuestos.Parameters.AddWithValue("reparacionId", reparacionId);
 
-                object result = cmd.ExecuteScalar();
-                return Convert.ToDecimal(result);
+                object result = cmdRepuestos.ExecuteScalar();
+                decimal totalRepuestos = Convert.ToDecimal(result ?? 0m);
+
+                //Calculo del total mas mano de obra
+                decimal subtotal = totalRepuestos + DatosConstantes.ManoDeObra;
+                //Calculo iva
+                decimal iva = subtotal * 0.21m;  
+                //Total 
+                decimal totalConIva = subtotal + iva;
+
+                return totalConIva;
             }
             catch (Exception ex)
             {
                 MessageBox.Show($"Error al calcular _total: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 return 0m;
+            }
+        }
+
+        public void EliminarRepuestoDeReparacion(int repuestoUsadoId)
+        {
+            using var connection = GetConection();
+            connection.Open();
+
+            using var command = new NpgsqlCommand("DELETE FROM repuesto_usado WHERE id = @id", connection);
+            command.Parameters.AddWithValue("@id", repuestoUsadoId);
+
+            int rowsAffected = command.ExecuteNonQuery();
+
+            if (rowsAffected == 0)
+            {
+                throw new Exception("No se encontró el repuesto para eliminar.");
             }
         }
     }

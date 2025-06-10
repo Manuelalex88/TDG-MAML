@@ -139,12 +139,6 @@ namespace Prueba.viewModel
 
                 factura.GeneratePdf(ruta);
 
-                _facturaRepository.MarcarRepuestosComoFacturados(facturaSeleccionada.Id);
-                _facturaRepository.MarcarFacturaComoPagada(facturaSeleccionada.Id);
-
-                // Actualizamos la lista
-                CargarFacturasFinalizas(Thread.CurrentPrincipal?.Identity?.Name ?? "");
-
                 // Abrir el archivo generado
                 Process.Start(new ProcessStartInfo(ruta) { UseShellExecute = true });
             }

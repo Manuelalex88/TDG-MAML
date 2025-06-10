@@ -15,10 +15,12 @@
     </UserControl.DataContext>
 
 
-    <!--Definimos los recursos-->
+    <!--Visibilidad-->
     <UserControl.Resources>
         <conv:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
+        <conv:BoolToVisibilityConverter x:Key="BoolToVisibilityConverterInverted" Invert="True"/>
     </UserControl.Resources>
+
 
     <Grid>
         <Grid.ColumnDefinitions>
@@ -139,7 +141,11 @@
 
                 <!-- Objetos abajo  -->
 
-                <CheckBox Grid.Row="1" Content="¿Asignar?" IsChecked="{Binding Asignar}" Foreground="{StaticResource colorTexto}"/>
+                <CheckBox Grid.Row="1" 
+                          Content="¿Asignar?" 
+                          IsChecked="{Binding Asignar}" 
+                          Visibility="{Binding EsAdmin, Converter={StaticResource BoolToVisibilityConverterInverted}}"
+                          Foreground="{StaticResource colorTexto}"/>
                 <Button Grid.Row="1" Content="Guardar Vehiculo" Width="120" Height="50"
                 Margin="0,13,0,0" HorizontalAlignment="Center" VerticalAlignment="Bottom"
                 Style="{StaticResource btnChildView}" Command="{Binding AgregarVehiculoClienteCommand}"/>

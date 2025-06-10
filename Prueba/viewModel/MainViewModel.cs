@@ -25,6 +25,8 @@ namespace Prueba.viewModel
         private IconChar _icon;
         private string _nombreUsuario = String.Empty;
         public bool EsAdmin => Thread.CurrentPrincipal?.IsInRole("admin") == true;
+        public bool IsCheckedMecanicos => EsAdmin;
+        public bool IsCheckedPrincipal => !EsAdmin;
 
         #endregion
         #region Propiedades
@@ -56,11 +58,11 @@ namespace Prueba.viewModel
         #endregion
 
         #region Comandos
-        public ICommand showPrimerachildViewCommand {  get;}
-        public ICommand showSegundachildViewCommand {  get;}
+        public ICommand showPrincipalChildViewCommand {  get;}
+        public ICommand showRegistrarVehiculoChildViewCommand {  get;}
         public ICommand showReparacionesChildViewCommand {  get;}
         public ICommand showFacturasChildViewCommand{  get;}
-        public ICommand ShowVehiculosEnTallerChildViewCommand {  get;}
+        public ICommand showVehiculosEnTallerChildViewCommand {  get;}
         public ICommand showMecanicosChildViewCommand { get;}
         public ICommand CerrarSesionCommand { get; }
         public ICommand MostrarAyudaCommand { get; }
@@ -72,11 +74,11 @@ namespace Prueba.viewModel
             var idMecanico = identity?.Name;
 
             //Instanciaar
-            showPrimerachildViewCommand = new comandoViewModel(ExecuteShowCommand);
-            showSegundachildViewCommand = new comandoViewModel(ExecuteShowCommand2);
+            showPrincipalChildViewCommand = new comandoViewModel(ShowPrincipalChildView);
+            showRegistrarVehiculoChildViewCommand = new comandoViewModel(ShowRegistrarVehiculoChildView);
             showReparacionesChildViewCommand = new comandoViewModel(ExecuteShowCommand3);
-            showFacturasChildViewCommand = new comandoViewModel(ExecuteShowCommand4);
-            ShowVehiculosEnTallerChildViewCommand = new comandoViewModel(ExecuteShowCommand5);
+            showFacturasChildViewCommand = new comandoViewModel(MostrarFacturasChildView);
+            showVehiculosEnTallerChildViewCommand = new comandoViewModel(ShowMecanicosChildView);
             showMecanicosChildViewCommand = new comandoViewModel(MostrarMecanicoChildView, _ => EsAdmin);
             CerrarSesionCommand = new comandoViewModel(CerrarSesion);
             MostrarAyudaCommand = new comandoViewModel(MostrarAyuda);
@@ -92,7 +94,13 @@ namespace Prueba.viewModel
             OnPropertyChanged(nameof(NombreUsuario));  
 
             //Deafult View
-            ExecuteShowCommand(null);
+            if(EsAdmin){
+               MostrarMecanicoChildView(null);
+            }
+            else
+            {
+                ShowPrincipalChildView(null);
+            }
         }
         #region Metodos
         //Metodo para no poner set { _loquesea = value; OnPropertyChanged(loquesea) y poner simplemente SetProperty(ref Loquesea, value)
@@ -143,24 +151,33 @@ namespace Prueba.viewModel
                 }
             }
         }
-        private void MostrarMecanicoChildView(object obj)
+        private void MostrarMecanicoChildView(object? obj)
         {
             CurrentChildView = new MecanicosViewModel();
             Caption = "Mecanicos";
             Icon = IconChar.User;
         }
-        private void ExecuteShowCommand5(object obj)
+        private void ShowMecanicosChildView(object obj)
         {
             CurrentChildView = new VehiculosEnTallerViewModel();
             Caption = "Vehiculos En Taller";
             Icon = IconChar.Car;
         }
 
-        private void ExecuteShowCommand4(object obj)
+        private void MostrarFacturasChildView(object obj)
         {
-            CurrentChildView = new FacturaViewModel();
-            Caption = "Facturas";
-            Icon = IconChar.MoneyBill;
+            if (EsAdmin)
+            {
+                CurrentChildView = new FacturasAdminViewModel(); 
+                Caption = "Facturas (Admin)";
+                Icon = IconChar.MoneyBill;
+            }
+            else
+            {
+                CurrentChildView = new FacturaViewModel();
+                Caption = "Facturas";
+                Icon = IconChar.MoneyBill;
+            }
         }
 
         private void ExecuteShowCommand3(object obj)
@@ -170,14 +187,14 @@ namespace Prueba.viewModel
             Icon = IconChar.Wrench;
         }
 
-        private void ExecuteShowCommand2(object obj)
+        private void ShowRegistrarVehiculoChildView(object obj)
         {
             CurrentChildView = new RegistrarVehiculosViewModel();
             Caption = "Registrar Vehiculo";
             Icon = IconChar.Database;
         }
 
-        private void ExecuteShowCommand(object? obj)
+        private void ShowPrincipalChildView(object? obj)
         {
             CurrentChildView = new PrincipalViewModel();
             Caption = "Dashboard";

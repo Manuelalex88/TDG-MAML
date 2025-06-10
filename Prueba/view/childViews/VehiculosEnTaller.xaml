@@ -4,13 +4,19 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Prueba.view.childViews"
+             xmlns:conv="clr-namespace:Prueba.converters"
              xmlns:viewmodel="clr-namespace:Prueba.viewModel"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
-    
+
     <UserControl.DataContext>
         <viewmodel:VehiculosEnTallerViewModel/>
     </UserControl.DataContext>
+
+    <UserControl.Resources>
+        <conv:BoolToVisibilityConverter x:Key="BoolToVisibility" Invert="True"/>
+    </UserControl.Resources>
+
     <Grid Margin="20">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -50,12 +56,15 @@
                                            Style="{StaticResource txtTextBlockSub}"
                                            Tag="{StaticResource colorFondo}"
                                            HorizontalAlignment="Center" Margin="0,0,0,10" />
-
+                                <!--Colocamos el boolToVisibility para que si es admin no se asigne el vehiculo-->
                                 <Button Content="Asignarme este vehículo" 
                                         Width="150"
                                         Command="{Binding DataContext.AsignarVehiculoCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
                                         CommandParameter="{Binding}"
-                                        Style="{StaticResource btnChildView}"/>
+                                        Style="{StaticResource btnChildView}"
+                                        Visibility="{Binding DataContext.EsAdmin, 
+                                                             RelativeSource={RelativeSource AncestorType=UserControl}, 
+                                                             Converter={StaticResource BoolToVisibility}}"/>
                                 <Button Content="Marcar salida" 
                                         Width="150" Margin="0,5,0,0"
                                         Command="{Binding DataContext.MarcarSalidaCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"

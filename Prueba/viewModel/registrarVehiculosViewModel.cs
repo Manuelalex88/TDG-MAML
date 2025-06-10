@@ -40,6 +40,7 @@ namespace Prueba.viewModel
         private Boolean _asignar = false;
         private bool _mostrarDescripcion = false;
         public string Error => null!;
+        public bool EsAdmin => Thread.CurrentPrincipal?.IsInRole("admin") == true;
 
         private readonly VehiculoRepository _vehiculoRepository;
         private readonly ClienteRepository _clienteRepository;
@@ -50,18 +51,18 @@ namespace Prueba.viewModel
         public string Marca
         {
             get => _marca;
-            set => SetProperty(ref _marca, value);
+            set => SetProperty(ref _marca, value.ToUpperInvariant());
         }
         public string Modelo
         {
             get => _modelo;
-            set => SetProperty(ref _modelo, value);
+            set => SetProperty(ref _modelo, value.ToUpperInvariant());
         }
 
         public string Matricula
         {
             get => _matricula;
-            set => SetProperty(ref _matricula, value);
+            set => SetProperty(ref _matricula, value.ToUpperInvariant());
         }
         public bool MostrarDescripcion
         {
@@ -289,7 +290,7 @@ namespace Prueba.viewModel
         }
         private bool PuedeAgregar(object? obj)
         {
-            // Validar que matricula y nombre no estén vacíos
+            // Validar que los campos no esten vacios
             bool camposObligatorios = !string.IsNullOrWhiteSpace(Matricula) &&
                               !string.IsNullOrWhiteSpace(NombreCliente) &&
                               !string.IsNullOrWhiteSpace(Modelo) &&
@@ -316,7 +317,7 @@ namespace Prueba.viewModel
             if (!string.IsNullOrEmpty(errorDni))
             {
                 MessageBox.Show(errorDni, "Error de validación", MessageBoxButton.OK, MessageBoxImage.Warning);
-                return; // Sale del método, no guarda nada
+                return; 
             }
             //Comprobar el id_mecanico
             if (string.IsNullOrEmpty(idMecanico))
@@ -332,6 +333,17 @@ namespace Prueba.viewModel
                                                        MotivoIngreso, Descripcion, Asignar,
                                                        idMecanico);
                 MessageBox.Show("Cliente y vehiculo registrados/activados correctamente.");
+
+                //Limpiar los campos
+                Matricula = string.Empty;
+                Marca = string.Empty;
+                Modelo = string.Empty;
+                MotivoIngreso = string.Empty;
+                Descripcion = string.Empty;
+                NombreCliente = string.Empty;
+                TelefonoCliente = string.Empty;
+                DniCliente = string.Empty;
+                Asignar = false;
             }
             catch (Exception ex)
             {

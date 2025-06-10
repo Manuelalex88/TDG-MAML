@@ -17,8 +17,10 @@
         <ListView x:Name="FacturaListViewControl" ItemsSource="{Binding FacturaList}" Style="{StaticResource EstiloListViewFacturas}">
             <ListView.View>
                 <GridView ColumnHeaderContainerStyle="{StaticResource EstiloEncabezadoGridView}">
-                    <GridViewColumn Header="Id" Width="Auto" DisplayMemberBinding="{Binding Id}" />
-                    <GridViewColumn Header="Id Reparacion" Width="Auto" DisplayMemberBinding="{Binding IdReparacion}" />
+                    <GridViewColumn Header="ID FACTURA" Width="Auto" DisplayMemberBinding="{Binding Id}" />
+                    <GridViewColumn Header="DNI" Width="Auto" DisplayMemberBinding="{Binding Dni}" />
+                    <GridViewColumn Header="Nombre del Cliente" Width="Auto" DisplayMemberBinding="{Binding ClienteNombre}" />
+                    <GridViewColumn Header="Matricula" Width="Auto" DisplayMemberBinding="{Binding Matricula}" />
                     <GridViewColumn Header="Fecha Emisión" Width="Auto" DisplayMemberBinding="{Binding FechaEmision, StringFormat=d}" />
                     <GridViewColumn Header="Pagado" Width="Auto">
                         <GridViewColumn.CellTemplate>
@@ -33,10 +35,10 @@
                             <DataTemplate>
                                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" >
                                     <Button Content="Descargar" Margin="0,0,5,0" 
-                                            Command="{Binding DataContext.DescargarCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                            Command="{Binding DataContext.DescargarFacturaCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
                                             CommandParameter="{Binding}" Style="{StaticResource btnChildView}"/>
                                     <Button Content="Eliminar" 
-                                            Command="{Binding DataContext.EliminarCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                            Command="{Binding DataContext.BorrarFacturaCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
                                             CommandParameter="{Binding}" Style="{StaticResource btnChildView}"/>
                                 </StackPanel>
                             </DataTemplate>
