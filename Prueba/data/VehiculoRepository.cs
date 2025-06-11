@@ -60,26 +60,27 @@ namespace Prueba.data
                 using (var conn = GetConection())
                 {
                     conn.Open();
-                    var cmd = new NpgsqlCommand(@"
-                        SELECT r.id, v.marca, v.modelo, v.matricula, 
-                               r.estado, r.trabajo_a_realizar, r.fecha_inicio
-                        FROM vehiculo v
-                        JOIN reparacion r ON v.matricula = r.matricula_vehiculo
-                        WHERE r.mecanico_id = @idMecanico
-                          AND v.salida_taller = false
-                          AND r.estado <> @estado5 AND r.estado <> @estado6;", conn);
+                    var query = new NpgsqlCommand(@"
+                            SELECT DISTINCT ON (v.matricula) r.id, v.marca, v.modelo, v.matricula, 
+                                   r.estado, r.trabajo_a_realizar, r.fecha_inicio
+                            FROM vehiculo v
+                            JOIN reparacion r ON v.matricula = r.matricula_vehiculo
+                            WHERE r.mecanico_id = @idMecanico
+                              AND v.salida_taller = false
+                              AND r.estado <> @estado5 AND r.estado <> @estado6
+                            ORDER BY v.matricula, r.fecha_inicio DESC;", conn);
 
-                    cmd.Parameters.AddWithValue("@idMecanico", idMecanico);
-                    cmd.Parameters.AddWithValue("@estado5", DatosConstantes.Estado5);
-                    cmd.Parameters.AddWithValue("@estado6", DatosConstantes.Estado6);
+                    query.Parameters.AddWithValue("@idMecanico", idMecanico);
+                    query.Parameters.AddWithValue("@estado5", DatosConstantes.Estado5);
+                    query.Parameters.AddWithValue("@estado6", DatosConstantes.Estado6);
 
-                    using (var reader = cmd.ExecuteReader())
+                    using (var reader = query.ExecuteReader())
                     {
                         while (reader.Read())
                         {
                             lista.Add(new VehiculoReparacionDTO
                             {
-                                Id = reader.GetInt32(reader.GetOrdinal("id")),
+                                IdReparacion = reader.GetInt32(reader.GetOrdinal("id")),
                                 Marca = reader.IsDBNull(reader.GetOrdinal("marca")) ? string.Empty : reader.GetString(reader.GetOrdinal("marca")),
                                 Modelo = reader.IsDBNull(reader.GetOrdinal("modelo")) ? string.Empty : reader.GetString(reader.GetOrdinal("modelo")),
                                 Matricula = reader.IsDBNull(reader.GetOrdinal("matricula")) ? string.Empty : reader.GetString(reader.GetOrdinal("matricula")),

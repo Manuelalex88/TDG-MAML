@@ -92,7 +92,7 @@ namespace Prueba.viewModel
         
         public void DescargarFactura(object obj)
         {
-            if (obj is not FacturaVehiculoClienteDTO facturaSeleccionada)
+            if (obj is not HistorialFactura facturaSeleccionada)
             {
                 MessageBox.Show("No se pudo determinar la factura a descargar.");
                 return;
@@ -105,16 +105,16 @@ namespace Prueba.viewModel
                 // Datos necesarios para el PDF
                 var cliente = new Cliente
                 {
-                    Nombre = facturaSeleccionada.ClienteNombre,
-                    Dni = facturaSeleccionada.Dni,
-                    Telefono = facturaSeleccionada.Telefono
+                    Nombre = facturaSeleccionada.NombreCliente,
+                    Dni = facturaSeleccionada.DniCliente,
+                    Telefono = facturaSeleccionada.TelefonoCliente
                 };
 
                 var vehiculo = new Vehiculo
                 {
-                    Matricula = facturaSeleccionada.Matricula,
-                    Marca = facturaSeleccionada.Marca,
-                    Modelo = facturaSeleccionada.Modelo
+                    Matricula = facturaSeleccionada.VehiculoMatricula,
+                    Marca = facturaSeleccionada.VehiculoMarca,
+                    Modelo = facturaSeleccionada.VehiculoModelo
                 };
 
                 var mecanico = new Mecanico
@@ -124,7 +124,7 @@ namespace Prueba.viewModel
 
                 // Obtener todos los repuestos usados para esta factura
                 var repuestosUsados = _facturaRepository.ObtenerRepuestosUsadosPorReparacion(facturaSeleccionada.Id) ?? new List<RepuestoUsadoDTO>();
-                decimal total = repuestosUsados.Sum(r => r.Precio * r.Cantidad);
+                decimal total = facturaSeleccionada.Total;
 
                 var factura = new FacturaDocument
                 {

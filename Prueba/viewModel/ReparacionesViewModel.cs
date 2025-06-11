@@ -21,7 +21,7 @@ namespace Prueba.viewModel
         };
 
         public ObservableCollection<VehiculoReparacionDTO> VehiculosAsignados { get; set; } = new();
-        public ObservableCollection<RepuestoUsadoDTO> RepuestosSeleccionados { get; set; } = new();
+        public ObservableCollection<RepuestoUsadoDTO> RepuestosUsados { get; set; } = new();
 
         // Campos privados
         private readonly ReparacionRepository _reparacionRepository;
@@ -74,23 +74,23 @@ namespace Prueba.viewModel
                 {
                     TrabajoRealizar = value?.TrabajoARealizar ?? string.Empty;
                     EstadoSeleccionado = value?.Estado ?? string.Empty;
-                    RepuestosSeleccionados.Clear();
+                    RepuestosUsados.Clear();
 
                     if (value != null)
                     {
                         // Obtener ID de la reparacion actual
                         int reparacionId = _reparacionRepository.ObtenerIdReparacionPorMatricula(value.Matricula);
-
+                        MessageBox.Show(reparacionId.ToString());
                         // Cargar repuestos usados en la reparacion
                         var repuestos = _reparacionRepository.ObtenerRepuestosUsados(reparacionId);
 
                         foreach (var r in repuestos)
                         {
-                            RepuestosSeleccionados.Add(r);
+                            RepuestosUsados.Add(r);
                         }
                         // Actualizamos el estado de _mantenimientoAgregado para que se elimine correctamente
-                        var nombresMantenimiento = new[] { "Filtros", "Aceite", "Anticongelante" };
-                        _mantenimientoAgregado = RepuestosSeleccionados.Any(r => nombresMantenimiento.Contains(r.Nombre));
+                        var nombresMantenimiento = new[] { "FILTROS", "ACEITE", "ANTICONGELANTE" };
+                        _mantenimientoAgregado = RepuestosUsados.Any(r => nombresMantenimiento.Contains(r.Nombre));
                     }
                 }
             }
@@ -157,19 +157,35 @@ namespace Prueba.viewModel
         {
             if (VehiculoSeleccionado == null)
             {
-
                 MessageBox.Show("Selecciona un vehículo para guardar cambios.");
+                return;
+            }
+            //Si no hay nada que guardar no se guarda
+            bool hayCambios = RepuestosUsados.Any();
+
+            if (!hayCambios)
+            {
+                MessageBox.Show("No hay piezas para guardar.");
                 return;
             }
 
             try
             {
+                // Para que no haya duplicados
+                var repuestosNoRepetidos = RepuestosUsados
+                    .GroupBy(r => r.Nombre)
+                    .Select(g => new RepuestoUsadoDTO
+                    {
+                        Nombre = g.Key,
+                        Precio = g.Last().Precio,  
+                        Cantidad = g.Last().Cantidad 
+                    }).ToList();
 
                 _reparacionRepository.GuardarCambiosReparacion(
                     VehiculoSeleccionado,
                     TrabajoRealizar,
                     EstadoSeleccionado,
-                    RepuestosSeleccionados.ToList()
+                    repuestosNoRepetidos
                 );
 
                 MessageBox.Show("Cambios guardados correctamente.");
@@ -180,8 +196,9 @@ namespace Prueba.viewModel
                 NuevoRepuesto = string.Empty;
                 RepuestoPrecio = 0;
                 CantidadPieza = 0;
-                RepuestosSeleccionados.Clear();
+                RepuestosUsados.Clear();
                 VehiculoSeleccionado = null;
+
                 //Refrescar la lista
                 VehiculosAsignados.Clear();
                 VehiculosAsignadosActualmente();
@@ -193,12 +210,18 @@ namespace Prueba.viewModel
         }
         private bool PuedeFinalizar(object? obj)
         {
-            return EstadoSeleccionado == "En Reparacion";
+            if (VehiculoSeleccionado == null || EstadoSeleccionado != "En Reparacion")
+                return false;
+
+            int reparacionId = _reparacionRepository.ObtenerIdReparacionPorMatricula(VehiculoSeleccionado.Matricula);
+            var repuestosGuardados = _reparacionRepository.ObtenerRepuestosUsados(reparacionId);
+
+            return repuestosGuardados.Any();
         }
 
         private void FinalizarReparacion(object obj)
         {
-
+            
             if (VehiculoSeleccionado == null)
             {
                 MessageBox.Show("Selecciona una reparación para finalizar.");
@@ -209,7 +232,7 @@ namespace Prueba.viewModel
             {
 
                 // Finalizar reparación
-                var reparacionId = VehiculoSeleccionado.Id;
+                var reparacionId = VehiculoSeleccionado.IdReparacion;
                 _reparacionRepository.FinalizarReparacionActual(VehiculoSeleccionado, reparacionId);
 
                 MessageBox.Show("Reparación finalizada correctamente.");
@@ -221,7 +244,7 @@ namespace Prueba.viewModel
                 VehiculoSeleccionado = null;
                 TrabajoRealizar = string.Empty;
                 EstadoSeleccionado = string.Empty;
-                RepuestosSeleccionados.Clear();
+                RepuestosUsados.Clear();
             }
             catch (Exception ex)
             {
@@ -231,15 +254,21 @@ namespace Prueba.viewModel
         }
         private void AgregarPieza(object? obj)
         {
-            // Si se está editando un repuesto seleccionado
+
             if (RepuestoSeleccionado != null)
             {
-                RepuestoSeleccionado.Nombre = NuevoRepuesto;
-                RepuestoSeleccionado.Precio = RepuestoPrecio;
-                RepuestoSeleccionado.Cantidad = CantidadPieza;
-
-                // Notificar que cambió (si el Repuesto implementa INotifyPropertyChanged)
-                OnPropertyChanged(nameof(RepuestosSeleccionados));
+                // Obtén índice del repuesto seleccionado en la colección
+                int index = RepuestosUsados.IndexOf(RepuestoSeleccionado);
+                if (index >= 0)
+                {
+                    // Reemplaza el objeto con uno nuevo con los valores editados
+                    RepuestosUsados[index] = new RepuestoUsadoDTO
+                    {
+                        Nombre = NuevoRepuesto,
+                        Precio = RepuestoPrecio,
+                        Cantidad = CantidadPieza
+                    };
+                }
 
                 // Limpiar selección y campos
                 RepuestoSeleccionado = null;
@@ -249,17 +278,16 @@ namespace Prueba.viewModel
                 return;
             }
 
-            // Si no hay uno seleccionado, agregar nuevo o sumar cantidad
-            var existente = RepuestosSeleccionados.FirstOrDefault(r => r.Nombre == NuevoRepuesto);
+            // Si no hay seleccionado, agregar nuevo o sumar cantidad
+            var existente = RepuestosUsados.FirstOrDefault(r => r.Nombre == NuevoRepuesto);
             if (existente != null)
             {
                 existente.Cantidad = CantidadPieza;
                 existente.Precio = RepuestoPrecio;
-                OnPropertyChanged(nameof(RepuestosSeleccionados));
             }
             else
             {
-                RepuestosSeleccionados.Add(new RepuestoUsadoDTO
+                RepuestosUsados.Add(new RepuestoUsadoDTO
                 {
                     Nombre = NuevoRepuesto,
                     Precio = RepuestoPrecio,
@@ -267,7 +295,6 @@ namespace Prueba.viewModel
                 });
             }
 
-            // Limpiar campos
             NuevoRepuesto = string.Empty;
             RepuestoPrecio = 0;
             CantidadPieza = 0;
@@ -280,19 +307,19 @@ namespace Prueba.viewModel
             if (!_mantenimientoAgregado)
             {
                 // Agregar mantenimiento básico
-                RepuestosSeleccionados.Add(new RepuestoUsadoDTO { Nombre = "Filtros", Precio = 20, Cantidad = 3 });
-                RepuestosSeleccionados.Add(new RepuestoUsadoDTO { Nombre = "Aceite", Precio = 40, Cantidad = 1 });
-                RepuestosSeleccionados.Add(new RepuestoUsadoDTO { Nombre = "Anticongelante", Precio = 20, Cantidad = 1 });
+                RepuestosUsados.Add(new RepuestoUsadoDTO { Nombre = "Filtros", Precio = 20, Cantidad = 3 });
+                RepuestosUsados.Add(new RepuestoUsadoDTO { Nombre = "Aceite", Precio = 40, Cantidad = 1 });
+                RepuestosUsados.Add(new RepuestoUsadoDTO { Nombre = "Anticongelante", Precio = 20, Cantidad = 1 });
 
                 _mantenimientoAgregado = true;
             }
             else
             {
                 // Quitar mantenimiento básico
-                var itemsAEliminar = RepuestosSeleccionados.Where(r => nombresMantenimiento.Contains(r.Nombre)).ToList();
+                var itemsAEliminar = RepuestosUsados.Where(r => nombresMantenimiento.Contains(r.Nombre)).ToList();
                 foreach (var item in itemsAEliminar)
                 {
-                    RepuestosSeleccionados.Remove(item);
+                    RepuestosUsados.Remove(item);
                 }
 
                 _mantenimientoAgregado = false;
@@ -319,7 +346,7 @@ namespace Prueba.viewModel
                 _vehiculoRepository.CancelarReparacionPorMatricula(matricula);
 
                 // Limpia UI 
-                RepuestosSeleccionados.Clear();
+                RepuestosUsados.Clear();
                 VehiculosAsignados.Remove(VehiculoSeleccionado);
                 VehiculoSeleccionado = null;
 
@@ -350,6 +377,7 @@ namespace Prueba.viewModel
 
             try
             {
+                VehiculosAsignados.Clear();
                 var lista = _vehiculoRepository.ObtenerVehiculosAsignados(idMecanico);
                 foreach (var v in lista)
                 {
@@ -370,7 +398,7 @@ namespace Prueba.viewModel
             }
             try
             {
-                RepuestosSeleccionados.Remove(repuestoBorrar);
+                RepuestosUsados.Remove(repuestoBorrar);
 
                 if (VehiculoSeleccionado != null)
                 {

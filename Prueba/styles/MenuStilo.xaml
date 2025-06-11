@@ -18,4 +18,34 @@
         <Setter Property="Background" Value="Transparent"/>
         <Setter Property="BorderBrush" Value="Transparent"/>
     </Style>
+    <!--SubMenu VentanaPrincipal-->
+    <Style x:Key="subMenuVP" TargetType="MenuItem">
+        <Setter Property="Foreground" Value="{StaticResource colorTexto}" />
+        <Setter Property="Background" Value="{StaticResource colorFondo}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="MenuItem">
+                    <Border 
+                    Name="border"
+                    Background="{TemplateBinding Background}" 
+                    BorderBrush="{StaticResource colorBorde}" 
+                    BorderThickness="1" 
+                    Padding="4">
+                        <ContentPresenter 
+                        ContentSource="Header" 
+                        HorizontalAlignment="Left" 
+                        VerticalAlignment="Center" />
+                    </Border>
+
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="border" Property="Background" Value="{StaticResource colorTexto}" />
+                            <Setter Property="Foreground" Value="{StaticResource colorFondo}" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
 </ResourceDictionary>

@@ -75,8 +75,8 @@ namespace Prueba.data
                             {
                                 col.Item().Text("Vehículo").Bold().FontSize(14).Underline();
                                 col.Item().Text($"Matrícula: {Vehiculo?.Matricula}");
-                                col.Item().Text($"Marca: {Vehiculo?.Marca}");
-                                col.Item().Text($"Modelo: {Vehiculo?.Modelo}");
+                                col.Item().Text($"MarcaVehiculo: {Vehiculo?.Marca}");
+                                col.Item().Text($"ModeloVehiculo: {Vehiculo?.Modelo}");
                             });
                         });
 
@@ -153,7 +153,7 @@ namespace Prueba.data
 
                 page.Footer()
                     .AlignCenter()
-                    .Text("Gracias por confiar en Taller Manuel. Para dudas o reclamaciones, contacte al +34 123 456 789.")
+                    .Text("Gracias por confiar en Taller Manuel. Para dudas o reclamaciones, contacte al +34 666 666 666.")
                     .FontSize(9)
                     .FontColor(Colors.Grey.Medium);
             });

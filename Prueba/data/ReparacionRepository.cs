@@ -18,58 +18,57 @@ namespace Prueba.data
             using var transaction = conn.BeginTransaction();
             try
             {
+                // Obtener ID de reparación actual
+                int reparacionId;
+                using (var cmdGetId = new NpgsqlCommand("SELECT id FROM reparacion WHERE matricula_vehiculo = @matricula AND estado <> @estadoFinalizado;", conn, transaction))
+                {
+                    cmdGetId.Parameters.AddWithValue("matricula", vehiculo.Matricula);
+                    cmdGetId.Parameters.AddWithValue("estadoFinalizado", DatosConstantes.Estado6);
+                    reparacionId = Convert.ToInt32(cmdGetId.ExecuteScalar());
+                }
+
+                
+
                 // Actualizar reparación
                 string updateReparacion = @"
-                    UPDATE reparacion
-                    SET trabajo_a_realizar = @trabajo, estado = @estado
-                    WHERE matricula_vehiculo = @matricula;";
+                            UPDATE reparacion
+                            SET trabajo_a_realizar = @trabajo, estado = @estado
+                            WHERE id = @reparacionId;";
 
-                using (var cmdUpdate = new NpgsqlCommand(updateReparacion, conn))
+                using (var cmdUpdate = new NpgsqlCommand(updateReparacion, conn, transaction))
                 {
                     cmdUpdate.Parameters.AddWithValue("trabajo", trabajo ?? (object)DBNull.Value);
                     cmdUpdate.Parameters.AddWithValue("estado", estado ?? (object)DBNull.Value);
-                    cmdUpdate.Parameters.AddWithValue("matricula", vehiculo.Matricula);
+                    cmdUpdate.Parameters.AddWithValue("reparacionId", reparacionId);
                     cmdUpdate.ExecuteNonQuery();
                 }
 
-                // Obtener ID de reparación actual
-                int reparacionId;
-                using (var cmdGetId = new NpgsqlCommand("SELECT id FROM reparacion WHERE matricula_vehiculo = @matricula", conn))
-                {
-                    cmdGetId.Parameters.AddWithValue("matricula", vehiculo.Matricula);
-                    reparacionId = Convert.ToInt32(cmdGetId.ExecuteScalar());
-                }
+                
 
                 foreach (var repuesto in repuestos)
                 {
                     int repuestoId;
+                    var nombreMayus = repuesto.Nombre.Trim().ToUpperInvariant();
 
-                    var nombreMayus = repuesto.Nombre.ToUpperInvariant();
-
-                    // Insertar o actualizar repuesto
+                    // Insertar o actualizar repuesto y obtener ID
                     using (var cmdInsertRepuesto = new NpgsqlCommand(@"
                             INSERT INTO repuesto (nombre, precio)
                             VALUES (@nombre, @precio)
-                            ON CONFLICT (nombre) DO UPDATE SET precio = EXCLUDED.precio;", conn))
+                            ON CONFLICT (nombre)
+                            DO UPDATE SET precio = EXCLUDED.precio
+                            RETURNING id;", conn, transaction))
                     {
                         cmdInsertRepuesto.Parameters.AddWithValue("nombre", nombreMayus);
                         cmdInsertRepuesto.Parameters.AddWithValue("precio", repuesto.Precio);
-                        cmdInsertRepuesto.ExecuteNonQuery();
+                        repuestoId = Convert.ToInt32(cmdInsertRepuesto.ExecuteScalar());
                     }
 
-                    // Obtener id del repuesto
-                    using (var cmdGetRepuestoId = new NpgsqlCommand("SELECT id FROM repuesto WHERE nombre = @nombre", conn))
-                    {
-                        cmdGetRepuestoId.Parameters.AddWithValue("nombre", nombreMayus);
-                        repuestoId = Convert.ToInt32(cmdGetRepuestoId.ExecuteScalar());
-                    }
-
-                    // Insertar o actualizar repuesto_usado sumando cantidad
+                    // Insertar o actualizar repuesto_usado cambiando la cantidad
                     using (var cmdInsertUsado = new NpgsqlCommand(@"
-                            INSERT INTO repuesto_usado (reparacion_id, repuesto_id, cantidad, facturado)
+                            INSERT INTO repuesto_usado (reparacion_id, repuesto_id, cantidad, pagado)
                             VALUES (@reparacion_id, @repuesto_id, @cantidad, FALSE)
                             ON CONFLICT (reparacion_id, repuesto_id)
-                            DO UPDATE SET cantidad = repuesto_usado.cantidad + EXCLUDED.cantidad;", conn))
+                            DO UPDATE SET cantidad = EXCLUDED.cantidad;", conn, transaction))
                     {
                         cmdInsertUsado.Parameters.AddWithValue("reparacion_id", reparacionId);
                         cmdInsertUsado.Parameters.AddWithValue("repuesto_id", repuestoId);
@@ -102,7 +101,7 @@ namespace Prueba.data
                         SET estado = @estado, fecha_fin = @fechaFin
                         WHERE id = @id;", conn, transaction))
                 {
-                    cmd.Parameters.AddWithValue("estado", DatosConstantes.Estado5);
+                    cmd.Parameters.AddWithValue("estado", DatosConstantes.Estado6);
                     cmd.Parameters.AddWithValue("fechaFin", DateTime.Now);
                     cmd.Parameters.AddWithValue("id", reparacionId);
                     cmd.ExecuteNonQuery();
@@ -152,10 +151,14 @@ namespace Prueba.data
                 conn.Open();
 
                 string query = @"
-                    SELECT r.nombre, r.precio, ru.cantidad
-                    FROM repuesto_usado ru
-                    JOIN repuesto r ON r.id = ru.repuesto_id
-                    WHERE ru.reparacion_id = @reparacionId;";
+                        SELECT ru.id, r.nombre, r.precio, ru.cantidad
+                        FROM repuesto_usado ru
+                        JOIN repuesto r ON r.id = ru.repuesto_id
+                        JOIN reparacion rep ON rep.id = ru.reparacion_id
+                        WHERE ru.reparacion_id = @reparacionId
+                        AND ru.pagado = false";
+
+                
 
                 using var cmd = new NpgsqlCommand(query, conn);
                 cmd.Parameters.AddWithValue("reparacionId", reparacionId);
@@ -165,9 +168,10 @@ namespace Prueba.data
                 {
                     repuestos.Add(new RepuestoUsadoDTO
                     {
-                        Nombre = reader.GetString(0),
-                        Precio = reader.GetDecimal(1),
-                        Cantidad = reader.GetInt32(2)
+                        Id = reader.GetInt32(0),
+                        Nombre = reader.GetString(1),
+                        Precio = reader.GetDecimal(2),
+                        Cantidad = reader.GetInt32(3)
                     });
                 }
             }
@@ -186,9 +190,9 @@ namespace Prueba.data
                 using var conn = GetConection();
                 conn.Open();
 
-                using var cmd = new NpgsqlCommand("SELECT id FROM reparacion WHERE matricula_vehiculo = @matricula", conn);
+                using var cmd = new NpgsqlCommand("SELECT id FROM reparacion WHERE matricula_vehiculo = @matricula AND estado <> @estadoFinalizado;", conn);
                 cmd.Parameters.AddWithValue("matricula", matricula);
-
+                cmd.Parameters.AddWithValue("estadoFinalizado", DatosConstantes.Estado6);
                 var result = cmd.ExecuteScalar();
                 if (result == null || result == DBNull.Value)
                     return -1; // o valor que indique no encontrado
@@ -222,7 +226,7 @@ namespace Prueba.data
                 //Calculo del total mas mano de obra
                 decimal subtotal = totalRepuestos + DatosConstantes.ManoDeObra;
                 //Calculo iva
-                decimal iva = subtotal * 0.21m;  
+                decimal iva = subtotal * 0.21m;
                 //Total 
                 decimal totalConIva = subtotal + iva;
 
@@ -237,18 +241,27 @@ namespace Prueba.data
 
         public void EliminarRepuestoDeReparacion(int repuestoUsadoId)
         {
-            using var connection = GetConection();
-            connection.Open();
 
-            using var command = new NpgsqlCommand("DELETE FROM repuesto_usado WHERE id = @id", connection);
-            command.Parameters.AddWithValue("@id", repuestoUsadoId);
-
-            int rowsAffected = command.ExecuteNonQuery();
-
-            if (rowsAffected == 0)
+            try
             {
-                throw new Exception("No se encontró el repuesto para eliminar.");
+                using var connection = GetConection();
+                connection.Open();
+
+                using var command = new NpgsqlCommand("DELETE FROM repuesto_usado WHERE id = @id", connection);
+                command.Parameters.AddWithValue("@id", repuestoUsadoId);
+
+                int rowsAffected = command.ExecuteNonQuery();
+
+                if (rowsAffected == 0)
+                {
+                    throw new Exception("No se encontró el repuesto para eliminar.");
+                }
             }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error al eliminar el repuesto usado: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+
         }
     }
 }

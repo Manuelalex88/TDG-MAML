@@ -15,7 +15,7 @@ namespace Prueba.data
         //Repuesto_usado
         public int Id { get; set; }
         public int Cantidad { get; set; }
-        public bool Facturado { get; set; }
+        public bool Pagado { get; set; }
     }
 
 }

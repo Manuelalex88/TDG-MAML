@@ -36,14 +36,14 @@
                 <Label Content="Marca:" Style="{StaticResource GroupBoxText}" />
                 <ComboBox x:Name="cmbMarca"  Margin="0,0,0,10" Width="200" ItemsSource="{Binding ListaMarcas}" 
                           HorizontalAlignment="Left" Style="{StaticResource ComboBoxRegistrarVehiculo}" 
-                          SelectedValue="{Binding Marca, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                          SelectedValue="{Binding MarcaVehiculo, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
 
                 <Label Content="Modelo:" Style="{StaticResource GroupBoxText}"/>
-                <TextBox x:Name="txtModelo" Margin="0,0,0,10" Width="200" HorizontalAlignment="Left" Text="{Binding Modelo, UpdateSourceTrigger=PropertyChanged}"/>
+                <TextBox x:Name="txtModelo" Margin="0,0,0,10" Width="200" HorizontalAlignment="Left" Text="{Binding ModeloVehiculo, UpdateSourceTrigger=PropertyChanged}"/>
 
                 <Label Content="Matrícula:" Style="{StaticResource GroupBoxText}"/>
                 <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
-                    <TextBox Text="{Binding Matricula, 
+                    <TextBox Text="{Binding MatriculaVehiculo, 
                                     Mode=TwoWay, 
                                     UpdateSourceTrigger=PropertyChanged, 
                                     ValidatesOnDataErrors=True, 
@@ -76,7 +76,7 @@
                 <Label Content="Motivo de ingreso" Style="{StaticResource GroupBoxText}"/>
                 <ComboBox x:Name="cmbMotivoIngreso"  Margin="0,0,0,10" Width="200" ItemsSource="{Binding ListaMotivoIngreso}"
                           HorizontalAlignment="Left" Style="{StaticResource ComboBoxRegistrarVehiculo}" 
-                          SelectedValue="{Binding MotivoIngreso, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                          SelectedValue="{Binding MotivoIngresoVehiculo, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
                 <!--Si la eleccion es una en especifico lo convertimos a visible-->
                 <Label Content="Breve descripción del problema"
                        Style="{StaticResource GroupBoxText}"

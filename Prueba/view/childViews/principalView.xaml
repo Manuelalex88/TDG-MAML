@@ -48,6 +48,10 @@
                                   Style="{StaticResource EstiloListViewFacturas}"
                                   ItemContainerStyle="{StaticResource EstiloListViewItemHover}"
                                   >
+                            <!--Estilo de la barra (Scrollbar)-->
+                            <ListView.Resources>
+                                <Style TargetType="ScrollBar" BasedOn="{StaticResource ScrollBarHorizontalRedondeada}" />
+                            </ListView.Resources>
                             <ListView.View>
                                 <GridView ColumnHeaderContainerStyle="{StaticResource EstiloEncabezadoGridView}">
                                     <GridViewColumn Header="Matrícula" Width="Auto">
@@ -104,6 +108,10 @@
                         <ListView ItemsSource="{Binding FacturasMecanico}" ScrollViewer.VerticalScrollBarVisibility="Auto" HorizontalAlignment="Stretch"
                                   Style="{StaticResource EstiloListViewFacturas}"
                                   ItemContainerStyle="{StaticResource EstiloListViewItemHover}">
+                            <!--Estilo de la barra (Scrollbar)-->
+                            <ListView.Resources>
+                                <Style TargetType="ScrollBar" BasedOn="{StaticResource ScrollBarHorizontalRedondeada}" />
+                            </ListView.Resources>
                             <ListView.View>
                                 <GridView ColumnHeaderContainerStyle="{StaticResource EstiloEncabezadoGridView}">
                                     <GridViewColumn Header="Matricula" DisplayMemberBinding="{Binding VehiculoMatricula}" Width="Auto"/>

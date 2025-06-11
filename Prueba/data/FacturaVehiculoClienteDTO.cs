@@ -10,6 +10,7 @@ namespace Prueba.data
     {
         //Factura
         public int Id { get; set; }
+        public int IdReparacion { get; set; }
         public DateTime? FechaEmision { get; set; }
         public decimal Total { get; set; }
         public bool Pagado { get; set; }

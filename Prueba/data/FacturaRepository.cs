@@ -62,7 +62,33 @@ namespace Prueba.data
             return lista;
         }
 
+        public void MarcarRepuestosComoFacturados(int idReparacion)
+        {
+            
+            using (var connection = GetConection())
+            {
+                connection.Open();
 
+                string sql = "UPDATE repuesto_usado SET Pagado = TRUE WHERE reparacion_id = @idReparacion;";
+
+                using (var cmd = new Npgsql.NpgsqlCommand(sql, connection))
+                {
+                    cmd.Parameters.AddWithValue("idReparacion", idReparacion);
+                    int filasAfectadas = cmd.ExecuteNonQuery();
+
+                    
+                    if (filasAfectadas == 0)
+                    {
+                        
+                        Console.WriteLine("No se actualizó ningún registro.");
+                    }
+                    else
+                    {
+                        Console.WriteLine($"{filasAfectadas} registro(s) actualizado(s) correctamente.");
+                    }
+                }
+            }
+        }
         public List<FacturaVehiculoClienteDTO> ObtenerFacturasPendientesPorMecanico(string mecanicoId)
         {
             var lista = new List<FacturaVehiculoClienteDTO>();
@@ -71,6 +97,7 @@ namespace Prueba.data
             {
                 string query = @"SELECT 
                                 f.id AS factura_id,
+                                f.id_reparacion,
                                 f.fecha_emision,
                                 f.total,
                                 v.marca,
@@ -85,7 +112,8 @@ namespace Prueba.data
                             JOIN cliente_vehiculo cv ON v.matricula = cv.vehiculo_id
                             JOIN cliente c ON cv.cliente_id = c.dni
                             WHERE r.mecanico_id = @mecanico_id
-                              AND f.pagado = FALSE;";
+                              AND f.pagado = FALSE
+                            ORDER BY f.fecha_emision DESC;";
 
                 using var conn = GetConection();
                 conn.Open();
@@ -98,86 +126,22 @@ namespace Prueba.data
                 {
                     lista.Add(new FacturaVehiculoClienteDTO
                     {
-                        Id = reader.GetInt32(0),
-                        FechaEmision = reader.IsDBNull(1) ? null : reader.GetDateTime(1),
-                        Total = reader.GetDecimal(2),
-                        Marca = reader.GetString(3),
-                        Modelo = reader.GetString(4),
-                        Matricula = reader.GetString(5),
-                        ClienteNombre = reader.GetString(6),
-                        Dni = reader.GetString(7),
-                        Telefono = reader.IsDBNull(8) ? "Error: No hay telefono disponible" : reader.GetString(8)
+                        Id = reader.GetInt32(0), 
+                        IdReparacion = reader.GetInt32(1), 
+                        FechaEmision = reader.IsDBNull(2) ? null : reader.GetDateTime(2),
+                        Total = reader.GetDecimal(3),
+                        Marca = reader.GetString(4),
+                        Modelo = reader.GetString(5),
+                        Matricula = reader.GetString(6),
+                        ClienteNombre = reader.GetString(7),
+                        Dni = reader.GetString(8),
+                        Telefono = reader.IsDBNull(9) ? "Error: No hay telefono disponible" : reader.GetString(9)
                     });
                 }
             }
             catch (Exception ex)
             {
                 MessageBox.Show($"Error al obtener facturas pendientes: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
-
-            return lista;
-        }
-
-        public List<FacturaVehiculoClienteDTO> ObtenerFacturasPagadasPorMecanico(string idMecanico)
-        {
-            var lista = new List<FacturaVehiculoClienteDTO>();
-
-            try
-            {
-                using (var connection = GetConection())
-                {
-                    connection.Open();
-
-                    string query = @"
-                                SELECT 
-                                f.id, 
-                                f.fecha_emision, 
-                                f.total,
-                                v.marca, 
-                                v.modelo, 
-                                v.matricula,
-                                c.nombre AS cliente_nombre, 
-                                c.dni, 
-                                c.telefono
-                            FROM factura f
-                            INNER JOIN reparacion r ON f.id_reparacion = r.id
-                            INNER JOIN vehiculo v ON r.matricula_vehiculo = v.matricula
-                            INNER JOIN cliente_vehiculo cv ON cv.vehiculo_id = v.matricula
-                            INNER JOIN cliente c ON cv.cliente_id = c.dni
-                            WHERE r.mecanico_id = @idMecanico
-                              AND f.pagado = TRUE
-                            ORDER BY f.fecha_emision DESC;";
-
-                    using (var command = new NpgsqlCommand(query, connection))
-                    {
-                        command.Parameters.AddWithValue("@idMecanico", idMecanico);
-
-                        using (var reader = command.ExecuteReader())
-                        {
-                            while (reader.Read())
-                            {
-                                var dto = new FacturaVehiculoClienteDTO
-                                {
-                                    Id = reader.GetInt32(0),
-                                    FechaEmision = reader.IsDBNull(1) ? null : reader.GetDateTime(1),
-                                    Total = reader.GetDecimal(2),
-                                    Marca = reader.GetString(3),
-                                    Modelo = reader.GetString(4),
-                                    Matricula = reader.GetString(5),
-                                    ClienteNombre = reader.GetString(6),
-                                    Dni = reader.GetString(7),
-                                    Telefono = reader.GetString(8)
-                                };
-
-                                lista.Add(dto);
-                            }
-                        }
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Error al obtener facturas pagadas: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
 
             return lista;
@@ -210,7 +174,7 @@ namespace Prueba.data
 
                 // Obtenemos los repuestos usados
                 var queryRepuestos = @"
-                    SELECT ru.id, r.nombre, r.precio, ru.cantidad, ru.facturado
+                    SELECT ru.id, r.nombre, r.precio, ru.cantidad
                     FROM repuesto_usado ru
                     JOIN repuesto r ON ru.repuesto_id = r.id
                     WHERE ru.reparacion_id = @reparacionId";
@@ -228,7 +192,6 @@ namespace Prueba.data
                             Nombre = reader.GetString(1),
                             Precio = reader.GetDecimal(2),
                             Cantidad = reader.GetInt32(3),
-                            Facturado = reader.GetBoolean(4)
                         });
                     }
                 }
@@ -243,6 +206,7 @@ namespace Prueba.data
 
         public void MarcarFacturaComoPagada(int facturaId)
         {
+            
             try
             {
                 string query = "UPDATE factura SET pagado = TRUE WHERE id = @id";
@@ -261,23 +225,6 @@ namespace Prueba.data
             }
         }
 
-        public void MarcarRepuestosComoFacturados(int idReparacion)
-        {
-            try
-            {
-                using var conn = GetConection();
-                conn.Open();
-
-                var query = "UPDATE repuesto_usado SET facturado = TRUE WHERE reparacion_id = @id";
-                using var cmd = new NpgsqlCommand(query, conn);
-                cmd.Parameters.AddWithValue("id", idReparacion);
-                cmd.ExecuteNonQuery();
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Error al marcar repuestos como facturados: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
-        }
 
         public void EliminarFacturaSeleccionada(int facturaId)
         {

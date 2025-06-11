@@ -235,11 +235,11 @@
                                     </MenuItem.Header>
                                     <!-- Aplicar el estilo a los submenús -->
                                     <MenuItem.ItemContainerStyle>
-                                        <Style TargetType="MenuItem" BasedOn="{StaticResource submenuEstilo}"/>
+                                        <Style TargetType="MenuItem"/>
                                     </MenuItem.ItemContainerStyle>
 
                                     <!-- Submenú -->
-                                    <MenuItem Header="Cerrar Sesión" Command="{Binding CerrarSesionCommand}" Style="{StaticResource submenuEstilo}"/>
+                                    <MenuItem Header="Cerrar Sesión" Command="{Binding CerrarSesionCommand}" Style="{StaticResource subMenuVP}"/>
                                 </MenuItem>
                             </Menu>
                             <TextBlock Text="{Binding NombreUsuario}"

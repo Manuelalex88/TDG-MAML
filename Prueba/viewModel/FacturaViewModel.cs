@@ -94,6 +94,7 @@ namespace Prueba.viewModel
                         NombreCliente = _facturaSeleccionada.ClienteNombre;
                         DniCliente = _facturaSeleccionada.Dni;
                         TelefonoCliente = _facturaSeleccionada.Telefono;
+                        
                     }
                     else
                     {
@@ -103,6 +104,7 @@ namespace Prueba.viewModel
                         DniCliente = string.Empty;
                         TelefonoCliente = string.Empty;
                         MatriculaVehiculo = string.Empty;
+
                     }
                     // Notificar cambio en Total
                     OnPropertyChanged(nameof(Total));
@@ -110,13 +112,8 @@ namespace Prueba.viewModel
             }
         }
 
-        public decimal Total
-        {
-            //Si no esta seleccionada la factura no suma la mano de obra
-            get => (FacturaSeleccionada?.Id != null && FacturaSeleccionada.Id > 0)
-           ? FacturaSeleccionada.Total + DatosConstantes.ManoDeObra
-           : 0m;
-        }
+        //Actualizamos el total
+        public decimal Total => FacturaSeleccionada.Total;
 
         public ObservableCollection<FacturaVehiculoClienteDTO> FacturasPendientes
         {
@@ -250,6 +247,8 @@ namespace Prueba.viewModel
 
             try
             {
+
+
                 if (FacturaSeleccionada == null || FacturaSeleccionada.Id == 0)
                 {
                     MessageBox.Show("Selecciona una factura válida antes de confirmar.");
@@ -269,7 +268,7 @@ namespace Prueba.viewModel
                     MecanicoNombre = NombreMecanico,
                     MecanicoId = IdMecanico,
                     FechaEmision = DateTime.Now,
-                    Total = FacturaSeleccionada.Total + DatosConstantes.ManoDeObra
+                    Total = FacturaSeleccionada.Total
                 };
 
                 _historialFacturaRepository.GuardarFacturaEnHistorial(historial);
@@ -317,7 +316,7 @@ namespace Prueba.viewModel
                     MessageBox.Show("No se encontraron repuestos usados para esta reparación.(Una reparacion sin repuestos no tiene sentido)");
                     return;
                 }
-                decimal total = repuestosUsados.Sum(r => r.Precio * r.Cantidad)+DatosConstantes.ManoDeObra;
+
 
                 var factura = new FacturaDocument
                 {
@@ -325,7 +324,7 @@ namespace Prueba.viewModel
                     Vehiculo = vehiculo,
                     Mecanico = mecanico,
                     RepuestosUsados = repuestosUsados,
-                    Total = total
+                    Total = FacturaSeleccionada.Total
                 };
 
                 #endregion
@@ -335,7 +334,7 @@ namespace Prueba.viewModel
 
                 factura.GeneratePdf(ruta);
 
-                _facturaRepository.MarcarRepuestosComoFacturados(FacturaSeleccionada.Id);
+                _facturaRepository.MarcarRepuestosComoFacturados(FacturaSeleccionada.IdReparacion);
                 _facturaRepository.MarcarFacturaComoPagada(FacturaSeleccionada.Id);
 
                 MostrarFacturasPendientes(null);

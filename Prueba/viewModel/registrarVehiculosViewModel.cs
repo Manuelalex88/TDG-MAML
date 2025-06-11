@@ -19,7 +19,7 @@ namespace Prueba.viewModel
         #region Listas
         public List<string> ListaMarcas { get; set; } = new List<string>
             {
-                "Seat", "Mercedes", "BMW", "FIAT", "FERRARI"
+                "SEAT", "MERCEDES", "BMW", "FIAT", "FERRARI"
             };
         public List<string> ListaMotivoIngreso { get; set; } = new List<string>
              {
@@ -48,18 +48,18 @@ namespace Prueba.viewModel
         #endregion
         //No son el error
         #region Propiedades
-        public string Marca
+        public string MarcaVehiculo
         {
             get => _marca;
             set => SetProperty(ref _marca, value.ToUpperInvariant());
         }
-        public string Modelo
+        public string ModeloVehiculo
         {
             get => _modelo;
             set => SetProperty(ref _modelo, value.ToUpperInvariant());
         }
 
-        public string Matricula
+        public string MatriculaVehiculo
         {
             get => _matricula;
             set => SetProperty(ref _matricula, value.ToUpperInvariant());
@@ -69,7 +69,7 @@ namespace Prueba.viewModel
             get => _mostrarDescripcion;
             set => SetProperty(ref _mostrarDescripcion, value);
         }
-        public string MotivoIngreso
+        public string MotivoIngresoVehiculo
         {
             get => _motivoIngreso;
             set
@@ -80,7 +80,7 @@ namespace Prueba.viewModel
                 }
             }
         }
-        public string Descripcion
+        public string DescripcionVehiculo
         {
             get => _descripcion;
             set => SetProperty(ref _descripcion, value);
@@ -142,13 +142,13 @@ namespace Prueba.viewModel
                         result = "La letra del DNI no es válida para los números proporcionados.";
                     }
                 }
-                else if (propertyName == nameof(Matricula))
+                else if (propertyName == nameof(MatriculaVehiculo))
                 {
-                    if (string.IsNullOrWhiteSpace(Matricula))
+                    if (string.IsNullOrWhiteSpace(MatriculaVehiculo))
                     {
                         result = "La matrícula es obligatoria.";
                     }
-                    else if (!MatriculaValida(Matricula))
+                    else if (!MatriculaValida(MatriculaVehiculo))
                     {
                         result = "Formato de matrícula inválido. Ejemplo correcto: 1234BCD. Sin vocales ni Ñ.";
                     }
@@ -225,7 +225,7 @@ namespace Prueba.viewModel
         }
         private void BuscarVehiculo(object obj)
         {
-            if (string.IsNullOrWhiteSpace(Matricula))
+            if (string.IsNullOrWhiteSpace(MatriculaVehiculo))
             {
                 MessageBox.Show("Introduce una matricula para buscar.", "Aviso", MessageBoxButton.OK, MessageBoxImage.Information);
                 return;
@@ -233,15 +233,15 @@ namespace Prueba.viewModel
 
             try
             {
-                var vehiculo = _vehiculoRepository.BuscarPorMatricula(Matricula);
+                var vehiculo = _vehiculoRepository.BuscarPorMatricula(MatriculaVehiculo);
                 if (vehiculo != null)
                 {
-                    Marca = vehiculo.Marca;
-                    Modelo = vehiculo.Modelo;
+                    MarcaVehiculo = vehiculo.Marca;
+                    ModeloVehiculo = vehiculo.Modelo;
 
                     // Notificar cambios a la UI
-                    OnPropertyChanged(nameof(Marca));
-                    OnPropertyChanged(nameof(Modelo));
+                    OnPropertyChanged(nameof(MarcaVehiculo));
+                    OnPropertyChanged(nameof(ModeloVehiculo));
 
                     MessageBox.Show("Vehiculo encontrado.", "Información", MessageBoxButton.OK, MessageBoxImage.Information);
                 }
@@ -291,15 +291,15 @@ namespace Prueba.viewModel
         private bool PuedeAgregar(object? obj)
         {
             // Validar que los campos no esten vacios
-            bool camposObligatorios = !string.IsNullOrWhiteSpace(Matricula) &&
+            bool camposObligatorios = !string.IsNullOrWhiteSpace(MatriculaVehiculo) &&
                               !string.IsNullOrWhiteSpace(NombreCliente) &&
-                              !string.IsNullOrWhiteSpace(Modelo) &&
-                              !string.IsNullOrEmpty(Marca) &&
-                              !string.IsNullOrEmpty(MotivoIngreso) &&
+                              !string.IsNullOrWhiteSpace(ModeloVehiculo) &&
+                              !string.IsNullOrEmpty(MarcaVehiculo) &&
+                              !string.IsNullOrEmpty(MotivoIngresoVehiculo) &&
                               !string.IsNullOrEmpty(TelefonoCliente);
             // Validar el DNI y la MAtricula
             bool dniValido = string.IsNullOrEmpty(this[nameof(DniCliente)]);
-            bool matriculaValida = string.IsNullOrEmpty(this[nameof(Matricula)]);
+            bool matriculaValida = string.IsNullOrEmpty(this[nameof(MatriculaVehiculo)]);
 
             return camposObligatorios && dniValido && matriculaValida;
         }
@@ -309,7 +309,7 @@ namespace Prueba.viewModel
             var identity = Thread.CurrentPrincipal?.Identity as IdentidadMecanico;
             var idMecanico = identity?.Name;
 
-            string connectionString = System.Configuration.ConfigurationManager.ConnectionStrings["PostgreSqlConnection"].ConnectionString;
+            
             #region Comprobaciones
             // Validar DNI antes de continuar
             string errorDni = this[nameof(DniCliente)];
@@ -328,18 +328,30 @@ namespace Prueba.viewModel
             #endregion
             try
             {
-                _CVRepository.GuardarClienteVehiculoYAsignar(DniCliente, NombreCliente, TelefonoCliente,
-                                                       Matricula, Marca, Modelo,
-                                                       MotivoIngreso, Descripcion, Asignar,
-                                                       idMecanico);
+                var clienteA = new Cliente()
+                {
+                    Dni = DniCliente,
+                    Nombre = NombreCliente,
+                    Telefono= TelefonoCliente,
+                };
+
+                var vehiculoA = new Vehiculo()
+                {
+                    Matricula = MatriculaVehiculo,
+                    Marca = MarcaVehiculo,
+                    Modelo = ModeloVehiculo,
+                    MotivoIngreso = MotivoIngresoVehiculo,
+                    Descripcion = DescripcionVehiculo
+                };
+                _CVRepository.GuardarClienteVehiculoYAsignar(clienteA,vehiculoA,idMecanico,Asignar);
                 MessageBox.Show("Cliente y vehiculo registrados/activados correctamente.");
 
                 //Limpiar los campos
-                Matricula = string.Empty;
-                Marca = string.Empty;
-                Modelo = string.Empty;
-                MotivoIngreso = string.Empty;
-                Descripcion = string.Empty;
+                MatriculaVehiculo = string.Empty;
+                MarcaVehiculo = string.Empty;
+                ModeloVehiculo = string.Empty;
+                MotivoIngresoVehiculo = string.Empty;
+                DescripcionVehiculo = string.Empty;
                 NombreCliente = string.Empty;
                 TelefonoCliente = string.Empty;
                 DniCliente = string.Empty;

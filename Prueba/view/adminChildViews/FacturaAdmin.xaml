@@ -40,7 +40,7 @@
                     <GridViewColumn Header="Telefono Cliente" Width="Auto" DisplayMemberBinding="{Binding TelefonoCliente}" />
                     <GridViewColumn Header="Marca Vehiculo" Width="Auto" DisplayMemberBinding="{Binding VehiculoMarca}" />
                     <GridViewColumn Header="Matricula Vehiculo" Width="Auto" DisplayMemberBinding="{Binding VehiculoMatricula}" />
-                    <GridViewColumn Header="Fecha Emisión" Width="Auto" DisplayMemberBinding="{Binding FechaEmision, StringFormat=d}" />
+                    <GridViewColumn Header="Fecha Emisión" Width="Auto" DisplayMemberBinding="{Binding FechaEmision, StringFormat={}{0:dd/MM/yyyy}}" />
                     <GridViewColumn Header="Total" Width="Auto" DisplayMemberBinding="{Binding Total, StringFormat=C}" />
                     
                 </GridView>

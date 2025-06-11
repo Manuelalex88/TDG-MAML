@@ -15,6 +15,8 @@ namespace Prueba.data
         public const decimal MantenimientoBasico = 120.00m;
         public const decimal ManoDeObra = 50.00m;
 
+       
+
         //Estados constantes
         public const string Estado1 = "Problema sin identificar";
         public const string Estado2 = "Diagnosticando";
