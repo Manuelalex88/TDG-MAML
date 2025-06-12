@@ -82,12 +82,13 @@ namespace Prueba.repository
         }
         public Mecanico? ObtenerMecanicoPorId(string idMecanico)
         {
+            MessageBox.Show(idMecanico.ToString());
             try
             {
                 using var conn = GetConection();
                 conn.Open();
 
-                string query = @"SELECT id, nombre, contrasena FROM mecanico WHERE id = @idMecanico";
+                string query = @"SELECT id, nombre, contrasena FROM mecanico WHERE id = @id";
 
                 using var cmd = new NpgsqlCommand(query, conn);
                 cmd.Parameters.AddWithValue("@id", idMecanico);

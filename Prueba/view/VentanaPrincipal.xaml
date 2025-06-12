@@ -96,7 +96,7 @@
                                  Command="{Binding showPrincipalChildViewCommand}">
                         <StackPanel Orientation="Horizontal">
                             <fa:IconImage Icon="Home" Style="{StaticResource botonMenu}"/>
-                            <TextBlock Text="Principal" Style="{StaticResource botonMenuTexto}"/>
+                            <TextBlock Text="Bandeja de Entrada" Style="{StaticResource botonMenuTexto}"/>
                         </StackPanel>
                     </RadioButton>
 

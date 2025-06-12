@@ -80,7 +80,7 @@ namespace Prueba.viewModel.viewModelAdmin
             //Instanciar
             MecanicoList = new ObservableCollection<Mecanico>();
             _mecanicoList = new ObservableCollection<Mecanico>();
-            _mecanicoSeleccionado = null!; //  PON NULL PARA QUE FUNCIONE LA COMPROBACION DEL NULL
+            _mecanicoSeleccionado = null!; 
             _nombreMecanico = string.Empty;
             _idMecanico = string.Empty;
             _contrasena = string.Empty;
@@ -135,7 +135,6 @@ namespace Prueba.viewModel.viewModelAdmin
 
             if (MecanicoSeleccionado == null)
             {
-
                 MessageBox.Show("Selecciona un Mecanico para editarlo");
                 return;
             }
@@ -148,7 +147,7 @@ namespace Prueba.viewModel.viewModelAdmin
             try
             {
 
-                // Validar si el ID no existe ya (Haz exepcion del seleccionado)
+                // Validar si el ID no existe ya (Ha exepcion del seleccionado)
                 var mecanicoExistente = _mecanicoRepository.ObtenerMecanicoPorId(MecanicoID);
                 if (mecanicoExistente != null && mecanicoExistente.Id != MecanicoSeleccionado.Id)
                 {
@@ -224,12 +223,13 @@ namespace Prueba.viewModel.viewModelAdmin
                 MessageBox.Show("No se puede crear otro admin");
                 return;
             }
-
+            MessageBox.Show(MecanicoID.ToString());
             try
             {
 
                 // Validar si el ID no existe ya
-                var mecanicoExistente = _mecanicoRepository.ObtenerMecanicoPorId(MecanicoID);
+                
+                var mecanicoExistente = _mecanicoRepository.ObtenerMecanicoPorId(MecanicoID.ToString());
                 if (mecanicoExistente != null)
                 {
                     MessageBox.Show("Ya existe un mecánico con ese ID.");

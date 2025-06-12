@@ -197,7 +197,7 @@ namespace Prueba.viewModel
         private void ShowPrincipalChildView(object? obj)
         {
             CurrentChildView = new PrincipalViewModel();
-            Caption = "Dashboard";
+            Caption = "Bandeja de Entrada";
             Icon = IconChar.House;
         }
 
