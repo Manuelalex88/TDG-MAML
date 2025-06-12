@@ -254,7 +254,7 @@ namespace Prueba.data
 
                 if (rowsAffected == 0)
                 {
-                    throw new Exception("No se encontró el repuesto para eliminar.");
+                    return;
                 }
             }
             catch (Exception ex)

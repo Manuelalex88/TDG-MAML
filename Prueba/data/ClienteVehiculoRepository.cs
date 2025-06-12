@@ -16,6 +16,7 @@ namespace Prueba.data
 
         public void GuardarClienteVehiculoYAsignar(Cliente c, Vehiculo v, string idMecanico, bool asignar)
         {
+
             using (var conn = GetConection())
             {
                 conn.Open();
@@ -54,7 +55,16 @@ namespace Prueba.data
                             cmdVehiculo.Parameters.AddWithValue("salida_taller", false);
                             cmdVehiculo.ExecuteNonQuery();
                         }
+                        // Eliminar relación anterior (si la hay)
+                        string deleteRelacion = @"
+                                DELETE FROM cliente_vehiculo 
+                                WHERE vehiculo_id = @matricula;";
 
+                        using (var cmdDeleteRelacion = new NpgsqlCommand(deleteRelacion, conn))
+                        {
+                            cmdDeleteRelacion.Parameters.AddWithValue("matricula", v.Matricula ?? (object)DBNull.Value);
+                            cmdDeleteRelacion.ExecuteNonQuery();
+                        }
                         // Insertar relación cliente-vehículo
                         string insertRelacion = @"
                                 INSERT INTO cliente_vehiculo (cliente_id, vehiculo_id)
@@ -62,8 +72,8 @@ namespace Prueba.data
                                 ON CONFLICT DO NOTHING;";
                         using (var cmdRelacion = new NpgsqlCommand(insertRelacion, conn))
                         {
-                            cmdRelacion.Parameters.AddWithValue("dni", c.Dni);
-                            cmdRelacion.Parameters.AddWithValue("matricula", v.Matricula);
+                            cmdRelacion.Parameters.AddWithValue("dni", c.Dni ?? (object)DBNull.Value);
+                            cmdRelacion.Parameters.AddWithValue("matricula", v.Matricula ?? (object)DBNull.Value);
                             cmdRelacion.ExecuteNonQuery();
                         }
 
@@ -94,6 +104,53 @@ namespace Prueba.data
                     }
                 }
                 conn.Close();
+            }
+        }
+
+        public bool BuscarVehiculoEnTaller(string matricula)
+        {
+            using (var conn = GetConection())
+            {
+                conn.Open();
+
+                string query = @"
+                        SELECT COUNT(*) 
+                        FROM vehiculo 
+                        WHERE matricula = @matricula AND salida_taller = FALSE;";
+
+                using (var cmd = new NpgsqlCommand(query, conn))
+                {
+                    cmd.Parameters.AddWithValue("matricula", matricula);
+
+                    int count = Convert.ToInt32(cmd.ExecuteScalar());
+
+                    return count > 0; 
+                }
+            }
+        }
+        public bool VehiculoTieneFacturaPendiente(string matricula)
+        {
+            try
+            {
+                using var conn = GetConection();
+                conn.Open();
+
+                string query = @"
+                        SELECT COUNT(*) 
+                        FROM factura f
+                        JOIN reparacion r ON f.id_reparacion = r.id
+                        WHERE r.matricula_vehiculo = @matricula AND f.pagado = FALSE;";
+
+                using var cmd = new NpgsqlCommand(query, conn);
+                cmd.Parameters.AddWithValue("matricula", matricula);
+
+                var count = (long?)cmd.ExecuteScalar();
+                return count > 0;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error al comprobar facturas pendientes: " + ex.Message);
+                return true; 
             }
         }
     }

@@ -13,52 +13,52 @@ namespace Prueba.viewModel
 {
     public class ReparacionesViewModel : BaseViewModel
     {
-        #region Campos
-
+        #region Listas
+        // Lista de posibles estados de una reparacion
         public List<string> ListaEstadoReparacion { get; set; } = new()
         {
             "Problema sin identificar", "Diagnosticando", "Esperando Repuesto", "En Reparacion"
         };
-
+        // Lista de vehiculos actualmente asignados al mecanico
         public ObservableCollection<VehiculoReparacionDTO> VehiculosAsignados { get; set; } = new();
+        // Lista de repuestos usados para la reparacion del vehiculo seleccionado
         public ObservableCollection<RepuestoUsadoDTO> RepuestosUsados { get; set; } = new();
+        #endregion
+        #region Campos
 
-        // Campos privados
         private readonly ReparacionRepository _reparacionRepository;
         private readonly VehiculoRepository _vehiculoRepository;
         private VehiculoReparacionDTO? _vehiculoSeleccionado;
         private bool _mantenimientoAgregado = false;
+
+        private string _trabajoRealizar = string.Empty;
+        private string _estadoSeleccionado = string.Empty;
+        private string _nuevoRepuesto = string.Empty;
+        private decimal _repuestoPrecio = 0;
+        private int _cantidad = 0;
         #endregion
         #region Propiedades
-        private string _trabajoRealizar = string.Empty;
+
         public string TrabajoRealizar
         {
             get => _trabajoRealizar;
             set => SetProperty(ref _trabajoRealizar, value);
         }
-
-        private string _estadoSeleccionado = string.Empty;
         public string EstadoSeleccionado
         {
             get => _estadoSeleccionado;
             set => SetProperty(ref _estadoSeleccionado, value);
         }
-
-        private string _nuevoRepuesto = string.Empty;
         public string NuevoRepuesto
         {
             get => _nuevoRepuesto;
             set => SetProperty(ref _nuevoRepuesto, value);
         }
-
-        private decimal _repuestoPrecio = 0;
         public decimal RepuestoPrecio
         {
             get => _repuestoPrecio;
             set => SetProperty(ref _repuestoPrecio, value);
         }
-
-        private int _cantidad = 0;
         public int CantidadPieza
         {
             get => _cantidad;
@@ -80,7 +80,7 @@ namespace Prueba.viewModel
                     {
                         // Obtener ID de la reparacion actual
                         int reparacionId = _reparacionRepository.ObtenerIdReparacionPorMatricula(value.Matricula);
-                        MessageBox.Show(reparacionId.ToString());
+
                         // Cargar repuestos usados en la reparacion
                         var repuestos = _reparacionRepository.ObtenerRepuestosUsados(reparacionId);
 
@@ -124,22 +124,24 @@ namespace Prueba.viewModel
         // Constructor
         public ReparacionesViewModel()
         {
-            //Instaciar la lista
+            //Instaciar
+
             _reparacionRepository = new ReparacionRepository();
             _vehiculoRepository = new VehiculoRepository();
-            //Comandos
+            // Inicializacion de comandos
             AgregarMantenimientoCommand = new comandoViewModel(AgregarMantenimientoBasico);
             AgregarRepuestoCommand = new comandoViewModel(AgregarPieza, PuedeAgregarPieza);
             CancelarReparacionCommand = new comandoViewModel(CancelarReparacion, PuedeCancelar);
             FinalizarReparacionCommand = new comandoViewModel(FinalizarReparacion, PuedeFinalizar);
             GuardarCambiosCommand = new comandoViewModel(GuardarCambios);
             BorrarRepuestoCommand = new comandoViewModel(BorrarRepuesto);
-            //Hacemos que se rellene la lista llamando a la funcion
+
+            // Carga inicial de vehiculos
             VehiculosAsignadosActualmente();
         }
 
         #region Metodos 
-        //Metodo para no poner set { _loquesea = value; OnPropertyChanged(loquesea) y poner simplemente SetProperty(ref Loquesea, value)
+        // Metodo auxiliar para simplificar el OnPropertyChanged (No agregar lo mismo en todas las propiedades)
         protected bool SetProperty<T>(ref T backingField, T value, [CallerMemberName] string? propertyName = null)
         {
             if (EqualityComparer<T>.Default.Equals(backingField, value))
@@ -152,7 +154,6 @@ namespace Prueba.viewModel
 
             return true;
         }
-
         private void GuardarCambios(object obj)
         {
             if (VehiculoSeleccionado == null)
@@ -177,8 +178,8 @@ namespace Prueba.viewModel
                     .Select(g => new RepuestoUsadoDTO
                     {
                         Nombre = g.Key,
-                        Precio = g.Last().Precio,  
-                        Cantidad = g.Last().Cantidad 
+                        Precio = g.Last().Precio,
+                        Cantidad = g.Last().Cantidad
                     }).ToList();
 
                 _reparacionRepository.GuardarCambiosReparacion(
@@ -190,7 +191,7 @@ namespace Prueba.viewModel
 
                 MessageBox.Show("Cambios guardados correctamente.");
 
-                // Limpiar los campos después de guardar
+                // Limpiar los campos despues de guardar
                 TrabajoRealizar = string.Empty;
                 EstadoSeleccionado = string.Empty;
                 NuevoRepuesto = string.Empty;
@@ -208,20 +209,9 @@ namespace Prueba.viewModel
                 MessageBox.Show("Error al guardar cambios: " + ex.Message);
             }
         }
-        private bool PuedeFinalizar(object? obj)
-        {
-            if (VehiculoSeleccionado == null || EstadoSeleccionado != "En Reparacion")
-                return false;
-
-            int reparacionId = _reparacionRepository.ObtenerIdReparacionPorMatricula(VehiculoSeleccionado.Matricula);
-            var repuestosGuardados = _reparacionRepository.ObtenerRepuestosUsados(reparacionId);
-
-            return repuestosGuardados.Any();
-        }
-
         private void FinalizarReparacion(object obj)
         {
-            
+
             if (VehiculoSeleccionado == null)
             {
                 MessageBox.Show("Selecciona una reparación para finalizar.");
@@ -299,17 +289,16 @@ namespace Prueba.viewModel
             RepuestoPrecio = 0;
             CantidadPieza = 0;
         }
-
         private void AgregarMantenimientoBasico(object? obj)
         {
-            var nombresMantenimiento = new[] { "Filtros", "Aceite", "Anticongelante" };
+            var nombresMantenimiento = new[] { "FILTROS", "ACEITE", "ANTICONGELANTE" };
 
             if (!_mantenimientoAgregado)
             {
                 // Agregar mantenimiento básico
-                RepuestosUsados.Add(new RepuestoUsadoDTO { Nombre = "Filtros", Precio = 20, Cantidad = 3 });
-                RepuestosUsados.Add(new RepuestoUsadoDTO { Nombre = "Aceite", Precio = 40, Cantidad = 1 });
-                RepuestosUsados.Add(new RepuestoUsadoDTO { Nombre = "Anticongelante", Precio = 20, Cantidad = 1 });
+                RepuestosUsados.Add(new RepuestoUsadoDTO { Nombre = "FILTROS", Precio = 20, Cantidad = 3 });
+                RepuestosUsados.Add(new RepuestoUsadoDTO { Nombre = "ACEITE", Precio = 40, Cantidad = 1 });
+                RepuestosUsados.Add(new RepuestoUsadoDTO { Nombre = "ANTICONGELANTE", Precio = 20, Cantidad = 1 });
 
                 _mantenimientoAgregado = true;
             }
@@ -325,12 +314,6 @@ namespace Prueba.viewModel
                 _mantenimientoAgregado = false;
             }
         }
-
-        private bool PuedeAgregarPieza(object? obj)
-        {
-            return !string.IsNullOrWhiteSpace(NuevoRepuesto) && RepuestoPrecio > 0 && CantidadPieza > 0;
-        }
-
         private void CancelarReparacion(object? obj)
         {
             if (VehiculoSeleccionado == null)
@@ -357,12 +340,6 @@ namespace Prueba.viewModel
                 MessageBox.Show("Error al cancelar la reparación: " + ex.Message);
             }
         }
-
-        private bool PuedeCancelar(object? obj)
-        {
-            return VehiculoSeleccionado != null;
-        }
-
         private void VehiculosAsignadosActualmente()
         {
             // Obtener el ID del mecánico desde el hilo actual
@@ -415,6 +392,27 @@ namespace Prueba.viewModel
             }
 
         }
+
+        //Metodos de verificacion/validacion
+        private bool PuedeCancelar(object? obj)
+        {
+            return VehiculoSeleccionado != null;
+        }
+        private bool PuedeAgregarPieza(object? obj)
+        {
+            return !string.IsNullOrWhiteSpace(NuevoRepuesto) && RepuestoPrecio > 0 && CantidadPieza > 0;
+        }
+        private bool PuedeFinalizar(object? obj)
+        {
+            if (VehiculoSeleccionado == null || EstadoSeleccionado != "En Reparacion")
+                return false;
+
+            int reparacionId = _reparacionRepository.ObtenerIdReparacionPorMatricula(VehiculoSeleccionado.Matricula);
+            var repuestosGuardados = _reparacionRepository.ObtenerRepuestosUsados(reparacionId);
+
+            return repuestosGuardados.Any();
+        }
+
     }
     #endregion
 }

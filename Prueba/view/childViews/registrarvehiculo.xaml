@@ -72,6 +72,13 @@
                             BorderBrush="Transparent">
                         <fa:IconImage Icon="Search" Width="16" Height="16" Foreground="{StaticResource colorTexto}"/>
                     </Button>
+                    <TextBlock Text="{Binding MensajeError}"
+                               Foreground="{StaticResource colorTexto}"
+                               FontSize="13"
+                               FontWeight="Medium"
+                               FontFamily="Montserrat"
+                               Margin="30,0,0,0"
+                               TextWrapping="Wrap"/>
                 </StackPanel>
                 <Label Content="Motivo de ingreso" Style="{StaticResource GroupBoxText}"/>
                 <ComboBox x:Name="cmbMotivoIngreso"  Margin="0,0,0,10" Width="200" ItemsSource="{Binding ListaMotivoIngreso}"
@@ -147,8 +154,9 @@
                           Visibility="{Binding EsAdmin, Converter={StaticResource BoolToVisibilityConverterInverted}}"
                           Foreground="{StaticResource colorTexto}"/>
                 <Button Grid.Row="1" Content="Guardar Vehiculo" Width="120" Height="50"
-                Margin="0,13,0,0" HorizontalAlignment="Center" VerticalAlignment="Bottom"
-                Style="{StaticResource btnChildView}" Command="{Binding AgregarVehiculoClienteCommand}"/>
+                        Margin="0,13,0,0" HorizontalAlignment="Center" VerticalAlignment="Bottom"
+                        Style="{StaticResource btnChildView}" Command="{Binding AgregarVehiculoClienteCommand}"
+                        ToolTip="Rellena todos los datos"/>
             </Grid>
         </GroupBox>
     </Grid>

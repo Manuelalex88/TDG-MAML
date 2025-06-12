@@ -17,15 +17,20 @@ namespace Prueba.viewModel
     public class RegistrarVehiculosViewModel : BaseViewModel, IDataErrorInfo
     {
         #region Listas
-        public List<string> ListaMarcas { get; set; } = new List<string>
-            {
-                "SEAT", "MERCEDES", "BMW", "FIAT", "FERRARI"
-            };
-        public List<string> ListaMotivoIngreso { get; set; } = new List<string>
-             {
-                 "Revisión General","Cambio de aceite", "Cambio de filtros", "Diagnóstico de motor","Problema sin identificar"
-             };
+        // Lista de marcas disponibles
+        private readonly List<string> _listaMarcas = new() 
+        { "SEAT", "MERCEDES", "BMW", "FIAT", "FERRARI" };
+
+        // Lista de motivos posibles de ingreso al taller
+        private readonly List<string> _listaMotivoIngreso = new()
+        { "Revisión General", "Cambio de aceite", "Cambio de filtros", "Diagnóstico de motor", "Problema sin identificar" };
+
+        // Propiedades publicas de solo lectura para enlazar en la vista
+        public List<string> ListaMarcas => _listaMarcas;
+        public List<string> ListaMotivoIngreso => _listaMotivoIngreso;
         #endregion
+
+
         #region Campos
 
         private string _marca = String.Empty;
@@ -34,6 +39,8 @@ namespace Prueba.viewModel
         private string _motivoIngreso = String.Empty;
         private string _descripcion = String.Empty;
         private string _nombreCliente = String.Empty;
+        private string _mensajeError;
+        private bool _vehiculoEnTaller;
         private string _anio = String.Empty;
         private string _dniCliente = String.Empty;
         private string _telefonoCliente = String.Empty;
@@ -42,11 +49,12 @@ namespace Prueba.viewModel
         public string Error => null!;
         public bool EsAdmin => Thread.CurrentPrincipal?.IsInRole("admin") == true;
 
+        // Repositorios de acceso a datos
         private readonly VehiculoRepository _vehiculoRepository;
         private readonly ClienteRepository _clienteRepository;
         private readonly ClienteVehiculoRepository _CVRepository;
         #endregion
-        //No son el error
+
         #region Propiedades
         public string MarcaVehiculo
         {
@@ -62,7 +70,13 @@ namespace Prueba.viewModel
         public string MatriculaVehiculo
         {
             get => _matricula;
-            set => SetProperty(ref _matricula, value.ToUpperInvariant());
+            set
+            {
+                if (SetProperty(ref _matricula, value.ToUpperInvariant()))
+                {
+                    VerificarVehiculoEnTaller(); // Llama a la validación automática
+                }
+            }
         }
         public bool MostrarDescripcion
         {
@@ -90,6 +104,23 @@ namespace Prueba.viewModel
         {
             get => _nombreCliente;
             set => SetProperty(ref _nombreCliente, value);
+        }
+        public string MensajeError
+        {
+            get => _mensajeError;
+            set => SetProperty(ref _mensajeError, value);
+        }
+        public bool VehiculoEnTaller
+        {
+            get => _vehiculoEnTaller;
+            set
+            {
+                if (SetProperty(ref _vehiculoEnTaller, value))
+                {
+                    // Actualizar el estado del boton
+                    CommandManager.InvalidateRequerySuggested();
+                }
+            }
         }
 
         public string Anio
@@ -199,18 +230,21 @@ namespace Prueba.viewModel
         //Constructor
         public RegistrarVehiculosViewModel()
         {
-            //Inicializar campos
+            // Inicializar repositorios
             _vehiculoRepository = new VehiculoRepository();
             _clienteRepository = new ClienteRepository();
             _CVRepository = new ClienteVehiculoRepository();
-            //Inicializar comandos
+
+            _mensajeError = string.Empty;
+
+            // Inicializar comandos
             BuscarVehiculoCommand = new comandoViewModel(BuscarVehiculo);
             BuscarClienteCommand = new comandoViewModel(BuscarCliente);
             AgregarVehiculoClienteCommand = new comandoViewModel(AgregarVehiculoCliente, PuedeAgregar);
 
         }
         #region Metodos
-        //Metodo para no poner set { _loquesea = value; OnPropertyChanged(loquesea) y poner simplemente SetProperty(ref Loquesea, value)
+        // Metodo auxiliar para simplificar el OnPropertyChanged (No agregar lo mismo en todas las propiedades)
         protected bool SetProperty<T>(ref T backingField, T value, [CallerMemberName] string? propertyName = null)
         {
             if (EqualityComparer<T>.Default.Equals(backingField, value))
@@ -288,28 +322,13 @@ namespace Prueba.viewModel
                 MessageBox.Show("Error al buscar cliente: " + ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
-        private bool PuedeAgregar(object? obj)
-        {
-            // Validar que los campos no esten vacios
-            bool camposObligatorios = !string.IsNullOrWhiteSpace(MatriculaVehiculo) &&
-                              !string.IsNullOrWhiteSpace(NombreCliente) &&
-                              !string.IsNullOrWhiteSpace(ModeloVehiculo) &&
-                              !string.IsNullOrEmpty(MarcaVehiculo) &&
-                              !string.IsNullOrEmpty(MotivoIngresoVehiculo) &&
-                              !string.IsNullOrEmpty(TelefonoCliente);
-            // Validar el DNI y la MAtricula
-            bool dniValido = string.IsNullOrEmpty(this[nameof(DniCliente)]);
-            bool matriculaValida = string.IsNullOrEmpty(this[nameof(MatriculaVehiculo)]);
-
-            return camposObligatorios && dniValido && matriculaValida;
-        }
         private void AgregarVehiculoCliente(object obj)
         {
             // Obtener el ID del mecánico desde el hilo actual
             var identity = Thread.CurrentPrincipal?.Identity as IdentidadMecanico;
             var idMecanico = identity?.Name;
 
-            
+
             #region Comprobaciones
             // Validar DNI antes de continuar
             string errorDni = this[nameof(DniCliente)];
@@ -317,12 +336,18 @@ namespace Prueba.viewModel
             if (!string.IsNullOrEmpty(errorDni))
             {
                 MessageBox.Show(errorDni, "Error de validación", MessageBoxButton.OK, MessageBoxImage.Warning);
-                return; 
+                return;
             }
             //Comprobar el id_mecanico
             if (string.IsNullOrEmpty(idMecanico))
             {
                 MessageBox.Show("El ID del mecánico no está definido.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+            //Si ya tiene una factura no pagada no puede entrar al taller 
+            if (_CVRepository.VehiculoTieneFacturaPendiente(MatriculaVehiculo))
+            {
+                MessageBox.Show("Este vehículo tiene facturas pendientes. No puede ingresar al taller hasta que estén pagadas.", "Acceso denegado", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
             #endregion
@@ -332,7 +357,7 @@ namespace Prueba.viewModel
                 {
                     Dni = DniCliente,
                     Nombre = NombreCliente,
-                    Telefono= TelefonoCliente,
+                    Telefono = TelefonoCliente,
                 };
 
                 var vehiculoA = new Vehiculo()
@@ -343,7 +368,7 @@ namespace Prueba.viewModel
                     MotivoIngreso = MotivoIngresoVehiculo,
                     Descripcion = DescripcionVehiculo
                 };
-                _CVRepository.GuardarClienteVehiculoYAsignar(clienteA,vehiculoA,idMecanico,Asignar);
+                _CVRepository.GuardarClienteVehiculoYAsignar(clienteA, vehiculoA, idMecanico, Asignar);
                 MessageBox.Show("Cliente y vehiculo registrados/activados correctamente.");
 
                 //Limpiar los campos
@@ -360,6 +385,54 @@ namespace Prueba.viewModel
             catch (Exception ex)
             {
                 MessageBox.Show($"Error: {ex.Message}");
+            }
+        }
+
+        //Metodos de verificacion/validacion
+        private bool PuedeAgregar(object? obj)
+        {
+            // Validar los campos que no esten vacios
+            bool camposObligatorios = !string.IsNullOrWhiteSpace(MatriculaVehiculo) &&
+                             !string.IsNullOrWhiteSpace(NombreCliente) &&
+                             !string.IsNullOrWhiteSpace(ModeloVehiculo) &&
+                             !string.IsNullOrEmpty(MarcaVehiculo) &&
+                             !string.IsNullOrEmpty(MotivoIngresoVehiculo) &&
+                             !string.IsNullOrEmpty(TelefonoCliente);
+            // Validar el dni y la matricula
+            bool dniValido = string.IsNullOrEmpty(this[nameof(DniCliente)]);
+            bool matriculaValida = string.IsNullOrEmpty(this[nameof(MatriculaVehiculo)]);
+
+            return camposObligatorios && dniValido && matriculaValida && !VehiculoEnTaller;
+        }
+        private void VerificarVehiculoEnTaller()
+        {
+            if (MatriculaValida(MatriculaVehiculo))
+            {
+                try
+                {
+                    if (_CVRepository.BuscarVehiculoEnTaller(MatriculaVehiculo))
+                    {
+                        VehiculoEnTaller = true;
+                        MensajeError = "*Este vehículo ya está en taller.";
+                    }
+                    else
+                    {
+                        VehiculoEnTaller = false;
+                        MensajeError = string.Empty;
+                    }
+
+                    OnPropertyChanged(nameof(MensajeError));
+                }
+                catch (Exception ex)
+                {
+                    MensajeError = $"Error al verificar estado del vehículo: {ex.Message}";
+                    VehiculoEnTaller = true;
+                }
+            }
+            else
+            {
+                VehiculoEnTaller = false;
+                MensajeError = string.Empty;
             }
         }
 

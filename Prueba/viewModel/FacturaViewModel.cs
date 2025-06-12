@@ -288,6 +288,7 @@ namespace Prueba.viewModel
             
             try
             {
+                // Necesitamos la licencia community
                 QuestPDF.Settings.License = QuestPDF.Infrastructure.LicenseType.Community;
 
                 #region Datos
