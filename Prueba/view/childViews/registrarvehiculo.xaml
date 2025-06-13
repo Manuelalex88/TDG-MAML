@@ -25,7 +25,7 @@
     <Grid>
         <Grid.ColumnDefinitions>
             <!--Registrar el coche-->
-            <ColumnDefinition Width="600"/>
+            <ColumnDefinition Width="Auto"/>
             <!--Registrar al cliente-->
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>

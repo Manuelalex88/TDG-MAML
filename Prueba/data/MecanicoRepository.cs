@@ -188,5 +188,26 @@ namespace Prueba.repository
                 return false;
             }
         }
+        public bool EstaMecanicoRelacionado(string idMecanico)
+        {
+            try
+            {
+                using var conn = GetConexion();
+                conn.Open();
+
+                string query = "SELECT EXISTS (SELECT 1 FROM reparacion WHERE mecanico_id = @id);";
+
+                using var cmd = new NpgsqlCommand(query, conn);
+                cmd.Parameters.AddWithValue("@id", idMecanico);
+
+                var result = cmd.ExecuteScalar();
+                return result != null && (bool)result;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error al verificar relaciones del mecánico: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                return true; // Por seguridad, si hay error asumimos que está relacionado
+            }
+        }
     }
 }

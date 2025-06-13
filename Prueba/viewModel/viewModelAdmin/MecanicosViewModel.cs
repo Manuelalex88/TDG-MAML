@@ -24,6 +24,7 @@ namespace Prueba.viewModel.viewModelAdmin
         private string _contrasena;
         private bool _isAdminSelected;
         private string _mesajeAdmin;
+        private string _idOriginalMecanico;
         #endregion
         #region Propiedades
         public Mecanico MecanicoSeleccionado
@@ -39,9 +40,9 @@ namespace Prueba.viewModel.viewModelAdmin
                         MecanicoID = _mecanicoSeleccionado.Id;
                         ContrasenaMecanico = _mecanicoSeleccionado.Contrasena;
 
+                        _idOriginalMecanico = _mecanicoSeleccionado.Id;
                         // Detectar si es Admin
                         IsAdminSelected = _mecanicoSeleccionado.Id == "Admin";
-
                         if (IsAdminSelected)
                         {
                             MensajeAdmin = "*No se puede editar el nombre ni el id del administrador";
@@ -73,7 +74,18 @@ namespace Prueba.viewModel.viewModelAdmin
         public string MecanicoID
         {
             get => _idMecanico;
-            set => SetProperty(ref _idMecanico, value);
+            set
+            {
+                if (SetProperty(ref _idMecanico, value))
+                {
+                    // Detectar si es "Admin"
+                    IsAdminSelected = value == "Admin";
+                    // Mostrar mensaje si es Admin
+                    MensajeAdmin = IsAdminSelected
+                        ? "*No se puede editar el nombre ni el id del administrador"
+                        : string.Empty;
+                }
+            }
         }
         public string ContrasenaMecanico
         {
@@ -110,6 +122,7 @@ namespace Prueba.viewModel.viewModelAdmin
             _idMecanico = string.Empty;
             _contrasena = string.Empty;
             _mesajeAdmin = string.Empty;
+            _idOriginalMecanico = string.Empty;
             _mecanicoRepository = new MecanicoRepository();
             //Comando
             MostrarMecanicosCommand = new comandoViewModel(MostrarMecanicos);
@@ -170,7 +183,12 @@ namespace Prueba.viewModel.viewModelAdmin
             {
                 MessageBox.Show("Selecciona un Mecanico para editarlo");
                 return;
-            } 
+            }else if (_mecanicoRepository.EstaMecanicoRelacionado(_idOriginalMecanico))
+            {
+                MessageBox.Show("No se puede modificar/eliminar el ID del mecánico porque está relacionado con una reparación o factura.");
+                return;
+            }
+
 
             try
             {
@@ -190,7 +208,7 @@ namespace Prueba.viewModel.viewModelAdmin
                     Contrasena = ContrasenaMecanico
                 };
 
-                _mecanicoRepository.ModificarMecanico(nuevoMecanico, MecanicoSeleccionado.Id);
+                _mecanicoRepository.ModificarMecanico(nuevoMecanico, _idOriginalMecanico);
                 MessageBox.Show("Mecanico Modificado con exito");
                 LimpiarCampos(nuevoMecanico, 2);
             }
