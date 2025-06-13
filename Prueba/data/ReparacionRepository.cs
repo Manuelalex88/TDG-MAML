@@ -12,7 +12,7 @@ namespace Prueba.data
     {
         public void GuardarCambiosReparacion(VehiculoReparacionDTO vehiculo, string trabajo, string estado, List<RepuestoUsadoDTO> repuestos)
         {
-            using var conn = GetConection();
+            using var conn = GetConexion();
             conn.Open();
 
             using var transaction = conn.BeginTransaction();
@@ -88,7 +88,7 @@ namespace Prueba.data
 
         public void FinalizarReparacionActual(VehiculoReparacionDTO vehiculo, int reparacionId)
         {
-            using var conn = GetConection();
+            using var conn = GetConexion();
             conn.Open();
 
             using var transaction = conn.BeginTransaction();
@@ -147,7 +147,7 @@ namespace Prueba.data
 
             try
             {
-                using var conn = GetConection();
+                using var conn = GetConexion();
                 conn.Open();
 
                 string query = @"
@@ -187,7 +187,7 @@ namespace Prueba.data
         {
             try
             {
-                using var conn = GetConection();
+                using var conn = GetConexion();
                 conn.Open();
 
                 using var cmd = new NpgsqlCommand("SELECT id FROM reparacion WHERE matricula_vehiculo = @matricula AND estado <> @estadoFinalizado;", conn);
@@ -244,7 +244,7 @@ namespace Prueba.data
 
             try
             {
-                using var connection = GetConection();
+                using var connection = GetConexion();
                 connection.Open();
 
                 using var command = new NpgsqlCommand("DELETE FROM repuesto_usado WHERE id = @id", connection);

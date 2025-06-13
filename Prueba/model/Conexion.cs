@@ -1,24 +1,24 @@
 ﻿using Npgsql;
+using Prueba.data;
 using System;
 using System.Collections.Generic;
 using System.Data.SqlTypes;
+using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace Prueba.model
 {
-    public abstract class Conexion 
+    public abstract class Conexion
     {
-        private readonly string _conectionString;
 
-        public Conexion()
+        protected NpgsqlConnection GetConexion()
         {
-            _conectionString = "Host=localhost;Port=5432;Username=postgres;Password=12345;Database=TallerMecanico";
-        }
-        protected NpgsqlConnection GetConection()
-        {
-            return new NpgsqlConnection(_conectionString);
+            var config = GestorConfiguracion.CargarConfiguracion();
+            string connectionString = config?.CadenaConexion ?? throw new InvalidOperationException("Cadena de conexión no configurada.");
+            return new NpgsqlConnection(connectionString);
         }
 
     }

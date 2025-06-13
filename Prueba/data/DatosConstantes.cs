@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -14,9 +15,8 @@ namespace Prueba.data
         // Precios constantes
         public const decimal MantenimientoBasico = 120.00m;
         public const decimal ManoDeObra = 50.00m;
-
-       
-
+        // Ruta del resources interno
+        public static string rutaConfiguracion => Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Resources", "configuracion.json");
         //Estados constantes
         public const string Estado1 = "Problema sin identificar";
         public const string Estado2 = "Diagnosticando";

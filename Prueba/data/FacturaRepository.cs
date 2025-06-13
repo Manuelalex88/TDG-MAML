@@ -13,7 +13,7 @@ namespace Prueba.data
             var lista = new List<FacturaVehiculoClienteDTO>();
             try
             {
-                using(var conn = GetConection())
+                using(var conn = GetConexion())
                 {
                     conn.Open();
                     string query = @"SELECT 
@@ -65,7 +65,7 @@ namespace Prueba.data
         public void MarcarRepuestosComoFacturados(int idReparacion)
         {
             
-            using (var connection = GetConection())
+            using (var connection = GetConexion())
             {
                 connection.Open();
 
@@ -115,7 +115,7 @@ namespace Prueba.data
                               AND f.pagado = FALSE
                             ORDER BY f.fecha_emision DESC;";
 
-                using var conn = GetConection();
+                using var conn = GetConexion();
                 conn.Open();
 
                 using var cmd = new NpgsqlCommand(query, conn);
@@ -153,7 +153,7 @@ namespace Prueba.data
 
             try
             {
-                using var conn = GetConection();
+                using var conn = GetConexion();
                 conn.Open();
 
                 // Obtenemos el reparacion_id de la factura
@@ -211,7 +211,7 @@ namespace Prueba.data
             {
                 string query = "UPDATE factura SET pagado = TRUE WHERE id = @id";
 
-                using var conn = GetConection();
+                using var conn = GetConexion();
                 conn.Open();
 
                 using var cmd = new NpgsqlCommand(query, conn);
@@ -230,7 +230,7 @@ namespace Prueba.data
         {
             try
             {
-                using var conn = GetConection();
+                using var conn = GetConexion();
                 conn.Open();
 
                 string query = "DELETE FROM factura WHERE id = @id";

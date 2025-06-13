@@ -28,20 +28,20 @@ namespace Prueba.view
             InitializeComponent();
 
         }
-        /*Requerimos usar la libreria de 32bits para manejar los eventos del propio sistema -MAML*/
+        /*Requerimos usar la libreria de 32bits para manejar los eventos del propio sistema */
         [DllImport("user32.dll")]
-        /*Capturamos las senales del mouse y enviar mensajes para mover y arrastrar la ventana -MAML*/
+        /*Capturamos las senales del mouse y enviar mensajes para mover y arrastrar la ventana */
         public static extern IntPtr SendMessage(IntPtr hWnd, int wMsg, int wParam, int lParam);
         private void Window_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            /*Creamos y enviamos el identificador de la ventana y como parametro de 16 bits enviamos 2 y 0 -MAML*/
+            /*Creamos y enviamos el identificador de la ventana y como parametro de 16 bits enviamos 2 y 0 */
             WindowInteropHelper helper = new WindowInteropHelper(this);
             SendMessage(helper.Handle, 161, 2, 0);
         }
 
         private void pnlBarraControl_MouseEnter(object sender, MouseEventArgs e)
         {
-            /*Para que al maximixar, esta tenga el tamano de la pantalla en la cual se ejecuta la app -MAML*/
+            /*Para que al maximixar, esta tenga el tamano de la pantalla en la cual se ejecuta la app */
             this.MaxHeight = SystemParameters.MaximizedPrimaryScreenHeight;
         }
 

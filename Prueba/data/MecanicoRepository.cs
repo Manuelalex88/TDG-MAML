@@ -12,7 +12,7 @@ namespace Prueba.repository
         {
             try
             {
-                using (var conn = GetConection())
+                using (var conn = GetConexion())
                 {
                     conn.Open();
 
@@ -49,7 +49,7 @@ namespace Prueba.repository
             var lista = new List<Mecanico>();
             try
             {
-                using (var connection = GetConection())
+                using (var connection = GetConexion())
                 {
                     connection.Open();
                     string query = @"SELECT id, nombre, contrasena FROM mecanico";
@@ -85,7 +85,7 @@ namespace Prueba.repository
             MessageBox.Show(idMecanico.ToString());
             try
             {
-                using var conn = GetConection();
+                using var conn = GetConexion();
                 conn.Open();
 
                 string query = @"SELECT id, nombre, contrasena FROM mecanico WHERE id = @id";
@@ -111,12 +111,11 @@ namespace Prueba.repository
 
             return null;
         }
-
         public void EliminarMecanico(string idMecanico)
         {
             try
             {
-                using var conn = GetConection();
+                using var conn = GetConexion();
                 conn.Open();
 
                 string query = @"DELETE FROM mecanico WHERE id = @id";
@@ -135,7 +134,7 @@ namespace Prueba.repository
         {
             try
             {
-                using var conn = GetConection();
+                using var conn = GetConexion();
                 conn.Open();
 
                 string query = @"INSERT INTO mecanico (id,nombre,contrasena) VALUES (@id, @nombre, @contrasena) ON CONFLICT (id) DO NOTHING";
@@ -157,7 +156,7 @@ namespace Prueba.repository
         {
             try
             {
-                using var conn = GetConection();
+                using var conn = GetConexion();
                 conn.Open();
 
                 string query = @"UPDATE mecanico SET id = @nuevoId, nombre = @nombre, contrasena = @contrasena WHERE id = @idOriginal;"; 
@@ -178,7 +177,7 @@ namespace Prueba.repository
         }
         public bool TestConexion()
         {
-            using var conexion = GetConection();
+            using var conexion = GetConexion();
             try
             {
                 conexion.Open();

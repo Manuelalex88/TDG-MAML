@@ -19,7 +19,7 @@ namespace Prueba.data
 
             try
             {
-                using (var conn = GetConection())
+                using (var conn = GetConexion())
                 {
                     conn.Open();
                     const string sql = "SELECT dni, nombre, telefono FROM cliente WHERE dni = @dni";

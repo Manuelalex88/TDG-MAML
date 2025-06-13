@@ -19,10 +19,10 @@ namespace Prueba.viewModel
     public class loginViewModel : BaseViewModel
     {
         #region Campos
-        public string NombreTaller => DatosConstantes.NombreTaller;
         private string _username;
         private SecureString _password = new SecureString();
         private string _mensajeError;
+        private string _nombreTaller;
         private bool _conexionBDActiva;
         public string MensajeEstadoConexion => ConexionBDActiva
         ? "✅ Base de datos conectada correctamente."
@@ -46,7 +46,11 @@ namespace Prueba.viewModel
             get => _username;
             set => SetProperty(ref _username, value);
         }
-
+        public string NombreTaller
+        {
+            get => _nombreTaller;
+            set => SetProperty(ref _nombreTaller, value);
+        }
         public SecureString Password
         {
             get => _password;
@@ -64,6 +68,7 @@ namespace Prueba.viewModel
         public ICommand LoginCommand { get; set; }
         public ICommand CloseCommand { get; }
         public ICommand MinimizeCommand { get; }
+        public ICommand AbrirConfiguracionBDCommand { get; }
         #endregion
 
         // Constructor
@@ -72,8 +77,13 @@ namespace Prueba.viewModel
             //Inicializar
             _username = string.Empty;
             _mensajeError = string.Empty;
+            _nombreTaller = string.Empty;
+            //Nombre Taller
+            var config = GestorConfiguracion.CargarConfiguracion();
+            NombreTaller = config.NombreTaller ?? "Nombre por defecto";
             //Comandos
             LoginCommand = new comandoViewModel(ExecuteLoginCommand, CanExecuteLoginCommand);
+            AbrirConfiguracionBDCommand = new comandoViewModel(ExecuteAbrirConfiguracionBD);
             CloseCommand = new comandoViewModel(o => ((Window)o!).Close());
             MinimizeCommand = new comandoViewModel(o =>
             {
@@ -118,9 +128,31 @@ namespace Prueba.viewModel
 
             return !(string.IsNullOrWhiteSpace(trimmedUsername) || trimmedUsername.Length < 5 || Password == null || Password.Length < 3);
         }
+        private void ExecuteAbrirConfiguracionBD(object obj)
+        {
+            var ventanaConfig = new ConfiguracionBD();
+            
+            ventanaConfig.ShowDialog();
 
+            
+            var config = GestorConfiguracion.CargarConfiguracion();
+            NombreTaller = config?.NombreTaller ?? "Nombre por defecto";
+            VerificarConexionBD();
+        }
         private void ExecuteLoginCommand(object obj)
         {
+
+            if (!ConexionBDActiva)
+            {
+                MessageBox.Show(
+                    "No está conectado a ninguna base de datos.\n\nHaga clic en el botón con el ícono de base de datos (abajo a la izquierda) para configurar la conexión.",
+                    "Sin conexión",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Warning
+                );
+                return;
+            }
+
             IntPtr passwordBSTR = IntPtr.Zero;
             string plainPassword = string.Empty;
             string[] roles;

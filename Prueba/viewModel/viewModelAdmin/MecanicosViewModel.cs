@@ -22,6 +22,8 @@ namespace Prueba.viewModel.viewModelAdmin
         private string _nombreMecanico;
         private string _idMecanico;
         private string _contrasena;
+        private bool _isAdminSelected;
+        private string _mesajeAdmin;
         #endregion
         #region Propiedades
         public Mecanico MecanicoSeleccionado
@@ -36,6 +38,18 @@ namespace Prueba.viewModel.viewModelAdmin
                         NombreMecanico = _mecanicoSeleccionado.Nombre;
                         MecanicoID = _mecanicoSeleccionado.Id;
                         ContrasenaMecanico = _mecanicoSeleccionado.Contrasena;
+
+                        // Detectar si es Admin
+                        IsAdminSelected = _mecanicoSeleccionado.Id == "Admin";
+
+                        if (IsAdminSelected)
+                        {
+                            MensajeAdmin = "*No se puede editar el nombre ni el id del administrador";
+                        }
+                        else
+                        {
+                            MensajeAdmin = string.Empty;
+                        }
                     }
                     else
                     {
@@ -66,6 +80,17 @@ namespace Prueba.viewModel.viewModelAdmin
             get => _contrasena;
             set => SetProperty(ref _contrasena, value);
         }
+        public bool IsAdminSelected
+        {
+            get => _isAdminSelected;
+            set => SetProperty(ref _isAdminSelected, value);
+        }
+
+        public string MensajeAdmin
+        {
+            get => _mesajeAdmin;
+            set => SetProperty(ref _mesajeAdmin, value);
+        }
         #endregion
 
         #region Comandos
@@ -84,6 +109,7 @@ namespace Prueba.viewModel.viewModelAdmin
             _nombreMecanico = string.Empty;
             _idMecanico = string.Empty;
             _contrasena = string.Empty;
+            _mesajeAdmin = string.Empty;
             _mecanicoRepository = new MecanicoRepository();
             //Comando
             MostrarMecanicosCommand = new comandoViewModel(MostrarMecanicos);
@@ -112,7 +138,14 @@ namespace Prueba.viewModel.viewModelAdmin
             {
                 MecanicoList.Clear();
 
+                
+
                 var lista = _mecanicoRepository.ObtenerMecanicos();
+
+                // Admin primero y luego alfabeticamente
+                var listaOrdenada = lista.OrderByDescending(m => m.Id == "Admin")
+                                         .ThenBy(m => m.Nombre);
+
                 foreach (var v in lista)
                 {
                     MecanicoList.Add(v);
@@ -137,12 +170,7 @@ namespace Prueba.viewModel.viewModelAdmin
             {
                 MessageBox.Show("Selecciona un Mecanico para editarlo");
                 return;
-            }
-            else if (MecanicoSeleccionado.Id == "Admin")
-            {
-                MessageBox.Show("No se puede editar el admin");
-                return;
-            }
+            } 
 
             try
             {

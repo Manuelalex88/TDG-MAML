@@ -239,27 +239,32 @@
                     <!--Icono de BD con la confirmacion-->
                 </StackPanel>
                 <StackPanel Grid.Row="3"
-                    Orientation="Horizontal"
-                    Margin="10,0,0,5"
-                    VerticalAlignment="Bottom"
-                    HorizontalAlignment="Left">
-                    <fa:IconBlock Icon="Database"
-                      Width="20"
-                      Height="20"
-                      VerticalAlignment="Center"
-                      Foreground="{StaticResource colorBorde}">
-                        <fa:IconBlock.ToolTip>
-                         <ToolTip Style="{StaticResource EstiloPersonalizadoToolTip}"
-                         Content="{Binding MensajeEstadoConexion}" />
-                        </fa:IconBlock.ToolTip>
-                    </fa:IconBlock>
+                            Orientation="Horizontal"
+                            Margin="10,0,0,5"
+                            VerticalAlignment="Bottom"
+                            HorizontalAlignment="Left">
+
+                    <!-- Boton que abre la configuracion de BD -->
+                    <Button Command="{Binding AbrirConfiguracionBDCommand}"
+                            ToolTip="{Binding MensajeEstadoConexion}"
+                            Background="Transparent"
+                            BorderThickness="0"
+                            Padding="0">
+                        <fa:IconBlock Icon="Database"
+                                      Width="20"
+                                      Height="20"
+                                      VerticalAlignment="Center"
+                                      Foreground="{StaticResource colorBorde}"/>
+                    </Button>
+
+                    <!-- Estado de conexión -->
                     <fa:IconBlock Width="20"
-                      Height="20"
-                      Margin="5,0,0,0"
-                      VerticalAlignment="Center"
-                      Icon="{Binding ConexionBDActiva, Converter={StaticResource EstadoIconoConverter}}"
-                      Foreground="{StaticResource colorTexto}"
-                      FontWeight="Bold"/>
+                                  Height="20"
+                                  Margin="5,0,0,0"
+                                  VerticalAlignment="Center"
+                                  Icon="{Binding ConexionBDActiva, Converter={StaticResource EstadoIconoConverter}}"
+                                  Foreground="{StaticResource colorTexto}"
+                                  FontWeight="Bold"/>
                 </StackPanel>
             </Grid>
         </Border>

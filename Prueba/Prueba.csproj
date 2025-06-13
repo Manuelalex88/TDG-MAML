@@ -27,6 +27,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Include="bin\Debug\net8.0-windows\resources\configuracion.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="images\icono\wrench-screwdriver-icon_34325.ico" />
   </ItemGroup>
 

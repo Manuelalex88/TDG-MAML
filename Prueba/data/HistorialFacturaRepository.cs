@@ -14,7 +14,7 @@ namespace Prueba.data
     {
         public void GuardarFacturaEnHistorial(HistorialFactura historial)
         {
-            using (var connection = GetConection())
+            using (var connection = GetConexion())
             {
                 connection.Open();
                 using (var command = new NpgsqlCommand())
@@ -57,7 +57,7 @@ namespace Prueba.data
             string idAdmin = "h0";
             try
             {
-                using (var connection = GetConection())
+                using (var connection = GetConexion())
                 {
                     connection.Open();
                     string query;
@@ -122,7 +122,7 @@ namespace Prueba.data
         {
             try
             {
-                using var conn = GetConection();
+                using var conn = GetConexion();
                 conn.Open();
 
                 string query = "DELETE FROM historial_factura WHERE id = @id";

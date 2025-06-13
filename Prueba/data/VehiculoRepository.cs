@@ -22,7 +22,7 @@ namespace Prueba.data
 
             try
             {
-                using (var connection = GetConection())
+                using (var connection = GetConexion())
                 {
                     connection.Open();
 
@@ -57,7 +57,7 @@ namespace Prueba.data
 
             try
             {
-                using (var conn = GetConection())
+                using (var conn = GetConexion())
                 {
                     conn.Open();
                     var query = new NpgsqlCommand(@"
@@ -106,7 +106,7 @@ namespace Prueba.data
         {
             try
             {
-                using (var connection = GetConection())
+                using (var connection = GetConexion())
                 {
                     connection.Open();
                     using (var transaction = connection.BeginTransaction())
@@ -152,7 +152,7 @@ namespace Prueba.data
 
         public void AsignarVehiculoAVista(string matricula, string mecanicoId)
         {
-            using var conn = GetConection();
+            using var conn = GetConexion();
             conn.Open();
 
             using var trans = conn.BeginTransaction();
@@ -199,7 +199,7 @@ namespace Prueba.data
         {
             try
             {
-                using var conn = GetConection();
+                using var conn = GetConexion();
                 conn.Open();
 
                 using var cmd = new NpgsqlCommand("UPDATE vehiculo SET salida_taller = true WHERE matricula = @matricula", conn);
@@ -217,7 +217,7 @@ namespace Prueba.data
 
             try
             {
-                using (var conn = GetConection())
+                using (var conn = GetConexion())
                 {
                     conn.Open();
                     const string sql = "SELECT marca, modelo FROM vehiculo WHERE matricula = @matricula";

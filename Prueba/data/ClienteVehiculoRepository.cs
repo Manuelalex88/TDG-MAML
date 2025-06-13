@@ -17,7 +17,7 @@ namespace Prueba.data
         public void GuardarClienteVehiculoYAsignar(Cliente c, Vehiculo v, string idMecanico, bool asignar)
         {
 
-            using (var conn = GetConection())
+            using (var conn = GetConexion())
             {
                 conn.Open();
                 using (var transaction = conn.BeginTransaction())
@@ -109,7 +109,7 @@ namespace Prueba.data
 
         public bool BuscarVehiculoEnTaller(string matricula)
         {
-            using (var conn = GetConection())
+            using (var conn = GetConexion())
             {
                 conn.Open();
 
@@ -132,7 +132,7 @@ namespace Prueba.data
         {
             try
             {
-                using var conn = GetConection();
+                using var conn = GetConexion();
                 conn.Open();
 
                 string query = @"

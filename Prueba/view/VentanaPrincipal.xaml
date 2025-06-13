@@ -80,9 +80,9 @@
                                 Height="35"
                                 Margin="15,25,0,40">
                         <Image Source="\images\ventanaPrincipal\fondotaller.png"/>
-                        <TextBlock Text="TALLER MANUEL"
+                        <TextBlock Text="GESTOR REPARCIONES"
                                    Foreground="{StaticResource colorTexto}"
-                                   FontSize="20"
+                                   FontSize="15"
                                    FontFamily="Montserrat"
                                    FontWeight="Bold"
                                    VerticalAlignment="Center"
