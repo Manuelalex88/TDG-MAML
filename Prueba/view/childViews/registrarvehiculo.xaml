@@ -36,10 +36,13 @@
                 <Label Content="Marca:" Style="{StaticResource GroupBoxText}" />
                 <ComboBox x:Name="cmbMarca"  Margin="0,0,0,10" Width="200" ItemsSource="{Binding ListaMarcas}" 
                           HorizontalAlignment="Left" Style="{StaticResource ComboBoxRegistrarVehiculo}" 
-                          SelectedValue="{Binding MarcaVehiculo, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                          SelectedValue="{Binding MarcaVehiculo, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                          IsEnabled="{Binding VehiculoEditable}"/>
 
                 <Label Content="Modelo:" Style="{StaticResource GroupBoxText}"/>
-                <TextBox x:Name="txtModelo" Margin="0,0,0,10" Width="200" HorizontalAlignment="Left" Text="{Binding ModeloVehiculo, UpdateSourceTrigger=PropertyChanged}"/>
+                <TextBox x:Name="txtModelo" Margin="0,0,0,10" Width="200" HorizontalAlignment="Left" 
+                         Text="{Binding ModeloVehiculo, UpdateSourceTrigger=PropertyChanged}"
+                         IsEnabled="{Binding VehiculoEditable}"/>
 
                 <Label Content="Matrícula:" Style="{StaticResource GroupBoxText}"/>
                 <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
@@ -49,7 +52,7 @@
                                     ValidatesOnDataErrors=True, 
                                     NotifyOnValidationError=True}" 
                              x:Name="txtMatricula"  
-                             Width="180" 
+                             Width="200" 
                              HorizontalAlignment="Left"
                              VerticalAlignment="Center">
                         <TextBox.Style>
@@ -65,13 +68,6 @@
                             </Style>
                         </TextBox.Style>
                     </TextBox>
-                    <Button Width="20" Height="20" Margin="5,0,0,0"
-                            Command="{Binding BuscarVehiculoCommand}"
-                            ToolTip="Buscar vehiculo"
-                            Background="Transparent"
-                            BorderBrush="Transparent">
-                        <fa:IconImage Icon="Search" Width="16" Height="16" Foreground="{StaticResource colorTexto}"/>
-                    </Button>
                     <TextBlock Text="{Binding MensajeError}"
                                Foreground="{StaticResource colorTexto}"
                                FontSize="13"
@@ -90,7 +86,7 @@
                        Visibility="{Binding MostrarDescripcion, Converter={StaticResource BoolToVisibilityConverter}}"/>
 
                 <TextBox Height="100"
-                         Text="{Binding Descripcion, UpdateSourceTrigger=PropertyChanged}"
+                         Text="{Binding DescripcionVehiculo, UpdateSourceTrigger=PropertyChanged}"
                          Visibility="{Binding MostrarDescripcion, Converter={StaticResource BoolToVisibilityConverter}}"
                          Background="{StaticResource colorFondo}"/>
 
@@ -108,40 +104,31 @@
                 <!-- Datos del cliente -->
                 <StackPanel Grid.Row="0" Margin="0,0,0,10">
                     <Label Content="Nombre:" Style="{StaticResource GroupBoxText}"/>
-                    <TextBox x:Name="txtNombreCliente" Margin="0,0,0,10" Text="{Binding NombreCliente, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                    <TextBox x:Name="txtNombreCliente" Margin="0,0,0,10" 
+                             Text="{Binding NombreCliente, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                             IsEnabled="{Binding ClienteEditable}"/>
 
                     <Label Content="Dni:" Style="{StaticResource GroupBoxText}"/>
-                    <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
-                        <TextBox x:Name="txtDni"
-                                 Width="110"
-                                 Height="17"
+
+                    <TextBox x:Name="txtDni"
                                  Text="{Binding DniCliente, 
                                                 Mode=TwoWay, 
                                                 UpdateSourceTrigger=PropertyChanged, 
                                                 ValidatesOnDataErrors=True, 
                                                 NotifyOnValidationError=True}">
-                            <TextBox.Style>
-                                <!--Para que el tooltip muestre el mensaje de error si lo pones mal-->
-                                <Style TargetType="TextBox">
-                                    <Style.Triggers>
-                                        <Trigger Property="Validation.HasError" Value="True">
-                                            <Setter Property="ToolTip"
+                        <TextBox.Style>
+                            <!--Para que el tooltip muestre el mensaje de error si lo pones mal-->
+                            <Style TargetType="TextBox">
+                                <Style.Triggers>
+                                    <Trigger Property="Validation.HasError" Value="True">
+                                        <Setter Property="ToolTip"
                                                     Value="{Binding RelativeSource={RelativeSource Self}, 
                                                     Path=(Validation.Errors)[0].ErrorContent}" />
-                                        </Trigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </TextBox.Style>
-                        </TextBox>
-                        <Button Width="30" Height="25" Margin="5,0,0,0"
-                                Command="{Binding BuscarClienteCommand}"
-                                ToolTip="Buscar cliente por DNI"
-                                Background="Transparent"
-                                BorderBrush="Transparent">
-                            <fa:IconImage Icon="Search" Width="16" Height="16" Foreground="{StaticResource colorTexto}"/>
-                        </Button>
-                    </StackPanel>
-
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBox.Style>
+                    </TextBox>
                     <Label Content="Número Telefónico:" Style="{StaticResource GroupBoxText}"/>
                     <TextBox x:Name="txtTelefono" Margin="0,0,0,10" Text="{Binding TelefonoCliente, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
                 </StackPanel>

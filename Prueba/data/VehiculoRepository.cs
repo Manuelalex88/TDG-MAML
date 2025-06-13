@@ -61,7 +61,7 @@ namespace Prueba.data
                 {
                     conn.Open();
                     var query = new NpgsqlCommand(@"
-                            SELECT DISTINCT ON (v.matricula) r.id, v.marca, v.modelo, v.matricula, 
+                            SELECT DISTINCT ON (v.matricula) r.id, v.marca, v.modelo, v.matricula,  
                                    r.estado, r.trabajo_a_realizar, r.fecha_inicio
                             FROM vehiculo v
                             JOIN reparacion r ON v.matricula = r.matricula_vehiculo
@@ -163,25 +163,35 @@ namespace Prueba.data
                 updateCmd.Parameters.AddWithValue("@matricula", matricula);
                 updateCmd.ExecuteNonQuery();
 
-                // Consultar motivo_ingreso del vehículo
+                // Consultar motivo_ingreso y descripcion del vehículo
                 string motivoIngreso = "Problema sin identificar"; // Valor por defecto
-                var motivoCmd = new NpgsqlCommand("SELECT motivo_ingreso FROM vehiculo WHERE matricula = @matricula", conn);
+                string? descripcionProblema = null;
+
+                var motivoCmd = new NpgsqlCommand("SELECT motivo_ingreso, descripcion FROM vehiculo WHERE matricula = @matricula", conn);
                 motivoCmd.Parameters.AddWithValue("@matricula", matricula);
-                var result = motivoCmd.ExecuteScalar();
-                if (result is string s && !string.IsNullOrWhiteSpace(s))
-                    motivoIngreso = s;
+
+                using (var reader = motivoCmd.ExecuteReader())
+                {
+                    if (reader.Read())
+                    {
+                        motivoIngreso = reader["motivo_ingreso"] as string ?? motivoIngreso;
+                        descripcionProblema = reader["descripcion"] as string;
+                    }
+                } 
+
+                string trabajo = string.IsNullOrWhiteSpace(descripcionProblema) ? motivoIngreso : descripcionProblema;
 
                 // Determinar el estado inicial según el motivo
                 string estadoReparacion = motivoIngreso == "Problema sin identificar" ? "Diagnosticando" : "En Reparacion";
 
                 // Insertar reparación
                 var insertCmd = new NpgsqlCommand(@"
-                    INSERT INTO reparacion (matricula_vehiculo, mecanico_id, trabajo_a_realizar, estado, fecha_inicio)
-                    VALUES (@matricula, @mecanicoId, @trabajo, @estado, @fechaInicio)", conn);
+                            INSERT INTO reparacion (matricula_vehiculo, mecanico_id, trabajo_a_realizar, estado, fecha_inicio)
+                            VALUES (@matricula, @mecanicoId, @trabajo, @estado, @fechaInicio)", conn);
 
                 insertCmd.Parameters.AddWithValue("@matricula", matricula);
                 insertCmd.Parameters.AddWithValue("@mecanicoId", mecanicoId);
-                insertCmd.Parameters.AddWithValue("@trabajo", motivoIngreso);
+                insertCmd.Parameters.AddWithValue("@trabajo", trabajo);
                 insertCmd.Parameters.AddWithValue("@estado", estadoReparacion);
                 insertCmd.Parameters.AddWithValue("@fechaInicio", DateTime.Now);
 

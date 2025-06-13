@@ -8,7 +8,7 @@ namespace Prueba.model
 {
     public class Vehiculo
     {
-        public string Matricula { get; set; } = String.Empty;             // Clave primaria
+        public string Matricula { get; set; } = String.Empty; // Clave primaria
         public string Marca { get; set; } = String.Empty;
         public string Modelo { get; set; } = String.Empty;
         public string MotivoIngreso { get; set; } = String.Empty;

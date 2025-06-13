@@ -41,6 +41,8 @@ namespace Prueba.viewModel
         private string _nombreCliente = String.Empty;
         private string _mensajeError;
         private bool _vehiculoEnTaller;
+        private bool _vehiculoEditable;
+        private bool _clienteEditable;
         private string _anio = String.Empty;
         private string _dniCliente = String.Empty;
         private string _telefonoCliente = String.Empty;
@@ -74,7 +76,8 @@ namespace Prueba.viewModel
             {
                 if (SetProperty(ref _matricula, value.ToUpperInvariant()))
                 {
-                    VerificarVehiculoEnTaller(); // Llama a la validación automática
+                    VerificarVehiculoEnTaller(); 
+                    BuscarVehiculoEnBD();
                 }
             }
         }
@@ -122,6 +125,16 @@ namespace Prueba.viewModel
                 }
             }
         }
+        public bool VehiculoEditable
+        {
+            get => _vehiculoEditable;
+            set => SetProperty(ref _vehiculoEditable, value);
+        }
+        public bool ClienteEditable
+        {
+            get => _clienteEditable;
+            set => SetProperty(ref _clienteEditable, value);
+        }
 
         public string Anio
         {
@@ -132,7 +145,13 @@ namespace Prueba.viewModel
         public string DniCliente
         {
             get => _dniCliente;
-            set => SetProperty(ref _dniCliente, value);
+            set
+            {
+                if(SetProperty(ref _dniCliente, value.ToUpperInvariant()))
+                {
+                    BuscarClienteEnBD();
+                }
+            }
         }
 
         public string TelefonoCliente
@@ -143,11 +162,7 @@ namespace Prueba.viewModel
         public Boolean Asignar
         {
             get => _asignar;
-            set
-            {
-                _asignar = value;
-
-            }
+            set => SetProperty(ref _asignar, value);
         }
         #endregion
         #region Formatos
@@ -160,6 +175,10 @@ namespace Prueba.viewModel
 
                 if (propertyName == nameof(DniCliente))
                 {
+                    // Evita validar si el campo no es editable
+                    if (!ClienteEditable)
+                        return string.Empty;
+
                     if (string.IsNullOrWhiteSpace(DniCliente))
                     {
                         result = "El DNI es obligatorio.";
@@ -171,17 +190,6 @@ namespace Prueba.viewModel
                     else if (!LetraDniValida(DniCliente))
                     {
                         result = "La letra del DNI no es válida para los números proporcionados.";
-                    }
-                }
-                else if (propertyName == nameof(MatriculaVehiculo))
-                {
-                    if (string.IsNullOrWhiteSpace(MatriculaVehiculo))
-                    {
-                        result = "La matrícula es obligatoria.";
-                    }
-                    else if (!MatriculaValida(MatriculaVehiculo))
-                    {
-                        result = "Formato de matrícula inválido. Ejemplo correcto: 1234BCD. Sin vocales ni Ñ.";
                     }
                 }
 
@@ -223,8 +231,7 @@ namespace Prueba.viewModel
         #endregion
         #region Comandos
 
-        public ICommand BuscarVehiculoCommand { get; }
-        public ICommand BuscarClienteCommand { get; }
+  
         public ICommand AgregarVehiculoClienteCommand { get; set; }
         #endregion
         //Constructor
@@ -234,12 +241,12 @@ namespace Prueba.viewModel
             _vehiculoRepository = new VehiculoRepository();
             _clienteRepository = new ClienteRepository();
             _CVRepository = new ClienteVehiculoRepository();
-
+            //Inicializar campos
             _mensajeError = string.Empty;
+            _vehiculoEditable = true;
+            _clienteEditable = true;
 
             // Inicializar comandos
-            BuscarVehiculoCommand = new comandoViewModel(BuscarVehiculo);
-            BuscarClienteCommand = new comandoViewModel(BuscarCliente);
             AgregarVehiculoClienteCommand = new comandoViewModel(AgregarVehiculoCliente, PuedeAgregar);
 
         }
@@ -257,69 +264,56 @@ namespace Prueba.viewModel
 
             return true;
         }
-        private void BuscarVehiculo(object obj)
+        private void BuscarVehiculoEnBD()
         {
-            if (string.IsNullOrWhiteSpace(MatriculaVehiculo))
-            {
-                MessageBox.Show("Introduce una matricula para buscar.", "Aviso", MessageBoxButton.OK, MessageBoxImage.Information);
-                return;
-            }
-
             try
             {
-                var vehiculo = _vehiculoRepository.BuscarPorMatricula(MatriculaVehiculo);
+               var vehiculo = _vehiculoRepository.BuscarPorMatricula(MatriculaVehiculo);
                 if (vehiculo != null)
                 {
                     MarcaVehiculo = vehiculo.Marca;
                     ModeloVehiculo = vehiculo.Modelo;
-
-                    // Notificar cambios a la UI
-                    OnPropertyChanged(nameof(MarcaVehiculo));
-                    OnPropertyChanged(nameof(ModeloVehiculo));
-
-                    MessageBox.Show("Vehiculo encontrado.", "Información", MessageBoxButton.OK, MessageBoxImage.Information);
+                    MotivoIngresoVehiculo = vehiculo.MotivoIngreso;
+                    DescripcionVehiculo = vehiculo.Descripcion;
+                    VehiculoEditable = false;
                 }
                 else
                 {
-                    MessageBox.Show("No se encontró ningún vehiculo con esa matricula.", "No encontrado", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    MarcaVehiculo = string.Empty;
+                    ModeloVehiculo = string.Empty;
+                    MotivoIngresoVehiculo = string.Empty;
+                    DescripcionVehiculo = string.Empty;
+                    VehiculoEditable = true;
                 }
             }
-            catch (Exception ex)
+            catch(Exception ex)
             {
-                MessageBox.Show("Error al buscar vehiculo: " + ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                VehiculoEnTaller = true;
+                MensajeError = $"Error al verificar al vehículo: {ex.Message}";
             }
         }
-        private void BuscarCliente(object obj)
+        private void BuscarClienteEnBD()
         {
-            if (string.IsNullOrWhiteSpace(DniCliente))
-            {
-                MessageBox.Show("Introduce un DNI para buscar.", "Aviso", MessageBoxButton.OK, MessageBoxImage.Information);
-                return;
-            }
-
             try
             {
-                var cliente = _clienteRepository.ObtenerPorDni(DniCliente!);
-
+                var cliente = _clienteRepository.ObtenerPorDni(DniCliente);
                 if (cliente != null)
                 {
                     NombreCliente = cliente.Nombre;
                     TelefonoCliente = cliente.Telefono;
-
-                    // Notificar cambios a la UI
-                    OnPropertyChanged(nameof(NombreCliente));
-                    OnPropertyChanged(nameof(TelefonoCliente));
-
-                    MessageBox.Show("Cliente encontrado.", "Información", MessageBoxButton.OK, MessageBoxImage.Information);
+                    ClienteEditable = false;
                 }
                 else
                 {
-                    MessageBox.Show("No se encontró ningún cliente con ese DNI.", "No encontrado", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    NombreCliente = string.Empty;
+                    TelefonoCliente = string.Empty;
+                    ClienteEditable = true;
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error al buscar cliente: " + ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                
+                MensajeError = $"Error al verificar al cliente: {ex.Message}";
             }
         }
         private void AgregarVehiculoCliente(object obj)
@@ -381,6 +375,10 @@ namespace Prueba.viewModel
                 TelefonoCliente = string.Empty;
                 DniCliente = string.Empty;
                 Asignar = false;
+
+                // Rehabilitar campos
+                _vehiculoEditable = true;
+                _clienteEditable = true;
             }
             catch (Exception ex)
             {

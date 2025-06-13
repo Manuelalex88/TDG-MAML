@@ -13,6 +13,7 @@ namespace Prueba.data
         public string Marca { get; set; } = string.Empty;
         public string Matricula { get; set; } = string.Empty;
         public string Modelo { get; set; } = string.Empty;
+        public string Descripcion {  get; set; } = string.Empty;
         //Reparacion 
         public int IdReparacion { get; set; }
         public string Estado { get; set; } = string.Empty;

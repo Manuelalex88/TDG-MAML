@@ -11,7 +11,6 @@ namespace Prueba.data
         {
             if (string.IsNullOrWhiteSpace(dni))
             {
-                MessageBox.Show("El DNI no puede ser nulo o vacío", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return null;
             }
 
