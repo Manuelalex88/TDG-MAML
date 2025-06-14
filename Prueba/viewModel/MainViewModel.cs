@@ -76,18 +76,12 @@ namespace Prueba.viewModel
             //Instanciaar
             showPrincipalChildViewCommand = new comandoViewModel(ShowPrincipalChildView);
             showRegistrarVehiculoChildViewCommand = new comandoViewModel(ShowRegistrarVehiculoChildView);
-            showReparacionesChildViewCommand = new comandoViewModel(ExecuteShowCommand3);
+            showReparacionesChildViewCommand = new comandoViewModel(ShowReparacionesChildView);
             showFacturasChildViewCommand = new comandoViewModel(MostrarFacturasChildView);
             showVehiculosEnTallerChildViewCommand = new comandoViewModel(ShowMecanicosChildView);
             showMecanicosChildViewCommand = new comandoViewModel(MostrarMecanicoChildView, _ => EsAdmin);
             CerrarSesionCommand = new comandoViewModel(CerrarSesion);
             MostrarAyudaCommand = new comandoViewModel(MostrarAyuda);
-
-            // Inicializar comandos solo si es admin
-            if (EsAdmin)
-            {
-                
-            }
 
             // Cargar el nombre del usuario desde UserData
             _nombreUsuario = identity?.NombreCompleto ?? "Desconocido"; 
@@ -103,7 +97,7 @@ namespace Prueba.viewModel
             }
         }
         #region Metodos
-        //Metodo para no poner set { _loquesea = value; OnPropertyChanged(loquesea) y poner simplemente SetProperty(ref Loquesea, value)
+        // Metodo auxiliar para simplificar el OnPropertyChanged (No agregar lo mismo en todas las propiedades)
         protected bool SetProperty<T>(ref T backingField, T value, [CallerMemberName] string? propertyName = null)
         {
             if (EqualityComparer<T>.Default.Equals(backingField, value))
@@ -180,7 +174,7 @@ namespace Prueba.viewModel
             }
         }
 
-        private void ExecuteShowCommand3(object obj)
+        private void ShowReparacionesChildView(object obj)
         {
             CurrentChildView = new ReparacionesViewModel();
             Caption = "Reparaciones";

@@ -17,14 +17,14 @@ namespace Prueba.viewModel.viewModelAdmin
 
         #region Campos
         private Mecanico _mecanicoSeleccionado;
-        private MecanicoRepository _mecanicoRepository;
-
         private string _nombreMecanico;
         private string _idMecanico;
         private string _contrasena;
         private bool _isAdminSelected;
         private string _mesajeAdmin;
         private string _idOriginalMecanico;
+        // Repositorios de acceso a datos
+        private MecanicoRepository _mecanicoRepository;
         #endregion
         #region Propiedades
         public Mecanico MecanicoSeleccionado
@@ -39,9 +39,9 @@ namespace Prueba.viewModel.viewModelAdmin
                         NombreMecanico = _mecanicoSeleccionado.Nombre;
                         MecanicoID = _mecanicoSeleccionado.Id;
                         ContrasenaMecanico = _mecanicoSeleccionado.Contrasena;
-
                         _idOriginalMecanico = _mecanicoSeleccionado.Id;
-                        // Detectar si es Admin
+
+                        // Control para evitar editar al admin
                         IsAdminSelected = _mecanicoSeleccionado.Id == "Admin";
                         if (IsAdminSelected)
                         {
@@ -111,10 +111,10 @@ namespace Prueba.viewModel.viewModelAdmin
         public ICommand EliminarMecanicoCommand { get; }
         public ICommand NuevoMecanicoCommand { get; }
         #endregion
-
+        //Constructor
         public MecanicosViewModel()
         {
-            //Instanciar
+            //Inicializar
             MecanicoList = new ObservableCollection<Mecanico>();
             _mecanicoList = new ObservableCollection<Mecanico>();
             _mecanicoSeleccionado = null!; 
@@ -124,15 +124,16 @@ namespace Prueba.viewModel.viewModelAdmin
             _mesajeAdmin = string.Empty;
             _idOriginalMecanico = string.Empty;
             _mecanicoRepository = new MecanicoRepository();
-            //Comando
+            // Inicializar comandos
             MostrarMecanicosCommand = new comandoViewModel(MostrarMecanicos);
             ModificarMecanicoCommand = new comandoViewModel(GuardarMecanico);
             EliminarMecanicoCommand = new comandoViewModel(EliminarMecanico);
             NuevoMecanicoCommand = new comandoViewModel(NuevoMecanico);
-
+            //Carga inicial
             MostrarMecanicosCommand.Execute(null);
         }
         #region Metodos
+        // Metodo auxiliar para simplificar el OnPropertyChanged (No agregar lo mismo en todas las propiedades)
         protected bool SetProperty<T>(ref T backingField, T value, [CallerMemberName] string? propertyName = null)
         {
             if (EqualityComparer<T>.Default.Equals(backingField, value))
@@ -145,6 +146,7 @@ namespace Prueba.viewModel.viewModelAdmin
 
             return true;
         }
+        // Carga los mecanicos desde el repositorio
         private void MostrarMecanicos(object? obj)
         {
             try
@@ -172,6 +174,7 @@ namespace Prueba.viewModel.viewModelAdmin
                     "StackTrace: " + ex.StackTrace);
             }
         }
+        // Guarda los cambios en un mecanico ya existente
         private void GuardarMecanico(object obj)
         {
             // Eliminar espacios en blanco al inicio y final
@@ -220,6 +223,7 @@ namespace Prueba.viewModel.viewModelAdmin
                                     "StackTrace: " + ex.StackTrace);
             }
         }
+
         private void EliminarMecanico(object obj)
         {
             // Eliminar espacios en blanco al inicio y final
@@ -257,6 +261,7 @@ namespace Prueba.viewModel.viewModelAdmin
                                     "StackTrace: " + ex.StackTrace);
             }
         }
+
         private void NuevoMecanico(object obj)
         {
             // Eliminar espacios en blanco al inicio y final
@@ -269,7 +274,7 @@ namespace Prueba.viewModel.viewModelAdmin
                 MessageBox.Show("No se puede crear otro admin");
                 return;
             }
-            MessageBox.Show(MecanicoID.ToString());
+
             try
             {
 

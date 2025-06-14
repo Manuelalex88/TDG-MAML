@@ -8,6 +8,7 @@
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
 
+    <!--Le pasamos el contexto del viewmodel-->
     <UserControl.DataContext>
         <viewmodel:MecanicosViewModel/>
     </UserControl.DataContext>
@@ -15,11 +16,13 @@
 
     <Grid Margin="10">
         <Grid.ColumnDefinitions>
+            <!--Para la lista-->
             <ColumnDefinition Width="2*" />
+            <!--Para el resto-->
             <ColumnDefinition Width="3*" />
         </Grid.ColumnDefinitions>
 
-        <!-- Lista de mecánicos -->
+        <!-- Lista de mecanicos -->
         <GroupBox Header="Mecánicos" Grid.Column="0" Margin="5" Style="{StaticResource gbocStilos}">
             <ListView Name="listViewMecanicos" SelectionMode="Single" Margin="5"
                       Style="{StaticResource EstiloListViewFacturas}"
@@ -35,7 +38,7 @@
             </ListView>
         </GroupBox>
 
-        <!-- Edición / creación -->
+        <!-- Edicion / creacion -->
         <GroupBox Header="Editar Mecánico" Grid.Column="1" Margin="5" Style="{StaticResource gbocStilos}">
             <StackPanel Margin="10" VerticalAlignment="Top">
                 <Label Content="ID:" Margin="0,0,0,5"  Style="{StaticResource GroupBoxText}"/>
@@ -51,8 +54,7 @@
                            FontSize="13"
                            FontWeight="Medium"
                            FontFamily="Montserrat"
-                           TextWrapping="Wrap"
-                           />
+                           TextWrapping="Wrap"/>
                 <StackPanel Orientation="Horizontal" Margin="0,20,0,0" HorizontalAlignment="Left" >
                     <Button  Content="Nuevo" Width="75" Margin="0,0,10,0" Style="{StaticResource btnChildView}" Command="{Binding NuevoMecanicoCommand}"/>
                     <Button  Content="Modificar" Width="75" Margin="40,0,10,0" Style="{StaticResource btnChildView}" Command="{Binding ModificarMecanicoCommand}"/>

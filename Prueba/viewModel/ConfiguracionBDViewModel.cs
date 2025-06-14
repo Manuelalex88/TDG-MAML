@@ -61,8 +61,9 @@ namespace Prueba.viewModel
             set => SetProperty(ref _nombreTaller, value);
         }
         #endregion
-
+        #region Comandos
         public ICommand GuardarCommand { get; }
+        #endregion
 
         public ConfiguracionBDViewModel()
         {
@@ -74,22 +75,23 @@ namespace Prueba.viewModel
             _baseDatos =string.Empty;
             _nombreTaller =string.Empty;
 
-
+            //Para la carga de la cadena de conexion
             var config = GestorConfiguracion.CargarConfiguracion();
             if (!string.IsNullOrWhiteSpace(config?.CadenaConexion))
             {
                 var csb = new NpgsqlConnectionStringBuilder(config.CadenaConexion);
-                Servidor = csb.Host;
-                Puerto = csb.Port.ToString();
-                Usuario = csb.Username;
-                Contrasena = csb.Password;
-                BaseDatos = csb.Database;
+                Servidor = csb.Host ?? string.Empty;
+                Puerto = csb.Port.ToString(); 
+                Usuario = csb.Username ?? string.Empty;
+                Contrasena = csb.Password ?? string.Empty;
+                BaseDatos = csb.Database ?? string.Empty; ;
             }
-
+            //Recuperamos el nombre del taller
             NombreTaller = config?.NombreTaller ?? "Mi Taller";
-
+            //Inicializar comandos
             GuardarCommand = new comandoViewModel(Guardar);
         }
+        // Metodo auxiliar para simplificar el OnPropertyChanged (No agregar lo mismo en todas las propiedades)
         protected bool SetProperty<T>(ref T backingField, T value, [CallerMemberName] string? propertyName = null)
         {
             if (EqualityComparer<T>.Default.Equals(backingField, value))

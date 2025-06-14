@@ -9,7 +9,7 @@
              xmlns:viewmodel="clr-namespace:Prueba.viewModel"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
-
+    <!--Le pasamos el contexto del viewmodel-->
     <UserControl.DataContext>
         <viewmodel:RegistrarVehiculosViewModel/>
     </UserControl.DataContext>
@@ -29,7 +29,7 @@
             <!--Registrar al cliente-->
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
-        <!-- Sección: Registro de Coche -->
+        <!-- Seccion: Registro de Coche -->
         <GroupBox Header="Datos del Vehiculo" Grid.Column="0" Margin="10" Style="{StaticResource gbocStilos}">
             <StackPanel Margin="10">
 
@@ -93,7 +93,7 @@
             </StackPanel>
         </GroupBox>
 
-        <!-- Sección: Datos del Cliente -->
+        <!-- Seccion: Datos del Cliente -->
         <GroupBox Header="Datos del Cliente" Grid.Column="1" Margin="10" Style="{StaticResource gbocStilos}">
             <Grid Margin="10">
                 <Grid.RowDefinitions>
@@ -130,7 +130,8 @@
                         </TextBox.Style>
                     </TextBox>
                     <Label Content="Número Telefónico:" Style="{StaticResource GroupBoxText}"/>
-                    <TextBox x:Name="txtTelefono" Margin="0,0,0,10" Text="{Binding TelefonoCliente, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                    <TextBox x:Name="txtTelefono" Margin="0,0,0,10" 
+                             Text="{Binding TelefonoCliente, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}" />
                 </StackPanel>
 
                 <!-- Objetos abajo  -->

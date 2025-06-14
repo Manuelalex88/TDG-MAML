@@ -172,13 +172,9 @@ namespace Prueba.viewModel
             get
             {
                 string result = string.Empty;
-
+                //Para el Dni
                 if (propertyName == nameof(DniCliente))
                 {
-                    // Evita validar si el campo no es editable
-                    if (!ClienteEditable)
-                        return string.Empty;
-
                     if (string.IsNullOrWhiteSpace(DniCliente))
                     {
                         result = "El DNI es obligatorio.";
@@ -191,15 +187,34 @@ namespace Prueba.viewModel
                     {
                         result = "La letra del DNI no es válida para los números proporcionados.";
                     }
+                } //Para la matricula
+                else if (propertyName == nameof(MatriculaVehiculo))
+                {
+                    if (string.IsNullOrWhiteSpace(MatriculaVehiculo))
+                    {
+                        result = "La matrícula es obligatoria.";
+                    }
+                    else if (!MatriculaValida(MatriculaVehiculo))
+                    {
+                        result = "Formato de matrícula inválido. Ejemplo correcto: 1234BCD. Sin vocales ni Ñ.";
+                    }
+                } //Para el telefono
+                else if (propertyName == nameof(TelefonoCliente))
+                {
+                    if (string.IsNullOrWhiteSpace(TelefonoCliente))
+                    {
+                        result = "El teléfono es obligatorio.";
+                    }
+                    else if (!Regex.IsMatch(TelefonoCliente, @"^\d{9}$"))
+                    {
+                        result = "El teléfono debe contener exactamente 9 dígitos numéricos.";
+                    }
                 }
 
                 return result;
             }
         }
 
-
-
-        //Para la validacion de la letra correcta del DNI
         private bool LetraDniValida(string dni)
         {
             string letras = "TRWAGMYFPDXBNJZSQVHLCKE";
@@ -230,8 +245,6 @@ namespace Prueba.viewModel
         }
         #endregion
         #region Comandos
-
-  
         public ICommand AgregarVehiculoClienteCommand { get; set; }
         #endregion
         //Constructor
@@ -268,25 +281,34 @@ namespace Prueba.viewModel
         {
             try
             {
-               var vehiculo = _vehiculoRepository.BuscarPorMatricula(MatriculaVehiculo);
-                if (vehiculo != null)
+                if (string.IsNullOrWhiteSpace(MatriculaVehiculo))
                 {
-                    MarcaVehiculo = vehiculo.Marca;
-                    ModeloVehiculo = vehiculo.Modelo;
-                    MotivoIngresoVehiculo = vehiculo.MotivoIngreso;
-                    DescripcionVehiculo = vehiculo.Descripcion;
-                    VehiculoEditable = false;
+                    VehiculoEditable = true;
+                    return;
+                }
+
+                if (MatriculaValida(MatriculaVehiculo))
+                {
+                    var vehiculo = _vehiculoRepository.BuscarPorMatricula(MatriculaVehiculo);
+                    if (vehiculo != null)
+                    {
+                        MarcaVehiculo = vehiculo.Marca;
+                        ModeloVehiculo = vehiculo.Modelo;
+                        MotivoIngresoVehiculo = vehiculo.MotivoIngreso;
+                        DescripcionVehiculo = vehiculo.Descripcion;
+                        VehiculoEditable = false; 
+                    }
+                    else
+                    {
+                        VehiculoEditable = true;
+                    }
                 }
                 else
                 {
-                    MarcaVehiculo = string.Empty;
-                    ModeloVehiculo = string.Empty;
-                    MotivoIngresoVehiculo = string.Empty;
-                    DescripcionVehiculo = string.Empty;
                     VehiculoEditable = true;
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 VehiculoEnTaller = true;
                 MensajeError = $"Error al verificar al vehículo: {ex.Message}";
@@ -296,23 +318,33 @@ namespace Prueba.viewModel
         {
             try
             {
-                var cliente = _clienteRepository.ObtenerPorDni(DniCliente);
-                if (cliente != null)
+                if (string.IsNullOrWhiteSpace(DniCliente))
                 {
-                    NombreCliente = cliente.Nombre;
-                    TelefonoCliente = cliente.Telefono;
-                    ClienteEditable = false;
+                    ClienteEditable = true;
+                    return;
+                }
+
+                if (string.IsNullOrEmpty(this[nameof(DniCliente)]))
+                {
+                    var cliente = _clienteRepository.ObtenerPorDni(DniCliente);
+                    if (cliente != null)
+                    {
+                        NombreCliente = cliente.Nombre;
+                        TelefonoCliente = cliente.Telefono;
+                        ClienteEditable = false; 
+                    }
+                    else
+                    {
+                        ClienteEditable = true;
+                    }
                 }
                 else
                 {
-                    NombreCliente = string.Empty;
-                    TelefonoCliente = string.Empty;
                     ClienteEditable = true;
                 }
             }
             catch (Exception ex)
             {
-                
                 MensajeError = $"Error al verificar al cliente: {ex.Message}";
             }
         }
@@ -399,6 +431,7 @@ namespace Prueba.viewModel
             // Validar el dni y la matricula
             bool dniValido = string.IsNullOrEmpty(this[nameof(DniCliente)]);
             bool matriculaValida = string.IsNullOrEmpty(this[nameof(MatriculaVehiculo)]);
+            bool telefonoValido = string.IsNullOrEmpty(this[nameof(TelefonoCliente)]);
 
             return camposObligatorios && dniValido && matriculaValida && !VehiculoEnTaller;
         }

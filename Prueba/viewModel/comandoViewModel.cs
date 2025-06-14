@@ -44,6 +44,8 @@ namespace Prueba.viewModel
 
         public void Execute(object? parameter)
         {
+            if(parameter == null) parameter = "Error";
+
             action?.Invoke(parameter);
         }
 

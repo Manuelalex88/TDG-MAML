@@ -12,6 +12,7 @@ namespace Prueba.data
     public class FacturaDocument : IDocument
     {
         public Cliente Cliente { get; set; } = new Cliente();
+        string mensaje = $"Gracias por confiar en {DatosConstantes.NombreTaller}. Para dudas o reclamaciones, contacte al +34 666 666 666.";
         public Vehiculo Vehiculo { get; set; } = new Vehiculo();
         public Mecanico Mecanico { get; set; } = new Mecanico();
         public List<RepuestoUsadoDTO> RepuestosUsados { get; set; } = new List<RepuestoUsadoDTO>();
@@ -40,10 +41,10 @@ namespace Prueba.data
 
                         row.RelativeItem().Column(column =>
                         {
-                            column.Item().Text("TALLER MANUEL S.A.").Bold().FontSize(18);
+                            column.Item().Text(DatosConstantes.NombreTaller).Bold().FontSize(18);
                             column.Item().Text("Calle Tortilla 123, Sevilla, Pilas");
                             column.Item().Text("Tel: +34 666 666 666 | Email: info@tallermanuel.com");
-                            column.Item().Text("CIF: B12345678");
+                            column.Item().Text("CIF: A12345678");
                         });
 
                         row.ConstantItem(120).AlignRight().Column(col =>
@@ -153,7 +154,7 @@ namespace Prueba.data
 
                 page.Footer()
                     .AlignCenter()
-                    .Text("Gracias por confiar en Taller Manuel. Para dudas o reclamaciones, contacte al +34 666 666 666.")
+                    .Text(mensaje)
                     .FontSize(9)
                     .FontColor(Colors.Grey.Medium);
             });

@@ -9,6 +9,7 @@
              mc:Ignorable="d" 
              d:DesignHeight="600" d:DesignWidth="800">
     
+    <!--Conectamos el viewModel-->
     <UserControl.DataContext>
         <viewmodel:PrincipalViewModel/>
     </UserControl.DataContext>
@@ -22,7 +23,6 @@
                        FontSize="20" FontWeight="Bold" Foreground="{StaticResource colorTexto}"
                        Margin="0,0,0,20"/>
 
-            <!-- Grid para dos columnas -->
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
@@ -133,7 +133,7 @@
                                     </GridViewColumn>
 
                                     <GridViewColumn Header="Total" DisplayMemberBinding="{Binding Total, StringFormat={}{0:C2}}" Width="Auto"/>
-
+                                    <!--Boton para descargar factura-->
                                     <GridViewColumn Header="Descargar" Width="Auto">
                                         <GridViewColumn.CellTemplate>
                                             <DataTemplate>

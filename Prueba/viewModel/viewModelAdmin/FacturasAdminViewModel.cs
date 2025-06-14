@@ -26,11 +26,11 @@ namespace Prueba.viewModel.viewModelAdmin
         #endregion
 
         #region Campos
+
+        // Repositorio de acceso a datos
         private HistorialFacturaRepository _historialFacturaRepository;
         private FacturaRepository _facturaRepository;
         private HistorialFactura _facturaSeleccionada;
-        private string _nombreMecanico;
-
         #endregion
 
         #region Propiedades
@@ -45,7 +45,6 @@ namespace Prueba.viewModel.viewModelAdmin
             set => SetProperty(ref _facturaSeleccionada, value);
         }
 
-        
         #endregion
 
         #region Comandos
@@ -61,12 +60,13 @@ namespace Prueba.viewModel.viewModelAdmin
             //Identidad Mecanico
             var identity = Thread.CurrentPrincipal?.Identity as IdentidadMecanico;
             var idMecanico = identity?.Name ?? "Desconocido";
+
             //Instanciar
             _facturasList = new ObservableCollection<HistorialFactura>();
             _historialFacturaRepository = new HistorialFacturaRepository();
             _facturaRepository = new FacturaRepository();
             _facturaSeleccionada = new HistorialFactura();
-            _nombreMecanico = identity?.NombreCompleto ?? "Desconocido";
+
 
             //Comando
             BorrarFacturaCommand = new comandoViewModel(BorrarFactura);

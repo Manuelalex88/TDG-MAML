@@ -53,14 +53,12 @@
        <conv:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
        <conv:BoolToVisibilityConverter x:Key="BoolToVisibilityConverterInverted" Invert="True"/>
 
-
     </Window.Resources>
     
 
     <Border CornerRadius="10"
             BorderBrush="{StaticResource colorFondo}"
-            Background="{StaticResource colorFondo}"
-           >
+            Background="{StaticResource colorFondo}">
 
         <Grid>
             <Grid.ColumnDefinitions>
@@ -233,12 +231,12 @@
                                             Foreground="{Binding Path=Tag, RelativeSource={RelativeSource AncestorType=Menu}}"
                                             Style="{StaticResource botonCerrar}"/>
                                     </MenuItem.Header>
-                                    <!-- Aplicar el estilo a los submenús -->
+                                    <!-- Aplicar el estilo a los submenus -->
                                     <MenuItem.ItemContainerStyle>
                                         <Style TargetType="MenuItem"/>
                                     </MenuItem.ItemContainerStyle>
 
-                                    <!-- Submenú -->
+                                    <!-- Submenu -->
                                     <MenuItem Header="Cerrar Sesión" Command="{Binding CerrarSesionCommand}" Style="{StaticResource subMenuVP}"/>
                                 </MenuItem>
                             </Menu>

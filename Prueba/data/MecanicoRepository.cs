@@ -82,7 +82,7 @@ namespace Prueba.repository
         }
         public Mecanico? ObtenerMecanicoPorId(string idMecanico)
         {
-            MessageBox.Show(idMecanico.ToString());
+            
             try
             {
                 using var conn = GetConexion();
@@ -206,7 +206,7 @@ namespace Prueba.repository
             catch (Exception ex)
             {
                 MessageBox.Show($"Error al verificar relaciones del mecánico: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                return true; // Por seguridad, si hay error asumimos que está relacionado
+                return true; // Por seguridad, si hay error asumimos que esta relacionado
             }
         }
     }

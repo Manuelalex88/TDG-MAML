@@ -27,13 +27,13 @@ namespace Prueba.viewModel
         public ObservableCollection<VehiculoReparacionDTO> ReparacionesAsignadas { get; set; }
         private ObservableCollection<HistorialFactura> _facturasMecanico;
         #endregion
-        #region Campos
+        #region Campos      
+        private string _textoEntrada;
+        private string _nombreMecanico;
+        // Repositorios de acceso a datos
         private readonly VehiculoRepository _vehiculoRepository;
         private readonly FacturaRepository _facturaRepository;
         private readonly HistorialFacturaRepository _historialFacturaRepository;
-        public string _textoEntrada;
-        private string _nombreMecanico;
-
         #endregion
         #region Propiedades
         public ObservableCollection<HistorialFactura> FacturasMecanico
@@ -75,7 +75,7 @@ namespace Prueba.viewModel
         }
 
         #region Metodos
-        //Metodo para no poner set { _loquesea = value; OnPropertyChanged(loquesea) y poner simplemente SetProperty(ref Loquesea, value)
+        // Metodo auxiliar para simplificar el OnPropertyChanged (No agregar lo mismo en todas las propiedades)
         protected bool SetProperty<T>(ref T backingField, T value, [CallerMemberName] string? propertyName = null)
         {
             if (EqualityComparer<T>.Default.Equals(backingField, value))
@@ -89,7 +89,6 @@ namespace Prueba.viewModel
             return true;
         }
         
-        
         public void DescargarFactura(object obj)
         {
             if (obj is not HistorialFactura facturaSeleccionada)
@@ -100,6 +99,7 @@ namespace Prueba.viewModel
 
             try
             {
+                //Licencia para usarlo gratis el QuestPDF
                 QuestPDF.Settings.License = QuestPDF.Infrastructure.LicenseType.Community;
                 
                 // Datos necesarios para el PDF
@@ -141,7 +141,7 @@ namespace Prueba.viewModel
 
                 factura.GeneratePdf(ruta);
 
-                // Abrir el archivo generado
+                // Abrir el archivo generado (Uso QuestPDF)
                 Process.Start(new ProcessStartInfo(ruta) { UseShellExecute = true });
             }
             catch (Exception ex)
@@ -161,7 +161,7 @@ namespace Prueba.viewModel
             {
                 FacturasMecanico.Clear();
 
-
+                // Mostrar las facturas
                 var lista = _historialFacturaRepository.MostrarFacturasMecanico(idMecanico);
                 foreach (var v in lista)
                 {

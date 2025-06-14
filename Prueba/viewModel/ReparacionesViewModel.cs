@@ -15,7 +15,7 @@ namespace Prueba.viewModel
     {
         #region Listas
         // Lista de posibles estados de una reparacion
-        public List<string> ListaEstadoReparacion { get; set; } = new()
+        private List<string> _listaEstadoReparacion { get; set; } = new()
         {
             "Problema sin identificar", "Diagnosticando", "Esperando Repuesto", "En Reparacion"
         };
@@ -23,19 +23,23 @@ namespace Prueba.viewModel
         public ObservableCollection<VehiculoReparacionDTO> VehiculosAsignados { get; set; } = new();
         // Lista de repuestos usados para la reparacion del vehiculo seleccionado
         public ObservableCollection<RepuestoUsadoDTO> RepuestosUsados { get; set; } = new();
+
+        // Propiedades publicas de solo lectura para enlazar en la vista
+        public List<string> ListaEstadoReparacion => _listaEstadoReparacion;
         #endregion
         #region Campos
-
-        private readonly ReparacionRepository _reparacionRepository;
-        private readonly VehiculoRepository _vehiculoRepository;
         private VehiculoReparacionDTO? _vehiculoSeleccionado;
+        private RepuestoUsadoDTO? _repuestoSeleccionado;
         private bool _mantenimientoAgregado = false;
-
         private string _trabajoRealizar = string.Empty;
         private string _estadoSeleccionado = string.Empty;
         private string _nuevoRepuesto = string.Empty;
         private decimal _repuestoPrecio = 0;
         private int _cantidad = 0;
+
+        // Repositorios de acceso a datos
+        private readonly ReparacionRepository _reparacionRepository;
+        private readonly VehiculoRepository _vehiculoRepository;
         #endregion
         #region Propiedades
 
@@ -95,7 +99,7 @@ namespace Prueba.viewModel
                 }
             }
         }
-        private RepuestoUsadoDTO? _repuestoSeleccionado;
+        
         public RepuestoUsadoDTO? RepuestoSeleccionado
         {
             get => _repuestoSeleccionado;

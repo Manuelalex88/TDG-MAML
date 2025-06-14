@@ -7,7 +7,7 @@
              xmlns:viewmodel="clr-namespace:Prueba.viewModel.viewModelAdmin"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
-    
+    <!--Le pasamos el contexto del viewmodel-->
     <UserControl.DataContext>
         <viewmodel:FacturasAdminViewModel/>
     </UserControl.DataContext>
@@ -15,11 +15,13 @@
 
     <Grid>
         <ListView x:Name="FacturaListViewControl" ItemsSource="{Binding FacturaList}" Style="{StaticResource EstiloListViewFacturas}">
+            <!--Estilo de la barra-->
             <ListView.Resources>
                 <Style TargetType="ScrollBar" BasedOn="{StaticResource ScrollBarHorizontalRedondeada}" />
             </ListView.Resources>
             <ListView.View>
                 <GridView ColumnHeaderContainerStyle="{StaticResource EstiloEncabezadoGridView}">
+                    <!--Columna de acciones para descargar y eliminar-->
                     <GridViewColumn Header="Acciones" Width="150">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
@@ -34,6 +36,7 @@
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
+                    <!--El resto de columnas necesarias-->
                     <GridViewColumn Header="Nombre Mecanico" Width="Auto" DisplayMemberBinding="{Binding MecanicoNombre}" />
                     <GridViewColumn Header="Nombre del Cliente" Width="Auto" DisplayMemberBinding="{Binding NombreCliente}" />
                     <GridViewColumn Header="DNI Cliente" Width="Auto" DisplayMemberBinding="{Binding DniCliente}" />

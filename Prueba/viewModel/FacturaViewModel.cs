@@ -21,17 +21,18 @@ namespace Prueba.viewModel
         private ObservableCollection<FacturaVehiculoClienteDTO> _facturasPendientes;
         #endregion
         #region Campos
-        private string _modeloVehiculo = string.Empty;
-        private string _marcaVehiculo = string.Empty;
-        private string _matriculaVehiculo = string.Empty;
-        private string _nombreCliente = string.Empty;
-        private string _dniCliente = string.Empty;
-        private string _telefonoCliente = string.Empty;
+        private string _modeloVehiculo;
+        private string _marcaVehiculo;
+        private string _matriculaVehiculo;
+        private string _nombreCliente;
+        private string _dniCliente;
+        private string _telefonoCliente;
 
-        private FacturaVehiculoClienteDTO _facturaSeleccionada;
-        public string _nombreMecanico { get; set; } = string.Empty;
-        public string IdMecanico { get; set; }
+        public string _nombreMecanico;
+        public string IdMecanico;
+        // Repositorios de acceso a datos
         private readonly FacturaRepository _facturaRepository;
+        private FacturaVehiculoClienteDTO _facturaSeleccionada;
         private readonly HistorialFacturaRepository _historialFacturaRepository;
         #endregion
         #region Propiedades
@@ -72,7 +73,6 @@ namespace Prueba.viewModel
             get => _telefonoCliente;
             set => SetProperty(ref _telefonoCliente, value);
         }
-
         public string MatriculaVehiculo
         {
             get => _matriculaVehiculo;
@@ -126,21 +126,29 @@ namespace Prueba.viewModel
         public ICommand MostrarFacturasPendientesCommand { get; }
         public ICommand EliminarFacturaCommand { get; set; }
         #endregion
-
+        // Constructor
         public FacturaViewModel()
         {
-            //Identidad Mecanico
-            var identity = Thread.CurrentPrincipal?.Identity as IdentidadMecanico;
-            var idMecanico = identity?.Name;
-            NombreMecanico = identity?.NombreCompleto ?? "Desconocido";
-            IdMecanico = idMecanico ?? string.Empty;
+            //Instanciar
+            _nombreMecanico = string.Empty;
+            _modeloVehiculo = string.Empty;
+            _marcaVehiculo = string.Empty ;
+            _matriculaVehiculo = string.Empty;
+            _nombreCliente = string.Empty ;
+            _dniCliente = string.Empty ;
+            _telefonoCliente = string .Empty;
 
-            //Instancias
             _facturasPendientes = new ObservableCollection<FacturaVehiculoClienteDTO>();
             _facturaSeleccionada = CrearFacturaPorDefecto();
             _facturaRepository = new FacturaRepository();
             _historialFacturaRepository = new HistorialFacturaRepository();
             FacturasPendientes = new ObservableCollection<FacturaVehiculoClienteDTO>();
+
+            //Identidad Mecanico
+            var identity = Thread.CurrentPrincipal?.Identity as IdentidadMecanico;
+            var idMecanico = identity?.Name;
+            NombreMecanico = identity?.NombreCompleto ?? "Desconocido";
+            IdMecanico = idMecanico ?? string.Empty;
 
             //Comandos
             ConfirmarFacturaCommand = new comandoViewModel(ConfirmarFactura, PuedeGenerarFactura);
@@ -152,6 +160,7 @@ namespace Prueba.viewModel
         }
 
         #region Metodos
+        // Metodo auxiliar para simplificar el OnPropertyChanged (No agregar lo mismo en todas las propiedades)
         protected bool SetProperty<T>(ref T backingField, T value, [CallerMemberName] string? propertyName = null)
         {
             if (EqualityComparer<T>.Default.Equals(backingField, value))
@@ -182,8 +191,6 @@ namespace Prueba.viewModel
                 Modelo = string.Empty
             };
         }
-
-
         private void MostrarFacturasPendientes(object? obj)
         {
             if (FacturasPendientes == null)
@@ -215,17 +222,6 @@ namespace Prueba.viewModel
                 "StackTrace: " + ex.StackTrace);
             }
         }
-
-        private bool PuedeGenerarFactura(object? obj)
-        {
-            return FacturaSeleccionada != null && FacturaSeleccionada.Id != 0;
-        }
-
-        private bool PuedeEliminar(object? obj)
-        {
-            return FacturaSeleccionada != null && FacturaSeleccionada.Id != 0;
-        }
-
         private void EliminarLaFactura(object obj)
         {
             
@@ -347,6 +343,15 @@ namespace Prueba.viewModel
                 Clipboard.SetText(ex.ToString());
                 MessageBox.Show($"Error al generar o abrir el PDF:\n\n{ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
+        }
+        //Metodos de verificacion/validacion
+        private bool PuedeGenerarFactura(object? obj)
+        {
+            return FacturaSeleccionada != null && FacturaSeleccionada.Id != 0;
+        }
+        private bool PuedeEliminar(object? obj)
+        {
+            return FacturaSeleccionada != null && FacturaSeleccionada.Id != 0;
         }
         #endregion
     }
