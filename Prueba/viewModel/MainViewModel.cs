@@ -64,6 +64,7 @@ namespace Prueba.viewModel
         public ICommand showFacturasChildViewCommand{  get;}
         public ICommand showVehiculosEnTallerChildViewCommand {  get;}
         public ICommand showMecanicosChildViewCommand { get;}
+        public ICommand showEditarDatosVariosCommand { get;}
         public ICommand CerrarSesionCommand { get; }
         public ICommand MostrarAyudaCommand { get; }
         #endregion
@@ -80,6 +81,7 @@ namespace Prueba.viewModel
             showFacturasChildViewCommand = new comandoViewModel(MostrarFacturasChildView);
             showVehiculosEnTallerChildViewCommand = new comandoViewModel(ShowMecanicosChildView);
             showMecanicosChildViewCommand = new comandoViewModel(MostrarMecanicoChildView, _ => EsAdmin);
+            showEditarDatosVariosCommand = new comandoViewModel(MostrarEditarDatosVarios, _ => EsAdmin);
             CerrarSesionCommand = new comandoViewModel(CerrarSesion);
             MostrarAyudaCommand = new comandoViewModel(MostrarAyuda);
 
@@ -144,6 +146,12 @@ namespace Prueba.viewModel
                     break;
                 }
             }
+        }
+        private void MostrarEditarDatosVarios(object? obj)
+        {
+            CurrentChildView = new EditarDatosVariosViewModelcs();
+            Caption = "Ajustes Varios";
+            Icon = IconChar.Gear;
         }
         private void MostrarMecanicoChildView(object? obj)
         {

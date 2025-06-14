@@ -46,6 +46,8 @@ namespace Prueba.viewModel
             get => _textoEntrada;
             set => SetProperty(ref _textoEntrada, value);
         }
+
+        
         #endregion
         #region Comandos
         public ICommand DescargarFacturaCommand { get; }
@@ -60,15 +62,18 @@ namespace Prueba.viewModel
             //Instanciar
             _textoEntrada = string.Empty;
             _nombreMecanico = identity?.NombreCompleto ?? "Desconocido";
-            TextoEntrada = "Bienvenido, " + _nombreMecanico;
-            ReparacionesAsignadas = new ObservableCollection<VehiculoReparacionDTO>();
             _vehiculoRepository = new VehiculoRepository();
             _facturasMecanico = new ObservableCollection<HistorialFactura>();
             _facturaRepository = new FacturaRepository();
             _historialFacturaRepository = new HistorialFacturaRepository();
 
-            
+            TextoEntrada = "Bienvenido, " + _nombreMecanico;
+            ReparacionesAsignadas = new ObservableCollection<VehiculoReparacionDTO>();
+
+            //Instanciar comandos
+
             DescargarFacturaCommand = new comandoViewModel(DescargarFactura);
+
             //Metodos
             CargarReparacionesAsignadas(idMecanico);
             CargarFacturasFinalizas(idMecanico);

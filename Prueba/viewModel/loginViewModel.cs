@@ -79,8 +79,7 @@ namespace Prueba.viewModel
             _mensajeError = string.Empty;
             _nombreTaller = string.Empty;
             //Nombre Taller
-            var config = GestorConfiguracion.CargarConfiguracion();
-            NombreTaller = config.NombreTaller ?? "Nombre por defecto";
+            NombreTaller = DatosConstantes.NombreTaller;
             //Comandos
             LoginCommand = new comandoViewModel(ExecuteLoginCommand, CanExecuteLoginCommand);
             AbrirConfiguracionBDCommand = new comandoViewModel(ExecuteAbrirConfiguracionBD);

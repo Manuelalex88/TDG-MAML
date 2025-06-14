@@ -56,7 +56,7 @@ namespace Prueba.viewModel
         public string NuevoRepuesto
         {
             get => _nuevoRepuesto;
-            set => SetProperty(ref _nuevoRepuesto, value);
+            set => SetProperty(ref _nuevoRepuesto, value.ToUpperInvariant());
         }
         public decimal RepuestoPrecio
         {

@@ -79,8 +79,9 @@
                             Margin="0,20,0,0">
                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                             <TextBlock Text="Precio Total:" VerticalAlignment="Center" FontWeight="Bold" Foreground="{StaticResource colorBorde}"/>
-                            <TextBlock Text="{Binding Total, StringFormat=C}" 
+                            <TextBlock Text="{Binding Total , StringFormat=C}" 
                                              Margin="10,0,0,0" FontSize="14" Foreground="{StaticResource colorBorde}"/>
+                            <TextBlock Text="IVA INCLUIDO" Foreground="{StaticResource colorBorde}" Margin="15,0,0,0" FontWeight="Bold" FontSize="14"/>
                         </StackPanel>
                     </Border>
 

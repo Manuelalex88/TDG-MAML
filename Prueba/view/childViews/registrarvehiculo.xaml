@@ -25,7 +25,7 @@
     <Grid>
         <Grid.ColumnDefinitions>
             <!--Registrar el coche-->
-            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="400"/>
             <!--Registrar al cliente-->
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
@@ -84,9 +84,8 @@
                 <Label Content="Breve descripción del problema"
                        Style="{StaticResource GroupBoxText}"
                        Visibility="{Binding MostrarDescripcion, Converter={StaticResource BoolToVisibilityConverter}}"/>
-
-                <TextBox Height="100"
-                         Text="{Binding DescripcionVehiculo, UpdateSourceTrigger=PropertyChanged}"
+                    
+                <TextBox Text="{Binding DescripcionVehiculo, UpdateSourceTrigger=PropertyChanged}" Width="200"
                          Visibility="{Binding MostrarDescripcion, Converter={StaticResource BoolToVisibilityConverter}}"
                          Background="{StaticResource colorFondo}"/>
 
@@ -111,11 +110,10 @@
                     <Label Content="Dni:" Style="{StaticResource GroupBoxText}"/>
 
                     <TextBox x:Name="txtDni"
-                                 Text="{Binding DniCliente, 
-                                                Mode=TwoWay, 
-                                                UpdateSourceTrigger=PropertyChanged, 
-                                                ValidatesOnDataErrors=True, 
-                                                NotifyOnValidationError=True}">
+                             Text="{Binding DniCliente, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, 
+                               ValidatesOnDataErrors=True, 
+                               NotifyOnValidationError=True}"
+                             Margin="0,0,0,10">
                         <TextBox.Style>
                             <!--Para que el tooltip muestre el mensaje de error si lo pones mal-->
                             <Style TargetType="TextBox">

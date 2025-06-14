@@ -7,6 +7,7 @@
         xmlns:local="clr-namespace:Prueba.view" 
         xmlns:viewmodel="clr-namespace:Prueba.viewModel"
         xmlns:viewmodelAdmin="clr-namespace:Prueba.viewModel.viewModelAdmin"
+        xmlns:pData="clr-namespace:Prueba.data"
         xmlns:localChild="clr-namespace:Prueba.view.childViews" 
         xmlns:conv="clr-namespace:Prueba.converters"
         xmlns:localChildAdmin="clr-namespace:Prueba.view.adminChildViews" 
@@ -16,12 +17,15 @@
         WindowStartupLocation="CenterScreen"
         Background="Transparent"
         AllowsTransparency="True">
+    
+    
     <!--Le pasamos el contexto del viewmodel-->
     <Window.DataContext>
         <viewmodel:MainViewModel/>
     </Window.DataContext>
     <!--Recursos del view model (Para las childViews) y Visibilidad-->
     <Window.Resources>
+
         <DataTemplate DataType="{x:Type viewmodel:PrincipalViewModel}">
             <local:principalView/>
         </DataTemplate>
@@ -41,21 +45,25 @@
         <DataTemplate DataType="{x:Type viewmodel:VehiculosEnTallerViewModel}">
             <localChild:VehiculosEnTaller/>
         </DataTemplate>
-
+        <!--Para el Admin-->
         <DataTemplate DataType="{x:Type viewmodelAdmin:MecanicosViewModel}">
             <localChildAdmin:Mecanicos/>
         </DataTemplate>
-        <!--Para el Admin-->
+        
         <DataTemplate DataType="{x:Type viewmodelAdmin:FacturasAdminViewModel}">
             <localChildAdmin:FacturaAdmin/>
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type viewmodelAdmin:EditarDatosVariosViewModelcs}">
+            <localChildAdmin:EditarDatosVarios/>
         </DataTemplate>
         <!--Visibilidad-->
        <conv:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
        <conv:BoolToVisibilityConverter x:Key="BoolToVisibilityConverterInverted" Invert="True"/>
 
     </Window.Resources>
-    
 
+        
     <Border CornerRadius="10"
             BorderBrush="{StaticResource colorFondo}"
             Background="{StaticResource colorFondo}">
@@ -78,7 +86,7 @@
                                 Height="35"
                                 Margin="15,25,0,40">
                         <Image Source="\images\ventanaPrincipal\fondotaller.png"/>
-                        <TextBlock Text="GESTOR REPARCIONES"
+                        <TextBlock Text="{x:Static pData:DatosConstantes.NombreAPP}"
                                    Foreground="{StaticResource colorTexto}"
                                    FontSize="15"
                                    FontFamily="Montserrat"
@@ -146,7 +154,15 @@
                         </StackPanel>
                     </RadioButton>
 
-                    
+                    <RadioButton Style="{StaticResource botones}"
+                                 Tag="{StaticResource colorTexto}"
+                                 Visibility="{Binding EsAdmin, Converter={StaticResource BoolToVisibilityConverter}}"
+                                 Command="{Binding showEditarDatosVariosCommand}">
+                        <StackPanel Orientation="Horizontal">
+                            <fa:IconImage Icon="Gear" Style="{StaticResource botonMenu}"/>
+                            <TextBlock Text="Ajustes Varios" Style="{StaticResource botonMenuTexto}"/>
+                        </StackPanel>
+                    </RadioButton>
 
                 </StackPanel>
             </Border>

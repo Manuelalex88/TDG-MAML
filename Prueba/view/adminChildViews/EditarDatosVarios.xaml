@@ -1,0 +1,115 @@
+﻿<UserControl x:Class="Prueba.view.adminChildViews.EditarDatosVarios"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+              xmlns:viewmodel="clr-namespace:Prueba.viewModel.viewModelAdmin"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Prueba.view.adminChildViews"
+             mc:Ignorable="d" 
+             d:DesignHeight="500" d:DesignWidth="800">
+    
+    <!--Le pasamos el contexto del viewmodel-->
+    <UserControl.DataContext>
+        <viewmodel:EditarDatosVariosViewModelcs/>
+    </UserControl.DataContext>
+
+
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <!-- Datos Factura -->
+            <RowDefinition Height="Auto" />
+            <!-- Nombre Taller -->
+            <RowDefinition Height="Auto" />
+            <!-- Mano de Obra e IVA -->
+            <RowDefinition Height="*" />
+            <!-- Espacio flexible -->
+        </Grid.RowDefinitions>
+
+        <!-- Sección Datos Factura -->
+        <StackPanel Grid.Row="0" Margin="0,0,0,10">
+            <GroupBox Header="Datos de la Factura" FontWeight="Bold" FontSize="14" Padding="10" Style="{StaticResource gbocStilos}">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+
+                    <!-- Calle -->
+                    <TextBlock Text="Calle:" VerticalAlignment="Center" Margin="0,0,5,5" Foreground="{StaticResource colorTexto}"/>
+                    <TextBox Grid.Column="1" Text="{Binding Calle, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,10,5" />
+
+                    <!-- Municipio -->
+                    <TextBlock Text="Municipio:" Grid.Row="1" VerticalAlignment="Center" Margin="0,0,5,5" Foreground="{StaticResource colorTexto}"/>
+                    <TextBox Grid.Column="1" Text="{Binding Municipio, UpdateSourceTrigger=PropertyChanged}" Grid.Row="1" Margin="0,0,10,5" />
+
+                    <!-- Ciudad -->
+                    <TextBlock Text="Ciudad:" Grid.Row="2" VerticalAlignment="Center" Margin="0,0,5,0" Foreground="{StaticResource colorTexto}"/>
+                    <TextBox Grid.Column="1" Text="{Binding Ciudad, UpdateSourceTrigger=PropertyChanged}" Grid.Row="2" Margin="0,0,10,0" />
+
+                    <!-- Teléfono -->
+                    <TextBlock Text="Teléfono:" Grid.Column="2" VerticalAlignment="Center" Margin="10,0,5,5" Foreground="{StaticResource colorTexto}"/>
+                    <TextBox Grid.Column="3" Text="{Binding Telefono, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,5" />
+
+                    <!-- Email -->
+                    <TextBlock Text="Email:" Grid.Row="1" Grid.Column="2" VerticalAlignment="Center" Margin="10,0,5,5" Foreground="{StaticResource colorTexto}"/>
+                    <TextBox Grid.Row="1" Text="{Binding Email, UpdateSourceTrigger=PropertyChanged}" Grid.Column="3" />
+
+                    <!-- CIF -->
+                    <TextBlock Text="CIF:" Grid.Row="2" Grid.Column="2" VerticalAlignment="Center" Margin="10,0,5,5" Foreground="{StaticResource colorTexto}"/>
+                    <TextBox Grid.Row="2" Text="{Binding CIF, UpdateSourceTrigger=PropertyChanged}" Grid.Column="3" />
+                </Grid>
+            </GroupBox>
+            <Button Content="Guardar Datos Factura" Width="160" Command="{Binding GuardarDatosFacturaCommand}"
+                    HorizontalAlignment="Right" Margin="0,5,0,0" Style="{StaticResource btnChildView}"/>
+        </StackPanel>
+
+        <!-- Sección Nombre del Taller -->
+        <StackPanel Grid.Row="1" Margin="0,0,0,10">
+            <GroupBox Header="Nombre del Taller" FontWeight="Bold" FontSize="14" Padding="10" Style="{StaticResource gbocStilos}">
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center" >
+                    <TextBlock Text="Nombre:" VerticalAlignment="Center" Margin="0,0,5,0" Width="80" Foreground="{StaticResource colorTexto}"/>
+                    <TextBox Text="{Binding NuevoNombreTaller, UpdateSourceTrigger=PropertyChanged}" Width="300" />
+                </StackPanel>
+            </GroupBox>
+            <Button Content="Guardar Nombre del Taller" Command="{Binding GuardarNombreTallerCommand}" Width="190" HorizontalAlignment="Right" Margin="0,5,0,0" Style="{StaticResource btnChildView}"/>
+        </StackPanel>
+
+        <!-- Sección Mano de Obra e IVA -->
+        <StackPanel Grid.Row="2" Margin="0,0,0,10">
+            <GroupBox Header="Mano de Obra e IVA" FontWeight="Bold" FontSize="14" Padding="10" Style="{StaticResource gbocStilos}">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+
+                    <!-- Mano de Obra -->
+                    <TextBlock Text="Mano de Obra (€):" VerticalAlignment="Center" Margin="0,0,5,0" Foreground="{StaticResource colorTexto}"/>
+                    <TextBox Grid.Column="1" Text="{Binding ManoObra, UpdateSourceTrigger=PropertyChanged}" Width="150" />
+
+                    <!-- IVA -->
+                    <TextBlock Text="IVA (%):" Grid.Column="2" VerticalAlignment="Center" Margin="10,0,5,0" Foreground="{StaticResource colorTexto}"/>
+                    <TextBox Grid.Column="3" Text="{Binding IVA, UpdateSourceTrigger=PropertyChanged}" Width="100" />
+                </Grid>
+            </GroupBox>
+            <Button Content="Guardar Mano de Obra e IVA" Width="210" Command="{Binding }"
+                    HorizontalAlignment="Right" Margin="0,5,0,0" Style="{StaticResource btnChildView}"/>
+        </StackPanel>
+
+    </Grid>
+</UserControl>

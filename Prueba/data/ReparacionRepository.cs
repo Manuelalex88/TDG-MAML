@@ -224,9 +224,9 @@ namespace Prueba.data
                 decimal totalRepuestos = Convert.ToDecimal(result ?? 0m);
 
                 //Calculo del total mas mano de obra
-                decimal subtotal = totalRepuestos + DatosConstantes.ManoDeObra;
+                decimal subtotal = totalRepuestos + DatosConstantes.ManoObra;
                 //Calculo iva
-                decimal iva = subtotal * 0.21m;
+                decimal iva = subtotal * (DatosConstantes.Iva / 100m);
                 //Total 
                 decimal totalConIva = subtotal + iva;
 

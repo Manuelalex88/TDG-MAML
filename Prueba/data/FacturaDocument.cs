@@ -13,6 +13,8 @@ namespace Prueba.data
     {
         public Cliente Cliente { get; set; } = new Cliente();
         string mensaje = $"Gracias por confiar en {DatosConstantes.NombreTaller}. Para dudas o reclamaciones, contacte al +34 666 666 666.";
+        string direccion = $"{DatosConstantes.Calle} , {DatosConstantes.Ciudad} , {DatosConstantes.Municipio}"; 
+        string telefonoEmail = $"Tel:{DatosConstantes.Telefono} || Email:{DatosConstantes.Email}";
         public Vehiculo Vehiculo { get; set; } = new Vehiculo();
         public Mecanico Mecanico { get; set; } = new Mecanico();
         public List<RepuestoUsadoDTO> RepuestosUsados { get; set; } = new List<RepuestoUsadoDTO>();
@@ -42,9 +44,9 @@ namespace Prueba.data
                         row.RelativeItem().Column(column =>
                         {
                             column.Item().Text(DatosConstantes.NombreTaller).Bold().FontSize(18);
-                            column.Item().Text("Calle Tortilla 123, Sevilla, Pilas");
-                            column.Item().Text("Tel: +34 666 666 666 | Email: info@tallermanuel.com");
-                            column.Item().Text("CIF: A12345678");
+                            column.Item().Text(direccion);
+                            column.Item().Text(telefonoEmail);
+                            column.Item().Text($"CIF: {DatosConstantes.CIF}");
                         });
 
                         row.ConstantItem(120).AlignRight().Column(col =>
@@ -115,10 +117,10 @@ namespace Prueba.data
                         }
 
                         // Resumen financiero
-                        var subtotal = RepuestosUsados?.Sum(r => r.Precio * r.Cantidad) ?? 0m;
-                        var manoObra = DatosConstantes.ManoDeObra;
-                        var baseImponible = subtotal + manoObra;
-                        var iva = baseImponible * 0.21m;
+                        var subtotalRepuestos = RepuestosUsados?.Sum(r => r.Precio * r.Cantidad) ?? 0m;
+                        var manoDeObra = DatosConstantes.ManoObra;
+                        var baseImponible = subtotalRepuestos + manoDeObra;
+                        var iva = baseImponible * (DatosConstantes.Iva / 100m);
                         var totalFinal = baseImponible + iva;
 
                         column.Item().PaddingTop(20).AlignRight().Column(col =>
@@ -126,12 +128,12 @@ namespace Prueba.data
                             col.Item().Row(row =>
                             {
                                 row.RelativeItem().Text("Subtotal piezas:");
-                                row.ConstantItem(100).Text($"{subtotal:C}");
+                                row.ConstantItem(100).Text($"{subtotalRepuestos:C}");
                             });
                             col.Item().Row(row =>
                             {
-                                row.RelativeItem().Text("Mano de obra:");
-                                row.ConstantItem(100).Text($"{manoObra:C}");
+                                row.RelativeItem().Text("Mano de Obra:");
+                                row.ConstantItem(100).Text($"{DatosConstantes.ManoObra:C}");
                             });
                             col.Item().Row(row =>
                             {
@@ -145,7 +147,7 @@ namespace Prueba.data
                             });
                         });
 
-                        // Mecánico asignado
+                        // Mecanico asignado
                         column.Item().PaddingTop(20).Text($"Mecánico asignado: {Mecanico?.Nombre}")
                             .Italic()
                             .FontSize(12)

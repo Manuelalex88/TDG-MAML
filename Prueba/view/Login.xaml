@@ -14,11 +14,11 @@
         Background="Transparent"
         AllowsTransparency="True" 
         Height="550" Width="800" MouseDown="Window_MouseDown">
-
+    <!--Le pasamos el contexto del viewmodel-->
     <Window.DataContext>
         <viewModel:loginViewModel/>
     </Window.DataContext>
-
+    <!--Recursos-->
     <Window.Resources>
         <BooleanToVisibilityConverter x:Key="BooleanToVisibility"/>
         <converters:EstadoIconoConverter x:Key="EstadoIconoConverter"/>
