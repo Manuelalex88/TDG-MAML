@@ -116,7 +116,7 @@ namespace GestionReparaciones.viewModel
         {
             string rutaPdf = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "resources", "Ayuda_GestionReparacioneses.pdf");
 
-
+            // Para mostrar el pdf de ayuda de la app
             if (File.Exists(rutaPdf))
             {
                 System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo

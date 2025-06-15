@@ -138,6 +138,7 @@ namespace GestionReparaciones.viewModel
                     Mecanico = mecanico,
                     RepuestosUsados = repuestosUsados,
                     Total = total
+                    
                 };
 
                 string timestamp = DateTime.Now.ToString("yyyy-MM-dd_HHmm");
@@ -186,6 +187,7 @@ namespace GestionReparaciones.viewModel
 
             try
             {
+                // Cargamos las reparaciones que el mecanico tiene asignada
                 var lista = _vehiculoRepository.ObtenerVehiculosAsignados(idMecanico);
                 foreach (var v in lista)
                 {

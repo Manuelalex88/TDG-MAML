@@ -11,14 +11,14 @@ namespace GestionReparaciones.data
 {
     public class FacturaDocument : IDocument
     {
+        #region Campos
         public Cliente Cliente { get; set; } = new Cliente();
-        string mensaje = $"Gracias por confiar en {DatosConstantes.NombreTaller}. Para dudas o reclamaciones, contacte al +34 666 666 666.";
-        string direccion = $"{DatosConstantes.Calle} , {DatosConstantes.Ciudad} , {DatosConstantes.Municipio}"; 
-        string telefonoEmail = $"Tel:{DatosConstantes.Telefono} || Email:{DatosConstantes.Email}";
-        string ivatext = $"IVA ({DatosConstantes.Iva})";
+        public bool DesdeHistorial { get; set; } = false;
+
         public Vehiculo Vehiculo { get; set; } = new Vehiculo();
         public Mecanico Mecanico { get; set; } = new Mecanico();
         public List<RepuestoUsadoDTO> RepuestosUsados { get; set; } = new List<RepuestoUsadoDTO>();
+        #endregion
 
         public decimal Total { get; set; }
 
@@ -36,25 +36,25 @@ namespace GestionReparaciones.data
                     {
                         row.ConstantItem(100).Height(60).AlignMiddle().AlignCenter().Background("#2A4759").Element(container =>
                         {
-                            container.Text("🛠") 
+                            container.Text("🛠")
                                      .FontSize(30)
                                      .FontColor("#F79B72")
                                      .AlignCenter();
                         });
-
+                        // Datos del taller
                         row.RelativeItem().Column(column =>
                         {
-                            column.Item().Text(DatosConstantes.NombreTaller).Bold().FontSize(18);
-                            column.Item().Text(direccion);
-                            column.Item().Text(telefonoEmail);
-                            column.Item().Text($"CIF: {DatosConstantes.CIF}");
+                            column.Item().Text(DatosConstantesEstaticos.NombreTaller).Bold().FontSize(18);
+                            column.Item().Text($"{DatosConstantesEstaticos.Calle}, {DatosConstantesEstaticos.Ciudad}, {DatosConstantesEstaticos.Municipio}");
+                            column.Item().Text($"Tel:{DatosConstantesEstaticos.Telefono} || Email:{DatosConstantesEstaticos.Email}");
+                            column.Item().Text($"CIF: {DatosConstantesEstaticos.CIF}");
                         });
 
                         row.ConstantItem(120).AlignRight().Column(col =>
                         {
                             col.Item().Text("FACTURA").Bold().FontSize(20).FontColor(Colors.Blue.Darken2);
                             col.Item().Text($"Fecha: {DateTime.Now:dd/MM/yyyy}");
-                            col.Item().Text($"Factura Nº: {Guid.NewGuid().ToString().Substring(0, 8).ToUpper()}"); //Numero aleatorio por GUID
+                            col.Item().Text($"Factura Nº: {Guid.NewGuid().ToString().Substring(0, 8).ToUpper()}");
                         });
                     });
 
@@ -64,7 +64,7 @@ namespace GestionReparaciones.data
                     {
                         column.Spacing(10);
 
-                        // Datos del Cliente y Vehículo lado a lado
+                        // Datos Cliente y Vehiculo
                         column.Item().Row(row =>
                         {
                             row.RelativeItem().Column(col =>
@@ -93,10 +93,10 @@ namespace GestionReparaciones.data
                             {
                                 table.ColumnsDefinition(columns =>
                                 {
-                                    columns.RelativeColumn(5); // Nombre pieza
-                                    columns.RelativeColumn(2); // Cantidad
-                                    columns.RelativeColumn(3); // Precio unitario
-                                    columns.RelativeColumn(3); // Total línea
+                                    columns.RelativeColumn(5);
+                                    columns.RelativeColumn(2);
+                                    columns.RelativeColumn(3);
+                                    columns.RelativeColumn(3);
                                 });
 
                                 table.Header(header =>
@@ -119,11 +119,11 @@ namespace GestionReparaciones.data
 
                         // Resumen financiero
                         var subtotalRepuestos = RepuestosUsados?.Sum(r => r.Precio * r.Cantidad) ?? 0m;
-                        var manoDeObra = DatosConstantes.ManoObra;
+                        var manoDeObra = DatosConstantesEstaticos.ManoObra;
                         var baseImponible = subtotalRepuestos + manoDeObra;
-                        var iva = baseImponible * (DatosConstantes.Iva / 100m);
-                        var totalFinal = baseImponible + iva;
-
+                        var iva = baseImponible * (DatosConstantesEstaticos.Iva / 100m);
+                        decimal totalFinal = Total;
+                        
                         column.Item().PaddingTop(20).AlignRight().Column(col =>
                         {
                             col.Item().Row(row =>
@@ -134,11 +134,11 @@ namespace GestionReparaciones.data
                             col.Item().Row(row =>
                             {
                                 row.RelativeItem().Text("Mano de Obra:");
-                                row.ConstantItem(100).Text($"{DatosConstantes.ManoObra:C}");
+                                row.ConstantItem(100).Text($"{manoDeObra:C}");
                             });
                             col.Item().Row(row =>
                             {
-                                row.RelativeItem().Text(ivatext);
+                                row.RelativeItem().Text($"IVA ({DatosConstantesEstaticos.Iva})");
                                 row.ConstantItem(100).Text($"{iva:C}");
                             });
                             col.Item().Row(row =>
@@ -155,9 +155,9 @@ namespace GestionReparaciones.data
                             .FontColor(Colors.Grey.Darken1);
                     });
 
-                page.Footer()
+                page.Footer() //Pie de pagina
                     .AlignCenter()
-                    .Text(mensaje)
+                    .Text($"Gracias por confiar en {DatosConstantesEstaticos.NombreTaller}. Para dudas o reclamaciones, contacte al +34 666 666 666.")
                     .FontSize(9)
                     .FontColor(Colors.Grey.Medium);
             });

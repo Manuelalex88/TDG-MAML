@@ -86,7 +86,7 @@
                                 Height="35"
                                 Margin="15,25,0,40">
                         <Image Source="\images\ventanaPrincipal\fondotaller.png"/>
-                        <TextBlock Text="{x:Static pData:DatosConstantes.NombreAPP}"
+                        <TextBlock Text="{x:Static pData:DatosConstantesEstaticos.NombreAPP}"
                                    Foreground="{StaticResource colorTexto}"
                                    FontSize="15"
                                    FontFamily="Montserrat"
@@ -94,7 +94,7 @@
                                    VerticalAlignment="Center"
                                    Margin="10,0,0,0"/>
                     </StackPanel>
-
+                    <!--Botones-->
                     <RadioButton Style="{StaticResource botones}" 
                                  Tag="{StaticResource colorTexto}"
                                  IsChecked="{Binding IsCheckedPrincipal,Mode=OneWay}"

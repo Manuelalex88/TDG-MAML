@@ -8,7 +8,6 @@ namespace GestionReparaciones.data
 {
     public class RepuestoUsadoDTO
     {
-        //Mezclamos la tabla repuesto y repuesto_usado
         //Repuesto
         public string Nombre { get; set; } = string.Empty;
         public decimal Precio { get; set; }

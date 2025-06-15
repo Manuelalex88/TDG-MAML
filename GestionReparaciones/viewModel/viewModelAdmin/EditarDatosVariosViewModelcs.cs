@@ -81,6 +81,7 @@ namespace GestionReparaciones.viewModel.viewModelAdmin
         {
             get
             {
+                // Casos diferentes para diferentes campos
                 string? result = null;
                 switch (propertyName)
                 {
@@ -140,9 +141,6 @@ namespace GestionReparaciones.viewModel.viewModelAdmin
         public ICommand GuardarNombreTallerCommand { get; }
         public ICommand GuardarManoObraIvaCommand { get; }
         public ICommand GuardarDatosFacturaCommand { get; }
-
-
-
 
         #endregion
         //Constructor
@@ -206,17 +204,15 @@ namespace GestionReparaciones.viewModel.viewModelAdmin
 
             try
             {
-                string ruta = DatosConstantes.rutaConfiguracion;
+                string ruta = DatosConstantesEstaticos.rutaConfiguracion;
                 var opciones = new JsonSerializerOptions { WriteIndented = true };
                 string json = JsonSerializer.Serialize(config, opciones);
                 File.WriteAllText(ruta, json);
 
-                DatosConstantes.NombreTaller = NuevoNombreTaller;
+                DatosConstantesEstaticos.NombreTaller = NuevoNombreTaller;
 
                 MessageBox.Show("Nombre del taller guardado correctamente.", "Éxito", MessageBoxButton.OK, MessageBoxImage.Information);
-
-                if (obj is Window ventana)
-                    ventana.Close();
+                DatosConstantesEstaticos.RecargarConfiguracion();
             }
             catch (Exception ex)
             {
@@ -235,12 +231,13 @@ namespace GestionReparaciones.viewModel.viewModelAdmin
                 config.ManoObra = this.ManoObra;
 
                 // Guardar en archivo JSON
-                string ruta = DatosConstantes.rutaConfiguracion;
+                string ruta = DatosConstantesEstaticos.rutaConfiguracion;
                 var opciones = new JsonSerializerOptions { WriteIndented = true };
                 File.WriteAllText(ruta, JsonSerializer.Serialize(config, opciones));
 
                 // Notificar al usuario
                 MessageBox.Show("IVA y Mano de Obra guardados correctamente.", "Éxito", MessageBoxButton.OK, MessageBoxImage.Information);
+                DatosConstantesEstaticos.RecargarConfiguracion();
             }
             catch (Exception ex)
             {
@@ -250,7 +247,7 @@ namespace GestionReparaciones.viewModel.viewModelAdmin
 
         public void GuardarDatosFactura(object obj)
         {
-            // Validar datos básicos (puedes hacer validaciones específicas aquí)
+            // Validar datos
             if (string.IsNullOrWhiteSpace(Calle) ||
                 string.IsNullOrWhiteSpace(Municipio) ||
                 string.IsNullOrWhiteSpace(Ciudad))
@@ -261,7 +258,7 @@ namespace GestionReparaciones.viewModel.viewModelAdmin
 
             try
             {
-                // Cargar configuración existente o crear nueva
+                // Cargar configuracion existente o crear nueva
                 var config = GestorConfiguracion.CargarConfiguracion() ?? new ConfiguracionApp();
 
                 // Actualizar campos de factura
@@ -273,16 +270,14 @@ namespace GestionReparaciones.viewModel.viewModelAdmin
                 config.CIF = this.CIF;
 
                 // Guardar en archivo JSON
-                string ruta = DatosConstantes.rutaConfiguracion;
+                string ruta = DatosConstantesEstaticos.rutaConfiguracion;
                 var opciones = new JsonSerializerOptions { WriteIndented = true };
                 string json = JsonSerializer.Serialize(config, opciones);
                 File.WriteAllText(ruta, json);
 
 
                 MessageBox.Show("Datos de la factura guardados correctamente.", "Éxito", MessageBoxButton.OK, MessageBoxImage.Information);
-
-                if (obj is Window ventana)
-                    ventana.Close();
+                DatosConstantesEstaticos.RecargarConfiguracion();
             }
             catch (Exception ex)
             {
@@ -297,20 +292,21 @@ namespace GestionReparaciones.viewModel.viewModelAdmin
             // Validar que los valores estén en rango
             bool camposObligatorios = IVA >= 0 && IVA <= 100 && ManoObra >= 0;
 
-            // Validar que no haya errores de validación
+            // Validar que no haya errores de validacion
             bool sinErrores = string.IsNullOrEmpty(this[nameof(IVA)]) &&
                               string.IsNullOrEmpty(this[nameof(ManoObra)]);
 
-            // Solo permitir guardar si todo está bien
+           
             return camposObligatorios && sinErrores;
         }
         private bool PuedeGuardarDatosFactura(object? obj)
         {
+            // Validar Campos
             bool camposValidos =
                 !string.IsNullOrWhiteSpace(Calle) &&
                 !string.IsNullOrWhiteSpace(Municipio) &&
                 !string.IsNullOrWhiteSpace(Ciudad);
-
+            // Validar que no haya errores de validacion
             bool sinErrores = string.IsNullOrEmpty(this[nameof(CIF)]) &&
                               string.IsNullOrEmpty(this[nameof(Email)]) &&
                               string.IsNullOrEmpty(this[nameof(Telefono)]);

@@ -57,6 +57,7 @@ namespace GestionReparaciones.viewModel
 
         public ConfiguracionBDViewModel()
         {
+            // Instanciar
             _usuario = string.Empty;
             _contrasena = string.Empty;
             _puerto = string.Empty;
@@ -74,7 +75,7 @@ namespace GestionReparaciones.viewModel
                 BaseDatos = csb.Database ?? string.Empty;
             }
 
-
+            // Cargar 
             GuardarCommand = new comandoViewModel(Guardar);
         }
 
@@ -110,7 +111,7 @@ namespace GestionReparaciones.viewModel
                 CadenaConexion = connectionString,
             };
 
-            string ruta = DatosConstantes.rutaConfiguracion;
+            string ruta = DatosConstantesEstaticos.rutaConfiguracion;
             var opciones = new JsonSerializerOptions { WriteIndented = true };
             File.WriteAllText(ruta, JsonSerializer.Serialize(nuevaConfig, opciones));
 

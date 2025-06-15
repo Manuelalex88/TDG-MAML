@@ -8,11 +8,13 @@ namespace GestionReparaciones.data
 {
     public class FacturaRepository : Conexion
     {
+        //Por ahora no se si lo usare asi, asi que lo dejo aqui por si lo uso
         public List<FacturaVehiculoClienteDTO> MostrarFacturaAdmin()
         {
             var lista = new List<FacturaVehiculoClienteDTO>();
             try
             {
+                //Mostramos todas las facturas para el admin de historial_factura
                 using(var conn = GetConexion())
                 {
                     conn.Open();
@@ -68,7 +70,7 @@ namespace GestionReparaciones.data
             using (var connection = GetConexion())
             {
                 connection.Open();
-
+                //Marcamos los repuestos usados como facturados
                 string sql = "UPDATE repuesto_usado SET Pagado = TRUE WHERE reparacion_id = @idReparacion;";
 
                 using (var cmd = new Npgsql.NpgsqlCommand(sql, connection))
@@ -94,7 +96,7 @@ namespace GestionReparaciones.data
             var lista = new List<FacturaVehiculoClienteDTO>();
 
             try
-            {
+            { //Obtenemos las facturas pendientes por mecanico
                 string query = @"SELECT 
                                 f.id AS factura_id,
                                 f.id_reparacion,
@@ -209,6 +211,7 @@ namespace GestionReparaciones.data
             
             try
             {
+                // Marcamos la factura como pagada
                 string query = "UPDATE factura SET pagado = TRUE WHERE id = @id";
 
                 using var conn = GetConexion();
@@ -232,7 +235,7 @@ namespace GestionReparaciones.data
             {
                 using var conn = GetConexion();
                 conn.Open();
-
+                // Eliminamos la factura
                 string query = "DELETE FROM factura WHERE id = @id";
 
                 using var cmd = new NpgsqlCommand(query, conn);

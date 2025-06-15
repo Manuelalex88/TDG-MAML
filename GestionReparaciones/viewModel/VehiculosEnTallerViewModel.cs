@@ -49,6 +49,7 @@ namespace GestionReparaciones.viewModel
             {
                 try
                 {
+                    // Marcamos la salida del vehiculo
                     _vehiculoRepository.MarcarSalidaTaller(vehiculo.Matricula);
                     VehiculosEnTaller.Remove(vehiculo);
                     MessageBox.Show("El vehiculo a salido", "Éxito", MessageBoxButton.OK, MessageBoxImage.Information);
@@ -69,6 +70,7 @@ namespace GestionReparaciones.viewModel
             {           
                 try
                 {
+                    // Asignar el vehiculo al mecanico
                     _vehiculoRepository.AsignarVehiculoAVista(vehiculo.Matricula, idMecanico);
                     MessageBox.Show("Vehículo asignado correctamente.", "Éxito", MessageBoxButton.OK, MessageBoxImage.Information);
                     VehiculosEnTaller.Remove(vehiculo);
@@ -87,6 +89,7 @@ namespace GestionReparaciones.viewModel
         {
             try
             {
+                // Rellenamos la lista
                 _vehiculoRepository = new VehiculoRepository();
                 VehiculosEnTaller = new ObservableCollection<Vehiculo>();
                 CargarVehiculosEnTaller();
@@ -100,6 +103,7 @@ namespace GestionReparaciones.viewModel
         {
             try
             {
+                // Cargamos los vehiculos en el taller
                 var vehiculos = _vehiculoRepository.ObtenerVehiculosEnTaller();
                 VehiculosEnTaller.Clear();
                 foreach (var vehiculo in vehiculos)

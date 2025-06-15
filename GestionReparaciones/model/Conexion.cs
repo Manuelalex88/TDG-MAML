@@ -16,6 +16,7 @@ namespace GestionReparaciones.model
 
         protected NpgsqlConnection GetConexion()
         {
+            //Para que herede la cadena de conexion
             var config = GestorConfiguracion.CargarConfiguracion();
             string connectionString = config?.CadenaConexion ?? throw new InvalidOperationException("Cadena de conexión no configurada.");
             return new NpgsqlConnection(connectionString);

@@ -10,12 +10,13 @@
         Height="350"
         WindowStartupLocation="CenterScreen"
         Background="{StaticResource colorBorde}">
-    
+    <!--Le pasamos el contexto del viewmodel-->
     <Window.DataContext>
         <viewmodel:ConfiguracionBDViewModel/>
     </Window.DataContext>
     
     <Grid>
+        <!--Todos los campos necesarios-->
         <StackPanel Margin="20" VerticalAlignment="Center">
             <TextBlock Text="Servidor (Host):" Foreground="{StaticResource colorTexto}"/>
             <TextBox Text="{Binding Servidor}" Margin="0,5"/>

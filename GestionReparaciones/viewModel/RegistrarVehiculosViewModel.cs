@@ -291,7 +291,7 @@ namespace GestionReparaciones.viewModel
                     VehiculoEditable = true;
                     return;
                 }
-
+                // Buscamos segun la matricula
                 if (MatriculaValida(MatriculaVehiculo))
                 {
                     var vehiculo = _vehiculoRepository.BuscarPorMatricula(MatriculaVehiculo);
@@ -301,10 +301,11 @@ namespace GestionReparaciones.viewModel
                         ModeloVehiculo = vehiculo.Modelo;
                         MotivoIngresoVehiculo = vehiculo.MotivoIngreso;
                         DescripcionVehiculo = vehiculo.Descripcion;
-                        VehiculoEditable = false; 
+                        VehiculoEditable = false; // Si lo encuentra se vuelve no editable
                     }
                     else
                     {
+                        // Si no lo encuentra se vuelve editable
                         VehiculoEditable = true;
                     }
                 }
@@ -328,7 +329,7 @@ namespace GestionReparaciones.viewModel
                     ClienteEditable = true;
                     return;
                 }
-
+                // Buscamos al cliente
                 if (string.IsNullOrEmpty(this[nameof(DniCliente)]))
                 {
                     var cliente = _clienteRepository.ObtenerPorDni(DniCliente);
@@ -336,11 +337,11 @@ namespace GestionReparaciones.viewModel
                     {
                         NombreCliente = cliente.Nombre;
                         TelefonoCliente = cliente.Telefono;
-                        ClienteEditable = false; 
+                        ClienteEditable = false; // Si lo encuentra se vuelve no editable los campos
                     }
                     else
                     {
-                        ClienteEditable = true;
+                        ClienteEditable = true; // Si no lo encuentra se vuelve editable
                     }
                 }
                 else
@@ -355,7 +356,7 @@ namespace GestionReparaciones.viewModel
         }
         private void AgregarVehiculoCliente(object obj)
         {
-            // Obtener el ID del mecánico desde el hilo actual
+            // Obtener el ID del mecanico desde el hilo actual
             var identity = Thread.CurrentPrincipal?.Identity as IdentidadMecanico;
             var idMecanico = identity?.Name;
 
@@ -399,6 +400,7 @@ namespace GestionReparaciones.viewModel
                     MotivoIngreso = MotivoIngresoVehiculo,
                     Descripcion = DescripcionVehiculo
                 };
+                // Guardamos el vehiculo y el cliente 
                 _CVRepository.GuardarClienteVehiculoYAsignar(clienteA, vehiculoA, idMecanico, Asignar);
                 MessageBox.Show("Cliente y vehiculo registrados/activados correctamente.");
 
@@ -446,6 +448,7 @@ namespace GestionReparaciones.viewModel
             {
                 try
                 {
+                    // Si ya esta en taller no se puede agregar
                     if (_CVRepository.BuscarVehiculoEnTaller(MatriculaVehiculo))
                     {
                         VehiculoEnTaller = true;

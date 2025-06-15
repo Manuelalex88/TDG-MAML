@@ -92,6 +92,7 @@ namespace GestionReparaciones.viewModel.viewModelAdmin
         public void MostrarFacturasAdmin (object obj)
         {
             string admin = "h0";
+            //Mostrar las facturas del admin osea todas
             try
             {
                 FacturaList.Clear();
@@ -117,7 +118,7 @@ namespace GestionReparaciones.viewModel.viewModelAdmin
                 MessageBox.Show("No se pudo determinar la facturaEliminar a borrar.");
                 return;
             }
-
+            // Borrar factura
             try
             {
                 _facturaRepository.EliminarFacturaSeleccionada(facturaEliminar.IdFactura);
@@ -140,7 +141,7 @@ namespace GestionReparaciones.viewModel.viewModelAdmin
                 MessageBox.Show("No se pudo determinar la factura a descargar.");
                 return;
             }
-
+            // Descargar factura
             try
             {
                 QuestPDF.Settings.License = QuestPDF.Infrastructure.LicenseType.Community;

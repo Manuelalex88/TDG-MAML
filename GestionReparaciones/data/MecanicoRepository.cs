@@ -15,7 +15,7 @@ namespace GestionReparaciones.repository
                 using (var conn = GetConexion())
                 {
                     conn.Open();
-
+                    // Para la comprobacion del login
                     string query = "SELECT id, nombre FROM Mecanico WHERE id = @id AND contrasena = @contrasena";
 
                     using (var cmd = new NpgsqlCommand(query, conn))
@@ -52,6 +52,7 @@ namespace GestionReparaciones.repository
                 using (var connection = GetConexion())
                 {
                     connection.Open();
+                    // Para obtener los mecanicos (todos)
                     string query = @"SELECT id, nombre, contrasena FROM mecanico";
 
                     using (var command = new NpgsqlCommand(query, connection))
@@ -87,7 +88,7 @@ namespace GestionReparaciones.repository
             {
                 using var conn = GetConexion();
                 conn.Open();
-
+                // Obtener los mecanicos por su id
                 string query = @"SELECT id, nombre, contrasena FROM mecanico WHERE id = @id";
 
                 using var cmd = new NpgsqlCommand(query, conn);
@@ -117,7 +118,7 @@ namespace GestionReparaciones.repository
             {
                 using var conn = GetConexion();
                 conn.Open();
-
+                // Eliminar al mecanico
                 string query = @"DELETE FROM mecanico WHERE id = @id";
 
                 using var cmd = new NpgsqlCommand(query, conn);
@@ -136,7 +137,7 @@ namespace GestionReparaciones.repository
             {
                 using var conn = GetConexion();
                 conn.Open();
-
+                // Registrar un nuevo mecanico si no esta repetido el id
                 string query = @"INSERT INTO mecanico (id,nombre,contrasena) VALUES (@id, @nombre, @contrasena) ON CONFLICT (id) DO NOTHING";
 
                 using( var cmd = new NpgsqlCommand(query, conn))
@@ -158,7 +159,7 @@ namespace GestionReparaciones.repository
             {
                 using var conn = GetConexion();
                 conn.Open();
-
+                // Modificamos un mecanico 
                 string query = @"UPDATE mecanico SET id = @nuevoId, nombre = @nombre, contrasena = @contrasena WHERE id = @idOriginal;"; 
 
                 using (var cmd = new NpgsqlCommand(query, conn))
@@ -178,6 +179,7 @@ namespace GestionReparaciones.repository
         public bool TestConexion()
         {
             using var conexion = GetConexion();
+            // Es un test para la conexion que se usa para el icono
             try
             {
                 conexion.Open();
@@ -194,7 +196,7 @@ namespace GestionReparaciones.repository
             {
                 using var conn = GetConexion();
                 conn.Open();
-
+                // Si esta relacionado el mecanico con alguna reparacion
                 string query = "SELECT EXISTS (SELECT 1 FROM reparacion WHERE mecanico_id = @id);";
 
                 using var cmd = new NpgsqlCommand(query, conn);
@@ -206,7 +208,7 @@ namespace GestionReparaciones.repository
             catch (Exception ex)
             {
                 MessageBox.Show($"Error al verificar relaciones del mecánico: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                return true; // Por seguridad, si hay error asumimos que esta relacionado
+                return true; // Por seguridad, si hay error asumimos que esta relacionado para que no falle 
             }
         }
     }

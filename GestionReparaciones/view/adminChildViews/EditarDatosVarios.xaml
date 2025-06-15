@@ -27,7 +27,7 @@
             <!-- Espacio flexible -->
         </Grid.RowDefinitions>
 
-        <!-- Sección Datos Factura -->
+        <!-- Seccion Datos Factura -->
         <StackPanel Grid.Row="0" Margin="0,0,0,10">
             <GroupBox Header="Datos de la Factura" FontWeight="Bold" FontSize="14" Padding="10" Style="{StaticResource gbocStilos}">
                 <Grid>

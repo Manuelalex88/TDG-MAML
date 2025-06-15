@@ -18,7 +18,7 @@ namespace GestionReparaciones.data
             {
                 connection.Open();
                 using (var command = new NpgsqlCommand())
-                {
+                {   //Guardamos los datos en historial_facturaa
                     command.Connection = connection;
                     command.CommandText = @"
                                 INSERT INTO historial_factura (
@@ -56,7 +56,7 @@ namespace GestionReparaciones.data
             var lista = new List<HistorialFactura>();
             string idAdmin = "h0";
             try
-            {
+            { // Mostramos facturas por mecanico desde historial_factura
                 using (var connection = GetConexion())
                 {
                     connection.Open();
@@ -68,7 +68,7 @@ namespace GestionReparaciones.data
                             vehiculo_matricula, vehiculo_marca, vehiculo_modelo, mecanico_nombre, total, mecanico_id
                           FROM historial_factura";
                     }
-                    else  
+                    else  // Si es el admin muestra todas
                     {
                         query = @"SELECT id, factura_id, cliente_dni, cliente_nombre, cliente_telefono, 
                             vehiculo_matricula, vehiculo_marca, vehiculo_modelo, mecanico_nombre, total, mecanico_id
@@ -124,7 +124,7 @@ namespace GestionReparaciones.data
             {
                 using var conn = GetConexion();
                 conn.Open();
-
+                // Elimina la factura
                 string query = "DELETE FROM historial_factura WHERE id = @id";
 
                 using var cmd = new NpgsqlCommand(query, conn);

@@ -79,7 +79,7 @@ namespace GestionReparaciones.viewModel
             _mensajeError = string.Empty;
             _nombreTaller = string.Empty;
             //Nombre Taller
-            NombreTaller = DatosConstantes.NombreTaller;
+            NombreTaller = DatosConstantesEstaticos.NombreTaller;
             //Comandos
             LoginCommand = new comandoViewModel(ExecuteLoginCommand, CanExecuteLoginCommand);
             AbrirConfiguracionBDCommand = new comandoViewModel(ExecuteAbrirConfiguracionBD);
@@ -129,14 +129,20 @@ namespace GestionReparaciones.viewModel
         }
         private void ExecuteAbrirConfiguracionBD(object obj)
         {
-            var ventanaConfig = new ConfiguracionBD();
-            
-            ventanaConfig.ShowDialog();
+            try
+            {
+                var ventanaConfig = new ConfiguracionBD();
 
+                ventanaConfig.ShowDialog();
+
+
+                var config = GestorConfiguracion.CargarConfiguracion();
+                NombreTaller = config?.NombreTaller ?? "Nombre por defecto";
+                VerificarConexionBD();
+            }catch (Exception ex) {
+                MessageBox.Show($"Error:\n{ex.Message}\n\n{ex.StackTrace}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
             
-            var config = GestorConfiguracion.CargarConfiguracion();
-            NombreTaller = config?.NombreTaller ?? "Nombre por defecto";
-            VerificarConexionBD();
         }
         private void ExecuteLoginCommand(object obj)
         {
@@ -151,7 +157,7 @@ namespace GestionReparaciones.viewModel
                 );
                 return;
             }
-
+            // Pasamos de secureString a string normal para comparar
             IntPtr passwordBSTR = IntPtr.Zero;
             string plainPassword = string.Empty;
             string[] roles;
@@ -166,6 +172,7 @@ namespace GestionReparaciones.viewModel
 
                 if (mecanico != null)
                 {
+                    // Creamos los roles
                     var identity = new IdentidadMecanico(mecanico.Id, mecanico.Nombre);
                     
                     if (mecanico.Nombre.Equals("Administrador", StringComparison.OrdinalIgnoreCase))

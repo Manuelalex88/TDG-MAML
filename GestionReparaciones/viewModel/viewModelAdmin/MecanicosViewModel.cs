@@ -16,7 +16,7 @@ namespace GestionReparaciones.viewModel.viewModelAdmin
         #endregion
 
         #region Campos
-        private Mecanico _mecanicoSeleccionado;
+        private Mecanico? _mecanicoSeleccionado;
         private string _nombreMecanico;
         private string _idMecanico;
         private string _contrasena;
@@ -27,7 +27,7 @@ namespace GestionReparaciones.viewModel.viewModelAdmin
         private MecanicoRepository _mecanicoRepository;
         #endregion
         #region Propiedades
-        public Mecanico MecanicoSeleccionado
+        public Mecanico? MecanicoSeleccionado
         {
             get => _mecanicoSeleccionado;
             set
@@ -114,7 +114,7 @@ namespace GestionReparaciones.viewModel.viewModelAdmin
         //Constructor
         public MecanicosViewModel()
         {
-            //Inicializar
+            // Inicializar
             MecanicoList = new ObservableCollection<Mecanico>();
             _mecanicoList = new ObservableCollection<Mecanico>();
             _mecanicoSeleccionado = null!; 
@@ -129,7 +129,7 @@ namespace GestionReparaciones.viewModel.viewModelAdmin
             ModificarMecanicoCommand = new comandoViewModel(GuardarMecanico);
             EliminarMecanicoCommand = new comandoViewModel(EliminarMecanico);
             NuevoMecanicoCommand = new comandoViewModel(NuevoMecanico);
-            //Carga inicial
+            // Carga inicial
             MostrarMecanicosCommand.Execute(null);
         }
         #region Metodos
@@ -245,7 +245,7 @@ namespace GestionReparaciones.viewModel.viewModelAdmin
 
             try
             {
-
+                // Eliminar mecanico
                 _mecanicoRepository.EliminarMecanico(MecanicoSeleccionado.Id);
                 LimpiarCampos(MecanicoSeleccionado,1);
 

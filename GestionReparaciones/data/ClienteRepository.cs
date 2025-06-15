@@ -17,7 +17,7 @@ namespace GestionReparaciones.data
             Cliente? cliente = null;
 
             try
-            {
+            {   //Obtenemos el cliente segun su dni
                 using (var conn = GetConexion())
                 {
                     conn.Open();

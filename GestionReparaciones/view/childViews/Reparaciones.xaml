@@ -35,7 +35,7 @@
                     </ListView.View>
                 </ListView>
 
-                <!-- Botón Cancelar Reparación -->
+                <!-- Boton Cancelar Reparacion -->
                 <Button Content="Cancelar Reparación"
                 Command="{Binding CancelarReparacionCommand}"
                 Margin="5"
@@ -48,7 +48,7 @@
         <!-- Columna derecha con dos GroupBox -->
         <StackPanel Grid.Column="1" Margin="5" VerticalAlignment="Stretch" >
 
-            <!-- Detalles de Reparación -->
+            <!-- Detalles de Reparacion -->
             <GroupBox Header="Detalles de Reparación" Margin="0,0,0,10" Style="{StaticResource gbocStilos}">
                 <StackPanel Margin="10">
                     <TextBlock Text="Trabajo a realizar:" FontWeight="Bold"/>
@@ -63,12 +63,12 @@
                 </StackPanel>
             </GroupBox>
 
-            <!-- Coste de la reparación -->
+            <!-- Coste de la reparacion -->
             <GroupBox Header="Coste de la reparación" Height="260" Style="{StaticResource gbocStilos}">
                 <Grid Margin="10">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
-                        <!-- Botón mantenimiento + formulario repuesto -->
+                        <!-- Boton mantenimiento + formulario repuesto -->
                         <RowDefinition Height="*"/>
                         <!-- Lista repuestos y mantenimiento -->
                         <RowDefinition Height="Auto"/>
@@ -99,19 +99,19 @@
                                           Foreground="Gray"/>
                             <!--Cantidad del repuesto-->
                             <TextBox Width="50" Text="{Binding CantidadPieza, UpdateSourceTrigger=PropertyChanged}"/>
-                            <!-- Icono Euro justo a la derecha del textbox -->
+                            <!-- Icono lista numerica justo a la derecha del textbox -->
                             <fa:IconImage Icon="ListNumeric"
                                           Width="16" Height="16"
                                           VerticalAlignment="Center"
                                           Margin="2,0,10,0"
                                           Foreground="Gray"/>
-                            <!-- Botón -->
+                            <!-- Boton -->
                             <Button Content="Agregar Repuesto"
                                     Command="{Binding AgregarRepuestoCommand}"
                                     Style="{StaticResource btnChildView}"/>
                         </StackPanel>
                     </StackPanel>
-
+                    <!--Repuestos usados y sus acciones-->
                     <ListView Grid.Row="1" ItemsSource="{Binding RepuestosUsados}" Margin="0,0,0,10"
                               SelectedItem="{Binding RepuestoSeleccionado, Mode=TwoWay}"
                               ItemContainerStyle="{StaticResource EstiloListViewItemHover}"
@@ -124,7 +124,7 @@
                                 <GridViewColumn Header="Eliminar"  Width="Auto">
                                     <GridViewColumn.CellTemplate>
                                         <DataTemplate>
-                                            <Button ToolTip="Descargar Factura" 
+                                            <Button ToolTip="Eliminar Repuesto" 
                                                     Command="{Binding DataContext.BorrarRepuestoCommand, RelativeSource={RelativeSource AncestorType=ListView}}"
                                                     CommandParameter="{Binding}"
                                                     Background="Transparent"

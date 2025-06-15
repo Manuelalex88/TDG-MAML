@@ -129,7 +129,7 @@ namespace GestionReparaciones.viewModel
         // Constructor
         public FacturaViewModel()
         {
-            //Instanciar
+            // Instanciar
             _nombreMecanico = string.Empty;
             _modeloVehiculo = string.Empty;
             _marcaVehiculo = string.Empty ;
@@ -144,18 +144,18 @@ namespace GestionReparaciones.viewModel
             _historialFacturaRepository = new HistorialFacturaRepository();
             FacturasPendientes = new ObservableCollection<FacturaVehiculoClienteDTO>();
 
-            //Identidad Mecanico
+            // Identidad Mecanico
             var identity = Thread.CurrentPrincipal?.Identity as IdentidadMecanico;
             var idMecanico = identity?.Name;
             NombreMecanico = identity?.NombreCompleto ?? "Desconocido";
             IdMecanico = idMecanico ?? string.Empty;
 
-            //Comandos
+            // Comandos
             ConfirmarFacturaCommand = new comandoViewModel(ConfirmarFactura, PuedeGenerarFactura);
             MostrarFacturasPendientesCommand = new comandoViewModel(MostrarFacturasPendientes);
             EliminarFacturaCommand = new comandoViewModel(EliminarLaFactura, PuedeEliminar);
 
-            //Metodos
+            // Metodos
             MostrarFacturasPendientes(null);
         }
 
@@ -198,8 +198,10 @@ namespace GestionReparaciones.viewModel
 
             try
             {
+                // Limpiamos primero la lista
                 FacturasPendientes.Clear();
 
+                // Identidad del mecanico
                 var identity = Thread.CurrentPrincipal?.Identity as IdentidadMecanico;
                 var idMecanico = identity?.Name;
 
@@ -207,7 +209,7 @@ namespace GestionReparaciones.viewModel
                 {
                     return;
                 }
-
+                // Obtenemos las facturas pendientes por mecanico
                 var lista = _facturaRepository.ObtenerFacturasPendientesPorMecanico(idMecanico);
                 foreach (var v in lista)
                 {
@@ -227,6 +229,7 @@ namespace GestionReparaciones.viewModel
             
             try
             {
+                // Elimina la factura seleccionada
                 _facturaRepository.EliminarFacturaSeleccionada(FacturaSeleccionada.Id);
 
                 FacturasPendientes.Remove(FacturaSeleccionada);
@@ -266,7 +269,7 @@ namespace GestionReparaciones.viewModel
                     FechaEmision = DateTime.Now,
                     Total = FacturaSeleccionada.Total
                 };
-
+                // Creamos la factura en el Historial_factura
                 _historialFacturaRepository.GuardarFacturaEnHistorial(historial);
 
                 
@@ -306,7 +309,7 @@ namespace GestionReparaciones.viewModel
                 {
                     Nombre = NombreMecanico
                 };
-
+                // Obtenemos los repuestos usados en esta reparacion
                 var repuestosUsados = _facturaRepository.ObtenerRepuestosUsadosPorReparacion(FacturaSeleccionada.Id);
                 if (repuestosUsados == null || !repuestosUsados.Any())
                 {
@@ -325,12 +328,12 @@ namespace GestionReparaciones.viewModel
                 };
 
                 #endregion
-                string timestamp = DateTime.Now.ToString("yyyy-MM-dd_HHmm");
-                string fileName = $"Factura_{timestamp}.pdf";
-                string ruta = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), fileName);
+                string tiempo = DateTime.Now.ToString("yyyy-MM-dd_HHmm");
+                string nombreArchivo = $"Factura_{tiempo}.pdf";
+                string ruta = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), nombreArchivo);
 
                 factura.GeneratePdf(ruta);
-
+                // Marcamos como facturados los repuestos y la factura pagada
                 _facturaRepository.MarcarRepuestosComoFacturados(FacturaSeleccionada.IdReparacion);
                 _facturaRepository.MarcarFacturaComoPagada(FacturaSeleccionada.Id);
 

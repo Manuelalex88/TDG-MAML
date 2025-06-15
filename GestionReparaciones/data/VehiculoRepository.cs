@@ -25,7 +25,7 @@ namespace GestionReparaciones.data
                 using (var connection = GetConexion())
                 {
                     connection.Open();
-
+                    // Obtenemos los vehiculos que estan en el taller
                     string query = "SELECT matricula, marca, modelo FROM vehiculo WHERE asignado = false AND salida_taller = false";
 
                     using (var command = new NpgsqlCommand(query, connection))
@@ -60,6 +60,7 @@ namespace GestionReparaciones.data
                 using (var conn = GetConexion())
                 {
                     conn.Open();
+                    // Obtenemos los vehiculos que tenemos asignados
                     var query = new NpgsqlCommand(@"
                             SELECT DISTINCT ON (v.matricula) r.id, v.marca, v.modelo, v.matricula,  
                                    r.estado, r.trabajo_a_realizar, r.fecha_inicio
@@ -71,8 +72,8 @@ namespace GestionReparaciones.data
                             ORDER BY v.matricula, r.fecha_inicio DESC;", conn);
 
                     query.Parameters.AddWithValue("@idMecanico", idMecanico);
-                    query.Parameters.AddWithValue("@estado5", DatosConstantes.Estado5);
-                    query.Parameters.AddWithValue("@estado6", DatosConstantes.Estado6);
+                    query.Parameters.AddWithValue("@estado5", DatosConstantesEstaticos.Estado5);
+                    query.Parameters.AddWithValue("@estado6", DatosConstantesEstaticos.Estado6);
 
                     using (var reader = query.ExecuteReader())
                     {
@@ -101,7 +102,7 @@ namespace GestionReparaciones.data
         }
 
 
-        // Elimina todos los repuestos asociados a una reparación de un vehículo por matrícula
+        
         public void CancelarReparacionPorMatricula(string matricula)
         {
             try
@@ -109,6 +110,7 @@ namespace GestionReparaciones.data
                 using (var connection = GetConexion())
                 {
                     connection.Open();
+                    // Elimina todos los repuestos asociados a una reparación de un vehículo por matrícula
                     using (var transaction = connection.BeginTransaction())
                     {
                         try
@@ -158,12 +160,12 @@ namespace GestionReparaciones.data
             using var trans = conn.BeginTransaction();
             try
             {
-                // Actualizar vehículo como asignado
+                // Actualizar vehiculo como asignado
                 var updateCmd = new NpgsqlCommand("UPDATE vehiculo SET asignado = true WHERE matricula = @matricula", conn);
                 updateCmd.Parameters.AddWithValue("@matricula", matricula);
                 updateCmd.ExecuteNonQuery();
 
-                // Consultar motivo_ingreso y descripcion del vehículo
+                // Consultar motivo_ingreso y descripcion del vehiculo
                 string motivoIngreso = "Problema sin identificar"; // Valor por defecto
                 string? descripcionProblema = null;
 
@@ -181,10 +183,10 @@ namespace GestionReparaciones.data
 
                 string trabajo = string.IsNullOrWhiteSpace(descripcionProblema) ? motivoIngreso : descripcionProblema;
 
-                // Determinar el estado inicial según el motivo
+                // Determinar el estado inicial segun el motivo
                 string estadoReparacion = motivoIngreso == "Problema sin identificar" ? "Diagnosticando" : "En Reparacion";
 
-                // Insertar reparación
+                // Insertar reparacion
                 var insertCmd = new NpgsqlCommand(@"
                             INSERT INTO reparacion (matricula_vehiculo, mecanico_id, trabajo_a_realizar, estado, fecha_inicio)
                             VALUES (@matricula, @mecanicoId, @trabajo, @estado, @fechaInicio)", conn);
@@ -211,7 +213,7 @@ namespace GestionReparaciones.data
             {
                 using var conn = GetConexion();
                 conn.Open();
-
+                // Marcamos la salida del taller
                 using var cmd = new NpgsqlCommand("UPDATE vehiculo SET salida_taller = true WHERE matricula = @matricula", conn);
                 cmd.Parameters.AddWithValue("matricula", matricula);
                 cmd.ExecuteNonQuery();
@@ -230,6 +232,7 @@ namespace GestionReparaciones.data
                 using (var conn = GetConexion())
                 {
                     conn.Open();
+                    // Buscamos el vehiculo por matricula
                     const string sql = "SELECT marca, modelo FROM vehiculo WHERE matricula = @matricula";
                     using (var cmd = new NpgsqlCommand(sql, conn))
                     {

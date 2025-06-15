@@ -3,7 +3,7 @@ using System.IO;
 
 namespace GestionReparaciones.data
 {
-    public static class DatosConstantes
+    public static class DatosConstantesEstaticos
     {
         #region Constantes fijas
         public const decimal MantenimientoBasico = 120.00m;
@@ -89,7 +89,24 @@ namespace GestionReparaciones.data
         #endregion
 
         #region Inicializacion estatica
-        static DatosConstantes()
+        static DatosConstantesEstaticos()
+        {
+            var config = GestorConfiguracion.CargarConfiguracion();
+
+            _nombreTaller = config?.NombreTaller ?? "Nombre por defecto";
+            _iva = config?.IVA ?? 21;
+            _manoObra = config?.ManoObra ?? 0;
+
+            _calle = config?.Calle ?? string.Empty;
+            _municipio = config?.Municipio ?? string.Empty;
+            _ciudad = config?.Ciudad ?? string.Empty;
+            _telefono = config?.Telefono ?? string.Empty;
+            _email = config?.Email ?? string.Empty;
+            _cif = config?.CIF ?? string.Empty;
+        }
+
+        //Recarga la configuracion del JSON
+        public static void RecargarConfiguracion()
         {
             var config = GestorConfiguracion.CargarConfiguracion();
 

@@ -38,7 +38,7 @@ namespace GestionReparaciones.data
                             cmdCliente.ExecuteNonQuery();
                         }
 
-                        // Insertar vehículo
+                        // Insertar vehiculo
                         string insertVehiculo = @"
                                 INSERT INTO vehiculo (matricula, marca, modelo, motivo_ingreso, descripcion, asignado, salida_taller)
                                 VALUES (@matricula, @marca, @modelo, @motivo_ingreso, @descripcion, @asignado, @salida_taller)
@@ -55,7 +55,7 @@ namespace GestionReparaciones.data
                             cmdVehiculo.Parameters.AddWithValue("salida_taller", false);
                             cmdVehiculo.ExecuteNonQuery();
                         }
-                        // Eliminar relación anterior (si la hay)
+                        // Eliminar relacion anterior (si la hay)
                         string deleteRelacion = @"
                                 DELETE FROM cliente_vehiculo 
                                 WHERE vehiculo_id = @matricula;";
@@ -65,7 +65,7 @@ namespace GestionReparaciones.data
                             cmdDeleteRelacion.Parameters.AddWithValue("matricula", v.Matricula ?? (object)DBNull.Value);
                             cmdDeleteRelacion.ExecuteNonQuery();
                         }
-                        // Insertar relación cliente-vehículo
+                        // Insertar relacion cliente-vehículo
                         string insertRelacion = @"
                                 INSERT INTO cliente_vehiculo (cliente_id, vehiculo_id)
                                 VALUES (@dni, @matricula)
@@ -76,10 +76,10 @@ namespace GestionReparaciones.data
                             cmdRelacion.Parameters.AddWithValue("matricula", v.Matricula ?? (object)DBNull.Value);
                             cmdRelacion.ExecuteNonQuery();
                         }
-
+                        //Si se asigna crearmos una reparacion
                         if (asignar)
                         {
-                            string estadoReparacion = v.MotivoIngreso == "Problema sin identificar" ? "Diagnosticando" : "En Reparacion";
+                            string estadoReparacion = v.MotivoIngreso == "Problema sin identificar" || v.MotivoIngreso == "Diagnóstico de motor" ? "Diagnosticando" : "En Reparacion";
                             string insertReparacion = @"
                                     INSERT INTO reparacion (matricula_vehiculo, fecha_inicio, trabajo_a_realizar, mecanico_id, estado)
                                     VALUES (@matricula, @fecha_inicio, @trabajo_a_realizar, @mecanico_id, @estado);";
@@ -112,7 +112,7 @@ namespace GestionReparaciones.data
             using (var conn = GetConexion())
             {
                 conn.Open();
-
+                //Buscar vehiculo con la matricula
                 string query = @"
                         SELECT COUNT(*) 
                         FROM vehiculo 

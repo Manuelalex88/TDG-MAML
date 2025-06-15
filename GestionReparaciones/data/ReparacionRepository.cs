@@ -18,18 +18,18 @@ namespace GestionReparaciones.data
             using var transaction = conn.BeginTransaction();
             try
             {
-                // Obtener ID de reparación actual
+                // Obtener ID de reparacion actual
                 int reparacionId;
                 using (var cmdGetId = new NpgsqlCommand("SELECT id FROM reparacion WHERE matricula_vehiculo = @matricula AND estado <> @estadoFinalizado;", conn, transaction))
                 {
                     cmdGetId.Parameters.AddWithValue("matricula", vehiculo.Matricula);
-                    cmdGetId.Parameters.AddWithValue("estadoFinalizado", DatosConstantes.Estado6);
+                    cmdGetId.Parameters.AddWithValue("estadoFinalizado", DatosConstantesEstaticos.Estado6);
                     reparacionId = Convert.ToInt32(cmdGetId.ExecuteScalar());
                 }
 
                 
 
-                // Actualizar reparación
+                // Actualizar reparacion
                 string updateReparacion = @"
                             UPDATE reparacion
                             SET trabajo_a_realizar = @trabajo, estado = @estado
@@ -95,13 +95,13 @@ namespace GestionReparaciones.data
 
             try
             {
-                // Actualizar reparación
+                // Actualizar reparacion
                 using (var cmd = new NpgsqlCommand(@"
                         UPDATE reparacion
                         SET estado = @estado, fecha_fin = @fechaFin
                         WHERE id = @id;", conn, transaction))
                 {
-                    cmd.Parameters.AddWithValue("estado", DatosConstantes.Estado6);
+                    cmd.Parameters.AddWithValue("estado", DatosConstantesEstaticos.Estado6);
                     cmd.Parameters.AddWithValue("fechaFin", DateTime.Now);
                     cmd.Parameters.AddWithValue("id", reparacionId);
                     cmd.ExecuteNonQuery();
@@ -149,7 +149,7 @@ namespace GestionReparaciones.data
             {
                 using var conn = GetConexion();
                 conn.Open();
-
+                // Obtenemos los repuestos usados en la reparacion
                 string query = @"
                         SELECT ru.id, r.nombre, r.precio, ru.cantidad
                         FROM repuesto_usado ru
@@ -189,13 +189,13 @@ namespace GestionReparaciones.data
             {
                 using var conn = GetConexion();
                 conn.Open();
-
+                // Obtenemos el id de la reparacion desde la matricula del vehiculo
                 using var cmd = new NpgsqlCommand("SELECT id FROM reparacion WHERE matricula_vehiculo = @matricula AND estado <> @estadoFinalizado;", conn);
                 cmd.Parameters.AddWithValue("matricula", matricula);
-                cmd.Parameters.AddWithValue("estadoFinalizado", DatosConstantes.Estado6);
+                cmd.Parameters.AddWithValue("estadoFinalizado", DatosConstantesEstaticos.Estado6);
                 var result = cmd.ExecuteScalar();
                 if (result == null || result == DBNull.Value)
-                    return -1; // o valor que indique no encontrado
+                    return -1; // Si no lo encuentra
 
                 return Convert.ToInt32(result);
             }
@@ -220,13 +220,13 @@ namespace GestionReparaciones.data
                 using var cmdRepuestos = new NpgsqlCommand(queryRepuestos, conn, transaction);
                 cmdRepuestos.Parameters.AddWithValue("reparacionId", reparacionId);
 
-                object result = cmdRepuestos.ExecuteScalar();
+                object result = cmdRepuestos.ExecuteScalar(); //No se por que da null exeption
 
                 decimal totalRepuestos = Convert.ToDecimal(result ?? 0m);
                 //Calculo del total mas mano de obra
-                decimal subtotal = totalRepuestos + DatosConstantes.ManoObra;
+                decimal subtotal = totalRepuestos + DatosConstantesEstaticos.ManoObra;
                 //Calculo iva
-                decimal iva = subtotal * (DatosConstantes.Iva / 100m);
+                decimal iva = subtotal * (DatosConstantesEstaticos.Iva / 100m);
                 //Total 
                 decimal totalConIva = subtotal + iva;
 
@@ -246,7 +246,7 @@ namespace GestionReparaciones.data
             {
                 using var connection = GetConexion();
                 connection.Open();
-
+                // Eliminar los repuestos usados de esa reparacion
                 using var command = new NpgsqlCommand("DELETE FROM repuesto_usado WHERE id = @id", connection);
                 command.Parameters.AddWithValue("@id", repuestoUsadoId);
 

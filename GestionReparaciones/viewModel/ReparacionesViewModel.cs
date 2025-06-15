@@ -225,13 +225,13 @@ namespace GestionReparaciones.viewModel
             try
             {
 
-                // Finalizar reparación
+                // Finalizar reparacion
                 var reparacionId = VehiculoSeleccionado.IdReparacion;
                 _reparacionRepository.FinalizarReparacionActual(VehiculoSeleccionado, reparacionId);
 
                 MessageBox.Show("Reparación finalizada correctamente.");
 
-                // Actualizar UI
+                // Actualizar la interfaz
                 VehiculosAsignados.Clear();
                 VehiculosAsignadosActualmente();
 
@@ -251,7 +251,7 @@ namespace GestionReparaciones.viewModel
 
             if (RepuestoSeleccionado != null)
             {
-                // Obtén índice del repuesto seleccionado en la colección
+                // Obtener el indice del repuesto seleccionado en la coleccion
                 int index = RepuestosUsados.IndexOf(RepuestoSeleccionado);
                 if (index >= 0)
                 {
@@ -264,7 +264,7 @@ namespace GestionReparaciones.viewModel
                     };
                 }
 
-                // Limpiar selección y campos
+                // Limpiar seleccion y campos
                 RepuestoSeleccionado = null;
                 NuevoRepuesto = string.Empty;
                 RepuestoPrecio = 0;
@@ -299,7 +299,7 @@ namespace GestionReparaciones.viewModel
 
             if (!_mantenimientoAgregado)
             {
-                // Agregar mantenimiento básico
+                // Agregar mantenimiento basico
                 RepuestosUsados.Add(new RepuestoUsadoDTO { Nombre = "FILTROS", Precio = 20, Cantidad = 3 });
                 RepuestosUsados.Add(new RepuestoUsadoDTO { Nombre = "ACEITE", Precio = 40, Cantidad = 1 });
                 RepuestosUsados.Add(new RepuestoUsadoDTO { Nombre = "ANTICONGELANTE", Precio = 20, Cantidad = 1 });
@@ -308,7 +308,7 @@ namespace GestionReparaciones.viewModel
             }
             else
             {
-                // Quitar mantenimiento básico
+                // Quitar mantenimiento basico
                 var itemsAEliminar = RepuestosUsados.Where(r => nombresMantenimiento.Contains(r.Nombre)).ToList();
                 foreach (var item in itemsAEliminar)
                 {
@@ -329,10 +329,10 @@ namespace GestionReparaciones.viewModel
             try
             {
                 string matricula = VehiculoSeleccionado.Matricula;
-
+                // Cancelamos la reparacion
                 _vehiculoRepository.CancelarReparacionPorMatricula(matricula);
 
-                // Limpia UI 
+                // Limpia la interfaz
                 RepuestosUsados.Clear();
                 VehiculosAsignados.Remove(VehiculoSeleccionado);
                 VehiculoSeleccionado = null;
@@ -358,6 +358,7 @@ namespace GestionReparaciones.viewModel
 
             try
             {
+                // Obtenemos los vehiculos asignados
                 VehiculosAsignados.Clear();
                 var lista = _vehiculoRepository.ObtenerVehiculosAsignados(idMecanico);
                 foreach (var v in lista)
@@ -379,6 +380,7 @@ namespace GestionReparaciones.viewModel
             }
             try
             {
+                //Borramos el repuesto
                 RepuestosUsados.Remove(repuestoBorrar);
 
                 if (VehiculoSeleccionado != null)

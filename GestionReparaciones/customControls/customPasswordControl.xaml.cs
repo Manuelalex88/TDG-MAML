@@ -17,26 +17,36 @@ using System.Windows.Shapes;
 namespace GestionReparaciones.customControls
 {
     /// <summary>
-    /// Lógica de interacción para customPasswordControl.xaml
+    /// Logica de interaccion para customPasswordControl.xaml
     /// </summary>
     public partial class customPasswordControl : UserControl
     {
+        // Define una DependencyProperty llamada "Password" que permite el enlace (binding) de datos seguros.
         public static readonly DependencyProperty PasswordProperty =
             DependencyProperty.Register("Password", typeof(SecureString), typeof(customPasswordControl));
+
+        // Propiedad CLR que encapsula la DependencyProperty. Permite acceso a la contraseña como SecureString.
         public SecureString Password
         {
-            get {  return (SecureString)GetValue(PasswordProperty);}
+            get { return (SecureString)GetValue(PasswordProperty); }
             set { SetValue(PasswordProperty, value); }
         }
+
+        // Constructor del control. Inicializa el componente y asocia el evento de cambio de contraseña.
         public customPasswordControl()
         {
             InitializeComponent();
+
+            // Suscribe el evento PasswordChanged del control PasswordBox llamado "txtPass".
             txtPass.PasswordChanged += OnPasswordChanged;
         }
 
+        // Evento que se dispara cuando el contenido del PasswordBox cambia.
+        // Actualiza la propiedad Password con la contraseña segura del usuario.
         private void OnPasswordChanged(object sender, RoutedEventArgs e)
         {
             Password = txtPass.SecurePassword;
         }
     }
+
 }
