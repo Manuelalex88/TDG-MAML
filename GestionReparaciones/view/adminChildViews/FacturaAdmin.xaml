@@ -1,0 +1,53 @@
+﻿<UserControl x:Class="GestionReparaciones.view.adminChildViews.FacturaAdmin"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:GestionReparaciones.view.adminChildViews"
+             xmlns:viewmodel="clr-namespace:GestionReparaciones.viewModel.viewModelAdmin"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <!--Le pasamos el contexto del viewmodel-->
+    <UserControl.DataContext>
+        <viewmodel:FacturasAdminViewModel/>
+    </UserControl.DataContext>
+
+
+    <Grid>
+        <ListView x:Name="FacturaListViewControl" ItemsSource="{Binding FacturaList}" Style="{StaticResource EstiloListViewFacturas}">
+            <!--Estilo de la barra-->
+            <ListView.Resources>
+                <Style TargetType="ScrollBar" BasedOn="{StaticResource ScrollBarHorizontalRedondeada}" />
+            </ListView.Resources>
+            <ListView.View>
+                <GridView ColumnHeaderContainerStyle="{StaticResource EstiloEncabezadoGridView}">
+                    <!--Columna de acciones para descargar y eliminar-->
+                    <GridViewColumn Header="Acciones" Width="150">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" >
+                                    <Button Content="Descargar" Margin="0,0,5,0" 
+                                        Command="{Binding DataContext.DescargarFacturaCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                        CommandParameter="{Binding}" Style="{StaticResource btnChildView}"/>
+                                    <Button Content="Eliminar" 
+                                        Command="{Binding DataContext.BorrarFacturaCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                        CommandParameter="{Binding}" Style="{StaticResource btnChildView}"/>
+                                </StackPanel>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                    <!--El resto de columnas necesarias-->
+                    <GridViewColumn Header="Nombre Mecanico" Width="Auto" DisplayMemberBinding="{Binding MecanicoNombre}" />
+                    <GridViewColumn Header="Nombre del Cliente" Width="Auto" DisplayMemberBinding="{Binding NombreCliente}" />
+                    <GridViewColumn Header="DNI Cliente" Width="Auto" DisplayMemberBinding="{Binding DniCliente}" />
+                    <GridViewColumn Header="Telefono Cliente" Width="Auto" DisplayMemberBinding="{Binding TelefonoCliente}" />
+                    <GridViewColumn Header="Marca Vehiculo" Width="Auto" DisplayMemberBinding="{Binding VehiculoMarca}" />
+                    <GridViewColumn Header="Matricula Vehiculo" Width="Auto" DisplayMemberBinding="{Binding VehiculoMatricula}" />
+                    <GridViewColumn Header="Fecha Emisión" Width="Auto" DisplayMemberBinding="{Binding FechaEmision, StringFormat={}{0:dd/MM/yyyy}}" />
+                    <GridViewColumn Header="Total" Width="Auto" DisplayMemberBinding="{Binding Total, StringFormat=C}" />
+                    
+                </GridView>
+            </ListView.View>
+        </ListView>
+    </Grid>
+</UserControl>
