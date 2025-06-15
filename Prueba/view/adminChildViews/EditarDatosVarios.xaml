@@ -57,15 +57,66 @@
 
                     <!-- Teléfono -->
                     <TextBlock Text="Teléfono:" Grid.Column="2" VerticalAlignment="Center" Margin="10,0,5,5" Foreground="{StaticResource colorTexto}"/>
-                    <TextBox Grid.Column="3" Text="{Binding Telefono, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,5" />
+                    <TextBox Grid.Column="3" Text="{Binding Telefono, 
+                        Mode=TwoWay, 
+                        UpdateSourceTrigger=PropertyChanged, 
+                        ValidatesOnDataErrors=True,
+                        NotifyOnValidationError=True}" Margin="0,0,0,5" >
+                        <TextBox.Style>
+                            <!--Para que el tooltip muestre el mensaje de error si lo pones mal-->
+                            <Style TargetType="TextBox">
+                                <Style.Triggers>
+                                    <Trigger Property="Validation.HasError" Value="True">
+                                        <Setter Property="ToolTip" 
+                                                Value="{Binding RelativeSource={RelativeSource Self}, 
+                                                Path=(Validation.Errors)[0].ErrorContent}" />
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBox.Style>
+                    </TextBox>
 
                     <!-- Email -->
                     <TextBlock Text="Email:" Grid.Row="1" Grid.Column="2" VerticalAlignment="Center" Margin="10,0,5,5" Foreground="{StaticResource colorTexto}"/>
-                    <TextBox Grid.Row="1" Text="{Binding Email, UpdateSourceTrigger=PropertyChanged}" Grid.Column="3" />
+                    <TextBox Grid.Row="1" Text="{Binding Email, 
+                        Mode=TwoWay, 
+                        UpdateSourceTrigger=PropertyChanged, 
+                        ValidatesOnDataErrors=True,
+                        NotifyOnValidationError=True}" Grid.Column="3">
+                        <TextBox.Style>
+                            <!--Para que el tooltip muestre el mensaje de error si lo pones mal-->
+                            <Style TargetType="TextBox">
+                                <Style.Triggers>
+                                    <Trigger Property="Validation.HasError" Value="True">
+                                        <Setter Property="ToolTip" 
+                                                Value="{Binding RelativeSource={RelativeSource Self}, 
+                                                Path=(Validation.Errors)[0].ErrorContent}" />
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBox.Style>
+                    </TextBox>
 
                     <!-- CIF -->
                     <TextBlock Text="CIF:" Grid.Row="2" Grid.Column="2" VerticalAlignment="Center" Margin="10,0,5,5" Foreground="{StaticResource colorTexto}"/>
-                    <TextBox Grid.Row="2" Text="{Binding CIF, UpdateSourceTrigger=PropertyChanged}" Grid.Column="3" />
+                    <TextBox Grid.Row="2" Text="{Binding CIF,
+                        Mode=TwoWay, 
+                        UpdateSourceTrigger=PropertyChanged, 
+                        ValidatesOnDataErrors=True,
+                        NotifyOnValidationError=True}" Grid.Column="3" >
+                        <TextBox.Style>
+                            <!--Para que el tooltip muestre el mensaje de error si lo pones mal-->
+                            <Style TargetType="TextBox">
+                                <Style.Triggers>
+                                    <Trigger Property="Validation.HasError" Value="True">
+                                        <Setter Property="ToolTip" 
+                                                Value="{Binding RelativeSource={RelativeSource Self}, 
+                                                Path=(Validation.Errors)[0].ErrorContent}" />
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBox.Style>
+                    </TextBox>
                 </Grid>
             </GroupBox>
             <Button Content="Guardar Datos Factura" Width="160" Command="{Binding GuardarDatosFacturaCommand}"
@@ -100,14 +151,50 @@
 
                     <!-- Mano de Obra -->
                     <TextBlock Text="Mano de Obra (€):" VerticalAlignment="Center" Margin="0,0,5,0" Foreground="{StaticResource colorTexto}"/>
-                    <TextBox Grid.Column="1" Text="{Binding ManoObra, UpdateSourceTrigger=PropertyChanged}" Width="150" />
+                    <TextBox Grid.Column="1" Text="{Binding ManoObra, 
+                        Mode=TwoWay, 
+                        UpdateSourceTrigger=PropertyChanged, 
+                        ValidatesOnDataErrors=True,
+                        ValidatesOnExceptions=True,
+                        NotifyOnValidationError=True}" Width="150" >
+                        <TextBox.Style>
+                            <!--Para que el tooltip muestre el mensaje de error si lo pones mal-->
+                            <Style TargetType="TextBox">
+                                <Style.Triggers>
+                                    <Trigger Property="Validation.HasError" Value="True">
+                                        <Setter Property="ToolTip" 
+                                                Value="{Binding RelativeSource={RelativeSource Self}, 
+                                                Path=(Validation.Errors)[0].ErrorContent}" />
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBox.Style>
+                    </TextBox>
 
                     <!-- IVA -->
                     <TextBlock Text="IVA (%):" Grid.Column="2" VerticalAlignment="Center" Margin="10,0,5,0" Foreground="{StaticResource colorTexto}"/>
-                    <TextBox Grid.Column="3" Text="{Binding IVA, UpdateSourceTrigger=PropertyChanged}" Width="100" />
+                    <TextBox Grid.Column="3" Text="{Binding IVA, 
+                        Mode=TwoWay, 
+                        UpdateSourceTrigger=PropertyChanged, 
+                        ValidatesOnDataErrors=True,
+                        ValidatesOnExceptions=True,
+                        NotifyOnValidationError=True}" Width="100" >
+                        <TextBox.Style>
+                            <!--Para que el tooltip muestre el mensaje de error si lo pones mal-->
+                            <Style TargetType="TextBox">
+                                <Style.Triggers>
+                                    <Trigger Property="Validation.HasError" Value="True">
+                                        <Setter Property="ToolTip" 
+                                                Value="{Binding RelativeSource={RelativeSource Self}, 
+                                                Path=(Validation.Errors)[0].ErrorContent}" />
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBox.Style>
+                    </TextBox>
                 </Grid>
             </GroupBox>
-            <Button Content="Guardar Mano de Obra e IVA" Width="210" Command="{Binding }"
+            <Button Content="Guardar Mano de Obra e IVA" Width="210" Command="{Binding GuardarManoObraIvaCommand}"
                     HorizontalAlignment="Right" Margin="0,5,0,0" Style="{StaticResource btnChildView}"/>
         </StackPanel>
 

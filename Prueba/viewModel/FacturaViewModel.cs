@@ -230,7 +230,7 @@ namespace Prueba.viewModel
                 _facturaRepository.EliminarFacturaSeleccionada(FacturaSeleccionada.Id);
 
                 FacturasPendientes.Remove(FacturaSeleccionada);
-                FacturaSeleccionada = null;
+                FacturaSeleccionada = CrearFacturaPorDefecto();
 
                 MessageBox.Show("Factura eliminada correctamente.");
             }

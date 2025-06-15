@@ -85,7 +85,10 @@
                        Style="{StaticResource GroupBoxText}"
                        Visibility="{Binding MostrarDescripcion, Converter={StaticResource BoolToVisibilityConverter}}"/>
                     
-                <TextBox Text="{Binding DescripcionVehiculo, UpdateSourceTrigger=PropertyChanged}" Width="200"
+                <TextBox Text="{Binding DescripcionVehiculo, UpdateSourceTrigger=PropertyChanged}" 
+                         Width="200" 
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Center"
                          Visibility="{Binding MostrarDescripcion, Converter={StaticResource BoolToVisibilityConverter}}"
                          Background="{StaticResource colorFondo}"/>
 

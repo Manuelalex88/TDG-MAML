@@ -49,5 +49,9 @@ namespace Prueba.viewModel
             action?.Invoke(parameter);
         }
 
+        internal void RaiseCanExecuteChanged()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

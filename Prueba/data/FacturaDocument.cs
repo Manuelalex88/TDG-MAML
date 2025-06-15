@@ -15,6 +15,7 @@ namespace Prueba.data
         string mensaje = $"Gracias por confiar en {DatosConstantes.NombreTaller}. Para dudas o reclamaciones, contacte al +34 666 666 666.";
         string direccion = $"{DatosConstantes.Calle} , {DatosConstantes.Ciudad} , {DatosConstantes.Municipio}"; 
         string telefonoEmail = $"Tel:{DatosConstantes.Telefono} || Email:{DatosConstantes.Email}";
+        string ivatext = $"IVA ({DatosConstantes.Iva})";
         public Vehiculo Vehiculo { get; set; } = new Vehiculo();
         public Mecanico Mecanico { get; set; } = new Mecanico();
         public List<RepuestoUsadoDTO> RepuestosUsados { get; set; } = new List<RepuestoUsadoDTO>();
@@ -137,7 +138,7 @@ namespace Prueba.data
                             });
                             col.Item().Row(row =>
                             {
-                                row.RelativeItem().Text("IVA (21%):");
+                                row.RelativeItem().Text(ivatext);
                                 row.ConstantItem(100).Text($"{iva:C}");
                             });
                             col.Item().Row(row =>

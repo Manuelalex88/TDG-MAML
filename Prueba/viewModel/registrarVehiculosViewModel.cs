@@ -165,52 +165,57 @@ namespace Prueba.viewModel
             set => SetProperty(ref _asignar, value);
         }
         #endregion
-        #region Formatos
+        #region Validaciones (IDataErrorInfo)
         //Para el formato del dni/matricula este correcto 
         public string this[string propertyName]
         {
             get
             {
                 string result = string.Empty;
-                //Para el Dni
-                if (propertyName == nameof(DniCliente))
+                switch (propertyName)
                 {
-                    if (string.IsNullOrWhiteSpace(DniCliente))
-                    {
-                        result = "El DNI es obligatorio.";
-                    }
-                    else if (!Regex.IsMatch(DniCliente, @"^\d{8}[A-Z]$"))
-                    {
-                        result = "El DNI debe tener 8 números seguidos de una letra mayúscula. Ej: 12345678A";
-                    }
-                    else if (!LetraDniValida(DniCliente))
-                    {
-                        result = "La letra del DNI no es válida para los números proporcionados.";
-                    }
-                } //Para la matricula
-                else if (propertyName == nameof(MatriculaVehiculo))
-                {
-                    if (string.IsNullOrWhiteSpace(MatriculaVehiculo))
-                    {
-                        result = "La matrícula es obligatoria.";
-                    }
-                    else if (!MatriculaValida(MatriculaVehiculo))
-                    {
-                        result = "Formato de matrícula inválido. Ejemplo correcto: 1234BCD. Sin vocales ni Ñ.";
-                    }
-                } //Para el telefono
-                else if (propertyName == nameof(TelefonoCliente))
-                {
-                    if (string.IsNullOrWhiteSpace(TelefonoCliente))
-                    {
-                        result = "El teléfono es obligatorio.";
-                    }
-                    else if (!Regex.IsMatch(TelefonoCliente, @"^\d{9}$"))
-                    {
-                        result = "El teléfono debe contener exactamente 9 dígitos numéricos.";
-                    }
-                }
+                        //Fomato DNI
+                    case nameof(DniCliente):
+                        if (string.IsNullOrWhiteSpace(DniCliente))
+                        {
+                            result = "El DNI es obligatorio.";
+                        }
+                        else if (!Regex.IsMatch(DniCliente, @"^\d{8}[A-Z]$"))
+                        {
+                            result = "El DNI debe tener 8 números seguidos de una letra mayúscula. Ej: 12345678A";
+                        }
+                        else if (!LetraDniValida(DniCliente))
+                        {
+                            result = "La letra del DNI no es válida para los números proporcionados.";
+                        }
+                        break;
+                        //Formato Matricula
+                    case nameof(MatriculaVehiculo):
+                        if (string.IsNullOrWhiteSpace(MatriculaVehiculo))
+                        {
+                            result = "La matrícula es obligatoria.";
+                        }
+                        else if (!MatriculaValida(MatriculaVehiculo))
+                        {
+                            result = "Formato de matrícula inválido. Ejemplo correcto: 1234BCD. Sin vocales ni Ñ.";
+                        }
+                        break;
+                        //Formato Telefono
+                    case nameof(TelefonoCliente):
+                        if (string.IsNullOrWhiteSpace(TelefonoCliente))
+                        {
+                            result = "El teléfono es obligatorio.";
+                        }
+                        else if (!Regex.IsMatch(TelefonoCliente, @"^\d{9}$"))
+                        {
+                            result = "El teléfono debe contener exactamente 9 dígitos numéricos.";
+                        }
+                        break;
 
+                    default:
+                        result = string.Empty;
+                        break;
+                }
                 return result;
             }
         }

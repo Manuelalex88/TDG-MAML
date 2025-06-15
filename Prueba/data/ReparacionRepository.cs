@@ -221,8 +221,8 @@ namespace Prueba.data
                 cmdRepuestos.Parameters.AddWithValue("reparacionId", reparacionId);
 
                 object result = cmdRepuestos.ExecuteScalar();
-                decimal totalRepuestos = Convert.ToDecimal(result ?? 0m);
 
+                decimal totalRepuestos = Convert.ToDecimal(result ?? 0m);
                 //Calculo del total mas mano de obra
                 decimal subtotal = totalRepuestos + DatosConstantes.ManoObra;
                 //Calculo iva
