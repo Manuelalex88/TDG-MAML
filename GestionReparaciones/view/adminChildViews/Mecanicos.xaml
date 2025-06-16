@@ -28,6 +28,10 @@
                       Style="{StaticResource EstiloListViewFacturas}"
                       ItemsSource="{Binding MecanicoList}"
                       SelectedItem="{Binding MecanicoSeleccionado, Mode=TwoWay}">
+                <!--Estilo de la barra-->
+                <ListView.Resources>
+                    <Style TargetType="ScrollBar" BasedOn="{StaticResource ScrollBarVerticalRedondeada}" />
+                </ListView.Resources>
                 <ListView.View>
                     <GridView ColumnHeaderContainerStyle="{StaticResource EstiloEncabezadoGridView}">
                         <GridViewColumn Header="ID" Width="Auto" DisplayMemberBinding="{Binding Id}" />

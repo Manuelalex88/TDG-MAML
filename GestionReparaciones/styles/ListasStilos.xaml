@@ -44,8 +44,8 @@
             </Setter.Value>
         </Setter>
     </Style>
-    <!-- Estilo para la barra del ListView -->
-    <Style x:Key="ScrollBarHorizontalRedondeada" TargetType="ScrollBar">
+    <!-- Estilo para la barra Vetical -->
+    <Style x:Key="ScrollBarVerticalRedondeada" TargetType="ScrollBar">
         <Setter Property="Orientation" Value="Vertical"/>
         <Setter Property="Width" Value="20"/>
         <Setter Property="Template">
@@ -84,6 +84,45 @@
             </Setter.Value>
         </Setter>
     </Style>
+    <!-- Estilo para la barra horizontal -->
+    <Style x:Key="ScrollBarHorizontalInferiorRedondeada" TargetType="ScrollBar">
+        <Setter Property="Orientation" Value="Horizontal"/>
+        <Setter Property="Height" Value="16"/>
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ScrollBar">
+                    <Grid Background="Transparent" Height="16">
+                        <Track Name="PART_Track" IsDirectionReversed="False">
+                            <Track.DecreaseRepeatButton>
+                                <RepeatButton Background="Transparent"
+                                          Width="0"
+                                          IsTabStop="False"/>
+                            </Track.DecreaseRepeatButton>
 
+                            <Track.Thumb>
+                                <Thumb Background="{StaticResource colorTexto}" Height="12" Margin="2">
+                                    <Thumb.Template>
+                                        <ControlTemplate TargetType="Thumb">
+                                            <Border Background="{TemplateBinding Background}"
+                                                CornerRadius="6"
+                                                Height="12"
+                                                VerticalAlignment="Center"/>
+                                        </ControlTemplate>
+                                    </Thumb.Template>
+                                </Thumb>
+                            </Track.Thumb>
+
+                            <Track.IncreaseRepeatButton>
+                                <RepeatButton Background="Transparent"
+                                          Width="0"
+                                          IsTabStop="False"/>
+                            </Track.IncreaseRepeatButton>
+                        </Track>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
 </ResourceDictionary>
 

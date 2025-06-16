@@ -54,7 +54,7 @@
                               ItemContainerStyle="{StaticResource EstiloListViewItemHover}">
                         <!--Estilo del scrollbar-->
                         <ListView.Resources>
-                            <Style TargetType="ScrollBar" BasedOn="{StaticResource ScrollBarHorizontalRedondeada}" />
+                            <Style TargetType="ScrollBar" BasedOn="{StaticResource ScrollBarVerticalRedondeada}" />
                         </ListView.Resources>
                         <ListView.View>
                             <GridView ColumnHeaderContainerStyle="{StaticResource EstiloEncabezadoGridView}">
@@ -118,7 +118,7 @@
                               ItemContainerStyle="{StaticResource EstiloListViewItemHover}">
                         <!--Estilo del scrollbar-->
                         <ListView.Resources>
-                            <Style TargetType="ScrollBar" BasedOn="{StaticResource ScrollBarHorizontalRedondeada}" />
+                            <Style TargetType="ScrollBar" BasedOn="{StaticResource ScrollBarVerticalRedondeada}" />
                         </ListView.Resources>
                         <ListView.View>
                             <GridView ColumnHeaderContainerStyle="{StaticResource EstiloEncabezadoGridView}">

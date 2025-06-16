@@ -17,7 +17,7 @@
         <ListView x:Name="FacturaListViewControl" ItemsSource="{Binding FacturaList}" Style="{StaticResource EstiloListViewFacturas}">
             <!--Estilo de la barra-->
             <ListView.Resources>
-                <Style TargetType="ScrollBar" BasedOn="{StaticResource ScrollBarHorizontalRedondeada}" />
+                <Style TargetType="ScrollBar" BasedOn="{StaticResource ScrollBarHorizontalInferiorRedondeada}" />
             </ListView.Resources>
             <ListView.View>
                 <GridView ColumnHeaderContainerStyle="{StaticResource EstiloEncabezadoGridView}">
