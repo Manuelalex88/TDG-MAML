@@ -35,6 +35,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Resource Include="bin\Debug\net8.0-windows\resources\Ayuda_GestionReparaciones.pdf" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Extended.Wpf.Toolkit" Version="4.7.25104.5739" />
     <PackageReference Include="FontAwesome.Sharp" Version="6.6.0" />
     <PackageReference Include="Npgsql" Version="9.0.3" />

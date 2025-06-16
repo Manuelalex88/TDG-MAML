@@ -110,7 +110,7 @@ namespace GestionReparaciones.data
                 using (var connection = GetConexion())
                 {
                     connection.Open();
-                    // Elimina todos los repuestos asociados a una reparación de un vehículo por matrícula
+                    // Elimina todos los repuestos asociados a una reparacion de un vehículo por matricula
                     using (var transaction = connection.BeginTransaction())
                     {
                         try
@@ -124,8 +124,8 @@ namespace GestionReparaciones.data
 
                             int repId = Convert.ToInt32(reparacionId);
 
-                            var deleteRepuestosCmd = new NpgsqlCommand("DELETE FROM repuesto_usado WHERE reparacion_id = @repId", connection);
-                            deleteRepuestosCmd.Parameters.AddWithValue("@repId", repId);
+                            var deleteRepuestosCmd = new NpgsqlCommand("DELETE FROM repuesto_usado WHERE reparacion_id = @reparacion_id", connection);
+                            deleteRepuestosCmd.Parameters.AddWithValue("reparacion_id", repId);
                             deleteRepuestosCmd.ExecuteNonQuery();
 
                             var updateVehiculoCmd = new NpgsqlCommand("UPDATE vehiculo SET asignado = false WHERE matricula = @matricula", connection);
