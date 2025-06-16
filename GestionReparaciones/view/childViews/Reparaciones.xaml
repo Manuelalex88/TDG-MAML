@@ -21,7 +21,7 @@
         <!-- Lista de reparaciones -->
         <GroupBox Header="Reparaciones en curso" Grid.Column="0" Margin="5" Style="{StaticResource gbocStilos}">
             <StackPanel>
-                <ListView Name="ReparacionesListView" Height="327" VerticalAlignment="Top"
+                <ListView Name="ReparacionesListView" Height="auto" VerticalAlignment="Top"
                           ItemsSource="{Binding VehiculosAsignados}"
                           SelectedItem="{Binding VehiculoSeleccionado, Mode=TwoWay}"
                           Style="{StaticResource EstiloListViewFacturas}"

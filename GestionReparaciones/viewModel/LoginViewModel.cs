@@ -69,6 +69,7 @@ namespace GestionReparaciones.viewModel
         public ICommand CloseCommand { get; }
         public ICommand MinimizeCommand { get; }
         public ICommand AbrirConfiguracionBDCommand { get; }
+        public ICommand MostrarMensajeRecuperarAdminCommand { get; }
         #endregion
 
         // Constructor
@@ -82,6 +83,7 @@ namespace GestionReparaciones.viewModel
             NombreTaller = DatosConstantesEstaticos.NombreTaller;
             //Comandos
             LoginCommand = new comandoViewModel(ExecuteLoginCommand, CanExecuteLoginCommand);
+            MostrarMensajeRecuperarAdminCommand = new comandoViewModel(MostrarMensajeRecuperarAdmin);
             AbrirConfiguracionBDCommand = new comandoViewModel(ExecuteAbrirConfiguracionBD);
             CloseCommand = new comandoViewModel(o => ((Window)o!).Close());
             MinimizeCommand = new comandoViewModel(o =>
@@ -206,7 +208,10 @@ namespace GestionReparaciones.viewModel
                     Marshal.ZeroFreeBSTR(passwordBSTR);
             }
         }
-
+        private void MostrarMensajeRecuperarAdmin(Object obj)
+        {
+            MessageBox.Show("Se ha enviado un correo a su cuenta para la recuperación para la contraseña");
+        }
         #endregion
     }
 }

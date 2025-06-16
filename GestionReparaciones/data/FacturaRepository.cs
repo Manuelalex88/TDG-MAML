@@ -15,7 +15,7 @@ namespace GestionReparaciones.data
             try
             {
                 //Mostramos todas las facturas para el admin de historial_factura
-                using(var conn = GetConexion())
+                using (var conn = GetConexion())
                 {
                     conn.Open();
                     string query = @"SELECT 
@@ -54,8 +54,9 @@ namespace GestionReparaciones.data
                         }
                     }
                 }
-               
-            }catch (Exception ex)
+
+            }
+            catch (Exception ex)
             {
                 MessageBox.Show($"Error al obtener las facturas: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
@@ -66,7 +67,7 @@ namespace GestionReparaciones.data
 
         public void MarcarRepuestosComoFacturados(int idReparacion)
         {
-            
+
             using (var connection = GetConexion())
             {
                 connection.Open();
@@ -78,10 +79,10 @@ namespace GestionReparaciones.data
                     cmd.Parameters.AddWithValue("idReparacion", idReparacion);
                     int filasAfectadas = cmd.ExecuteNonQuery();
 
-                    
+
                     if (filasAfectadas == 0)
                     {
-                        
+
                         Console.WriteLine("No se actualizó ningún registro.");
                     }
                     else
@@ -128,8 +129,8 @@ namespace GestionReparaciones.data
                 {
                     lista.Add(new FacturaVehiculoClienteDTO
                     {
-                        Id = reader.GetInt32(0), 
-                        IdReparacion = reader.GetInt32(1), 
+                        Id = reader.GetInt32(0),
+                        IdReparacion = reader.GetInt32(1),
                         FechaEmision = reader.IsDBNull(2) ? null : reader.GetDateTime(2),
                         Total = reader.GetDecimal(3),
                         Marca = reader.GetString(4),
@@ -208,7 +209,7 @@ namespace GestionReparaciones.data
 
         public void MarcarFacturaComoPagada(int facturaId)
         {
-            
+
             try
             {
                 // Marcamos la factura como pagada
@@ -240,25 +241,24 @@ namespace GestionReparaciones.data
 
                 try
                 {
-                    // Obtener el reparacion_id asociado a la factura
-                    string getReparacionIdQuery = "SELECT id_reparacion FROM factura WHERE id = @id";
-                    int reparacionId;
+                    int? reparacionId = null;
 
+                    // Obtener id_reparacion de la factura (si existe)
+                    string getReparacionIdQuery = "SELECT id_reparacion FROM factura WHERE id = @id";
                     using (var getCmd = new NpgsqlCommand(getReparacionIdQuery, conn))
                     {
                         getCmd.Parameters.AddWithValue("id", facturaId);
                         var result = getCmd.ExecuteScalar();
-                        if (result == null)
-                            throw new Exception("No se encontró la reparación asociada a la factura.");
-
-                        reparacionId = Convert.ToInt32(result);
+                        if (result != null && result != DBNull.Value)
+                            reparacionId = Convert.ToInt32(result);
                     }
 
-                    // Eliminar repuestos usados asociados a la reparacion
-                    string deleteRepuestosQuery = "DELETE FROM repuesto_usado WHERE reparacion_id = @repId";
-                    using (var deleteCmd = new NpgsqlCommand(deleteRepuestosQuery, conn))
+                    // Eliminar repuestos usados solo si hay reparacion asociada
+                    if (reparacionId.HasValue)
                     {
-                        deleteCmd.Parameters.AddWithValue("repId", reparacionId);
+                        string deleteRepuestosQuery = "DELETE FROM repuesto_usado WHERE reparacion_id = @repId";
+                        using var deleteCmd = new NpgsqlCommand(deleteRepuestosQuery, conn);
+                        deleteCmd.Parameters.AddWithValue("repId", reparacionId.Value);
                         deleteCmd.ExecuteNonQuery();
                     }
 
@@ -274,7 +274,7 @@ namespace GestionReparaciones.data
                 }
                 catch (Exception)
                 {
-                    transaction.Rollback(); 
+                    transaction.Rollback();
                     throw;
                 }
             }
@@ -283,6 +283,7 @@ namespace GestionReparaciones.data
                 MessageBox.Show($"Error al eliminar la factura: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
+
 
     }
 }
