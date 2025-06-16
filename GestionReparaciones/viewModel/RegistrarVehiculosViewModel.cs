@@ -400,7 +400,7 @@ namespace GestionReparaciones.viewModel
                     MotivoIngreso = MotivoIngresoVehiculo,
                     Descripcion = DescripcionVehiculo
                 };
-                MessageBox.Show(Asignar.ToString());
+
                 // Guardamos el vehiculo y el cliente 
                 _CVRepository.GuardarClienteVehiculoYAsignar(clienteA, vehiculoA, idMecanico, Asignar);
                 MessageBox.Show("Cliente y vehiculo registrados/activados correctamente.");
