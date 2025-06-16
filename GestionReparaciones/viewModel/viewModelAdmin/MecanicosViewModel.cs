@@ -242,11 +242,29 @@ namespace GestionReparaciones.viewModel.viewModelAdmin
                 MessageBox.Show("No se puede eliminar el admin");
                 return;
             }
+            else if (_mecanicoRepository.EstaMecanicoRelacionado(_idOriginalMecanico))
+            {
+                MessageBox.Show("No se puede modificar/eliminar el ID del mecánico porque está relacionado con una reparación o factura.");
+                return;
+            }
+
+            // Aquí añadimos la confirmacion antes de eliminar
+            var resultado = MessageBox.Show(
+                "Al borrar el mecánico también se eliminarán sus reparaciones y los repuestos usados relacionados.\n¿Seguro que quieres continuar?",
+                "Confirmar eliminación",
+                MessageBoxButton.YesNo,
+                MessageBoxImage.Warning);
+
+            if (resultado != MessageBoxResult.Yes)
+            {
+                // El mecanico cancelo el borrado
+                return;
+            }
 
             try
             {
                 // Eliminar mecanico
-                _mecanicoRepository.EliminarMecanico(MecanicoSeleccionado.Id);
+                _mecanicoRepository.EliminarMecanico(_idOriginalMecanico);
                 LimpiarCampos(MecanicoSeleccionado,1);
 
                 MecanicoSeleccionado = null;
@@ -275,6 +293,14 @@ namespace GestionReparaciones.viewModel.viewModelAdmin
                 return;
             }
 
+            // Validacion de campos vacios
+            if (string.IsNullOrWhiteSpace(MecanicoID) ||
+                string.IsNullOrWhiteSpace(NombreMecanico) ||
+                string.IsNullOrWhiteSpace(ContrasenaMecanico))
+            {
+                MessageBox.Show("Todos los campos son obligatorios para crear un nuevo mecánico.");
+                return;
+            }
             try
             {
 

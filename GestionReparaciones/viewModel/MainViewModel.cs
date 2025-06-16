@@ -132,19 +132,29 @@ namespace GestionReparaciones.viewModel
         }
         private void CerrarSesion(object obj)
         {
-            // Crear una nueva instancia de la ventana de login
-            var loginWindow = new Login();
-            loginWindow.Show();
-
-            // Cerrar la ventana actual (MainView)
-            // Buscamos la ventana activa que sea del tipo MainView y la cerramos
-            foreach (Window window in Application.Current.Windows)
+            try
             {
-                if (window is VentanaPrincipal)
+                // Guardamos los datos del JSON que esta en EditarDatosVarios para que no se pierda al cerrar sesion
+                if (Application.Current.Windows.OfType<VentanaPrincipal>().FirstOrDefault()?.DataContext is EditarDatosVariosViewModelcs vm)
                 {
-                    window.Close();
-                    break;
+                    vm.GuardarTodo(); 
                 }
+
+                var loginWindow = new Login();
+                loginWindow.Show();
+
+                foreach (Window window in Application.Current.Windows)
+                {
+                    if (window is VentanaPrincipal)
+                    {
+                        window.Close();
+                        break;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error al cerrar sesión: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
         private void MostrarEditarDatosVarios(object? obj)
@@ -202,6 +212,7 @@ namespace GestionReparaciones.viewModel
             Caption = "Bandeja de Entrada";
             Icon = IconChar.House;
         }
+
 
         #endregion
     }

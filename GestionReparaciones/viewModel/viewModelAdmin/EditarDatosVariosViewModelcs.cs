@@ -313,7 +313,33 @@ namespace GestionReparaciones.viewModel.viewModelAdmin
 
             return camposValidos && sinErrores;
         }
+        public void GuardarTodo()
+        {
+            var config = GestorConfiguracion.CargarConfiguracion() ?? new ConfiguracionApp();
 
+            // Guardar todos los campos antes de cerrar sesion
+            config.NombreTaller = this.NuevoNombreTaller;
+            config.IVA = this.IVA;
+            config.ManoObra = this.ManoObra;
+            config.Calle = this.Calle;
+            config.Municipio = this.Municipio;
+            config.Ciudad = this.Ciudad;
+            config.Telefono = this.Telefono;
+            config.Email = this.Email;
+            config.CIF = this.CIF;
+
+            try
+            {
+                string ruta = DatosConstantesEstaticos.rutaConfiguracion;
+                var opciones = new JsonSerializerOptions { WriteIndented = true };
+                string json = JsonSerializer.Serialize(config, opciones);
+                File.WriteAllText(ruta, json);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error al guardar automáticamente la configuración:\n{ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
         #endregion
     }
 }

@@ -116,6 +116,15 @@ namespace GestionReparaciones.data
                                 }
                             });
                         }
+                        else
+                        {
+                            // Mensaje si no hay repuestos usados
+                            column.Item().PaddingTop(15)
+                                  .Text("Los repuestos utilizados en esta factura han sido eliminados")
+                                  .Italic()
+                                  .FontSize(12)
+                                  .FontColor(Colors.Grey.Darken1);
+                        }
 
                         // Resumen financiero
                         var subtotalRepuestos = RepuestosUsados?.Sum(r => r.Precio * r.Cantidad) ?? 0m;
@@ -146,6 +155,15 @@ namespace GestionReparaciones.data
                                 row.RelativeItem().Text("TOTAL A PAGAR:").Bold().FontSize(14).FontColor(Colors.Green.Darken1);
                                 row.ConstantItem(100).Text($"{totalFinal:C}").Bold().FontSize(14).FontColor(Colors.Green.Darken1);
                             });
+                            // Mensaje adicional si no hay repuestos usados
+                            if (RepuestosUsados == null || !RepuestosUsados.Any())
+                            {
+                                col.Item().PaddingTop(5)
+                                    .Text("(El total no se ha cambiado inclusive los repuestos esten borrados)")
+                                    .Italic()
+                                    .FontSize(10)
+                                    .FontColor(Colors.Grey.Darken2);
+                            }
                         });
 
                         // Mecanico asignado
