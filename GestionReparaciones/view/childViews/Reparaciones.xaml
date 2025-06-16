@@ -20,12 +20,25 @@
 
         <!-- Lista de reparaciones -->
         <GroupBox Header="Reparaciones en curso" Grid.Column="0" Margin="5" Style="{StaticResource gbocStilos}">
-            <StackPanel>
-                <ListView Name="ReparacionesListView" Height="auto" VerticalAlignment="Top"
-                          ItemsSource="{Binding VehiculosAsignados}"
-                          SelectedItem="{Binding VehiculoSeleccionado, Mode=TwoWay}"
-                          Style="{StaticResource EstiloListViewFacturas}"
-                          ItemContainerStyle="{StaticResource EstiloListViewItemHover}">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" />
+                    <!-- Para la lista -->
+                    <RowDefinition Height="Auto" />
+                    <!-- Para el boton -->
+                </Grid.RowDefinitions>
+
+                <ListView Name="ReparacionesListView" Grid.Row="0"
+                  VerticalAlignment="Stretch" HorizontalAlignment="Stretch"
+                  ItemsSource="{Binding VehiculosAsignados}"
+                  SelectedItem="{Binding VehiculoSeleccionado, Mode=TwoWay}"
+                  Style="{StaticResource EstiloListViewFacturas}"
+                  ItemContainerStyle="{StaticResource EstiloListViewItemHover}">
+                    <!--Estilo del scrollbar-->
+                    <ListView.Resources>
+                        <Style TargetType="ScrollBar" BasedOn="{StaticResource ScrollBarHorizontalRedondeada}" />
+                    </ListView.Resources>
+                    
                     <ListView.View>
                         <GridView ColumnHeaderContainerStyle="{StaticResource EstiloEncabezadoGridView}">
                             <GridViewColumn Header="Marca" DisplayMemberBinding="{Binding Marca}" Width="auto"/>
@@ -34,15 +47,15 @@
                         </GridView>
                     </ListView.View>
                 </ListView>
-
-                <!-- Boton Cancelar Reparacion -->
+                 <!--Boton cancelar-->
                 <Button Content="Cancelar Reparación"
+                Grid.Row="1"
                 Command="{Binding CancelarReparacionCommand}"
                 Margin="5"
                 HorizontalAlignment="Center"
                 Width="150"
                 Style="{StaticResource btnChildView}"/>
-            </StackPanel>
+            </Grid>
         </GroupBox>
 
         <!-- Columna derecha con dos GroupBox -->
