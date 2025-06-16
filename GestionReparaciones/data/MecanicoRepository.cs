@@ -196,8 +196,21 @@ namespace GestionReparaciones.repository
             {
                 using var conn = GetConexion();
                 conn.Open();
-                // Si esta relacionado el mecanico con alguna reparacion
-                string query = "SELECT EXISTS (SELECT 1 FROM reparacion WHERE mecanico_id = @id);";
+                // Verifica si el mecánico esta relacionado a reparaciones que NO esten finalizadas
+                string query = @"
+                        SELECT EXISTS (
+                            SELECT 1 FROM reparacion 
+                            WHERE mecanico_id = @id 
+                            AND estado != 'Finalizada'
+                
+                            UNION
+                
+
+                            SELECT 1 FROM factura f
+                            INNER JOIN reparacion r ON f.id_reparacion = r.id
+                            WHERE r.mecanico_id = @id
+                            AND f.pagado = false
+                        );";
 
                 using var cmd = new NpgsqlCommand(query, conn);
                 cmd.Parameters.AddWithValue("@id", idMecanico);
@@ -208,7 +221,7 @@ namespace GestionReparaciones.repository
             catch (Exception ex)
             {
                 MessageBox.Show($"Error al verificar relaciones del mecánico: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                return true; // Por seguridad, si hay error asumimos que esta relacionado para que no falle 
+                return true; // Por seguridad, si hay error asumimos que esta relacionado
             }
         }
     }
