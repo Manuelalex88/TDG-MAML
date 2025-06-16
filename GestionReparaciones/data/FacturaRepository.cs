@@ -235,13 +235,48 @@ namespace GestionReparaciones.data
             {
                 using var conn = GetConexion();
                 conn.Open();
-                // Eliminamos la factura
-                string query = "DELETE FROM factura WHERE id = @id";
 
-                using var cmd = new NpgsqlCommand(query, conn);
-                cmd.Parameters.AddWithValue("id", facturaId);
+                using var transaction = conn.BeginTransaction();
 
-                cmd.ExecuteNonQuery();
+                try
+                {
+                    // Obtener el reparacion_id asociado a la factura
+                    string getReparacionIdQuery = "SELECT id_reparacion FROM factura WHERE id = @id";
+                    int reparacionId;
+
+                    using (var getCmd = new NpgsqlCommand(getReparacionIdQuery, conn))
+                    {
+                        getCmd.Parameters.AddWithValue("id", facturaId);
+                        var result = getCmd.ExecuteScalar();
+                        if (result == null)
+                            throw new Exception("No se encontró la reparación asociada a la factura.");
+
+                        reparacionId = Convert.ToInt32(result);
+                    }
+
+                    // Eliminar repuestos usados asociados a la reparacion
+                    string deleteRepuestosQuery = "DELETE FROM repuesto_usado WHERE reparacion_id = @repId";
+                    using (var deleteCmd = new NpgsqlCommand(deleteRepuestosQuery, conn))
+                    {
+                        deleteCmd.Parameters.AddWithValue("repId", reparacionId);
+                        deleteCmd.ExecuteNonQuery();
+                    }
+
+                    // Eliminar la factura
+                    string deleteFacturaQuery = "DELETE FROM factura WHERE id = @id";
+                    using (var cmd = new NpgsqlCommand(deleteFacturaQuery, conn))
+                    {
+                        cmd.Parameters.AddWithValue("id", facturaId);
+                        cmd.ExecuteNonQuery();
+                    }
+
+                    transaction.Commit();
+                }
+                catch (Exception)
+                {
+                    transaction.Rollback(); 
+                    throw;
+                }
             }
             catch (Exception ex)
             {

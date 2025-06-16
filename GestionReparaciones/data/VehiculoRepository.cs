@@ -110,24 +110,28 @@ namespace GestionReparaciones.data
                 using (var connection = GetConexion())
                 {
                     connection.Open();
-                    // Elimina todos los repuestos asociados a una reparación de un vehículo por matrícula
+                    // Eliminanos todos los repuestos asociados a una reparacion de un vehiculo por matricula
                     using (var transaction = connection.BeginTransaction())
                     {
                         try
                         {
-                            var getIdCmd = new NpgsqlCommand("SELECT id FROM reparacion WHERE matricula_vehiculo = @matricula", connection);
+                            // Recogemos el id de la reparacion
+                            var getIdCmd = new NpgsqlCommand(@"SELECT id FROM reparacion  WHERE matricula_vehiculo = @matricula  AND estado != @estado", connection);
+
                             getIdCmd.Parameters.AddWithValue("@matricula", matricula);
+                            getIdCmd.Parameters.AddWithValue("@estado", DatosConstantesEstaticos.Estado6);
+
                             var reparacionId = getIdCmd.ExecuteScalar();
 
                             if (reparacionId == null)
                                 throw new Exception("No se encontró la reparación para la matrícula dada.");
 
                             int repId = Convert.ToInt32(reparacionId);
-
-                            var deleteRepuestosCmd = new NpgsqlCommand("DELETE FROM repuesto_usado WHERE reparacion_id = @repId", connection);
-                            deleteRepuestosCmd.Parameters.AddWithValue("@repId", repId);
+                            var deleteRepuestosCmd = new NpgsqlCommand("DELETE FROM repuesto_usado WHERE reparacion_id = @reparacion_id AND pagado = FALSE",connection);
+                            deleteRepuestosCmd.Parameters.AddWithValue("reparacion_id", repId);
                             deleteRepuestosCmd.ExecuteNonQuery();
-
+                            deleteRepuestosCmd.ExecuteNonQuery();
+                            // Y lo desasignamos
                             var updateVehiculoCmd = new NpgsqlCommand("UPDATE vehiculo SET asignado = false WHERE matricula = @matricula", connection);
                             updateVehiculoCmd.Parameters.AddWithValue("@matricula", matricula);
                             updateVehiculoCmd.ExecuteNonQuery();
